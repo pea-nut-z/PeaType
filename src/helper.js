@@ -1,4 +1,4 @@
-export const credentials = {
+const secrets = {
   type: process.env.REACT_APP_type,
   project_id: process.env.REACT_APP_project_id,
   private_key_id: process.env.REACT_APP_private_key_id,
@@ -11,5 +11,4 @@ export const credentials = {
   client_x509_cert_url: process.env.REACT_APP_client_x509_cert_url,
 };
 
-export const test = JSON.stringify(credentials);
-export const test1 = JSON.parse(test);
+export const credentials = JSON.parse(JSON.stringify(secrets));
