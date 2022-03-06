@@ -12,3 +12,4 @@ const secrets = {
 };
 
 export const credentials = JSON.parse(JSON.stringify(secrets));
+export const langDataUrl = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
