@@ -1,6 +1,7 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
 import * as helper from "./helper";
+import TypeBox from "./TypeBox";
 
 function App() {
   const [settings, setSettings] = useState(false);
@@ -12,10 +13,9 @@ function App() {
   const [selectedName, setSelectedName] = useState("English");
   const [lastNode, setLastNode] = useState(0);
   const [currentNode, setCurrentNode] = useState(0);
-  // const [hilight, setHilight] = useState(0);
   const [selectedTime, setSelectedTime] = useState(15);
   const timeOptions = [15, 30, 60, 120, 240];
-  console.log({ showLangList });
+  // console.log({ showLangList });
   // console.log({ selectedName });
 
   useEffect(() => {
@@ -158,7 +158,9 @@ function App() {
         <button onClick={toggleSettings}>Settings</button>
       </section>
       {settings && renderSettings()}
-      <main>Render body</main>
+      <main>
+        <TypeBox />
+      </main>
     </div>
   );
 }
