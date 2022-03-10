@@ -159,7 +159,7 @@ function App() {
       </section>
       {settings && renderSettings()}
       <main>
-        <TypeBox />
+        <TypeBox lang={selectedLang} time={selectedTime} />
       </main>
     </div>
   );
