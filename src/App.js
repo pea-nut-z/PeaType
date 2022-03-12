@@ -1,11 +1,11 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
 import * as helper from "./helper";
-import TypeBox from "./TypeBox";
+import Main from "./components/Main";
 
 function App() {
   const [settings, setSettings] = useState(false);
-  const [langData, setLangData] = useState(null);
+  const [langListData, setLangListData] = useState(null);
   const [searchStr, setSearchStr] = useState("");
   const [showLangList, setShowLangList] = useState(false);
   const [filteredLang, setfilteredLang] = useState(null);
@@ -13,20 +13,20 @@ function App() {
   const [selectedName, setSelectedName] = useState("English");
   const [lastNode, setLastNode] = useState(0);
   const [currentNode, setCurrentNode] = useState(0);
-  const [selectedTime, setSelectedTime] = useState(15);
+  const [selectedTime, setSelectedTime] = useState(5);
   const timeOptions = [15, 30, 60, 120, 240];
   // console.log({ showLangList });
   // console.log({ selectedName });
 
   useEffect(() => {
     try {
-      fetch(helper.langDataUrl)
+      fetch(helper.LANG_LIST_API_URL)
         .then((res) => res.json())
         .then((result) => {
-          setLangData(result.data.languages);
+          setLangListData(result.data.languages);
         });
     } catch (error) {
-      console.log("Fetch language data error", error);
+      console.log("Fetch language list data error", error);
     }
   }, []);
 
@@ -51,13 +51,13 @@ function App() {
     setfilteredLang(null);
   };
 
-  const handleLangOnChange = (e) => {
+  const handleLangChange = (e) => {
     const container = document.querySelector("#container");
-    const val = e.target.value;
-    setSearchStr(val);
-    if (val) {
-      const matches = langData.filter((data) => {
-        const str = val.toLowerCase();
+    const value = e.target.value;
+    setSearchStr(value);
+    if (value) {
+      const matches = langListData.filter((data) => {
+        const str = value.toLowerCase();
         const name = data.name.toLowerCase().substring(0, str.length);
         return str === name;
       });
@@ -71,7 +71,7 @@ function App() {
     }
   };
 
-  const handleLangOnKeyDown = (e) => {
+  const handleLangKeyDown = (e) => {
     const key = e.key;
     const list = document.querySelectorAll("#filteredLang");
 
@@ -110,8 +110,8 @@ function App() {
             value={searchStr}
             placeholder={`Enter a language to change from ${selectedName}.`}
             onFocus={filteredLang && openLangList}
-            onChange={handleLangOnChange}
-            onKeyDown={handleLangOnKeyDown}
+            onChange={handleLangChange}
+            onKeyDown={handleLangKeyDown}
           />
           <div>
             {showLangList &&
@@ -159,7 +159,7 @@ function App() {
       </section>
       {settings && renderSettings()}
       <main>
-        <TypeBox lang={selectedLang} time={selectedTime} />
+        <Main lang={selectedLang} time={selectedTime} />
       </main>
     </div>
   );
