@@ -5,7 +5,7 @@ export default function TypeBox({ start, startTest, resetTest, lang }) {
   const [curQuoteArr, setCurQuoteArr] = useState(null);
   const [nxtQuoteArr, setNxtQuoteArr] = useState(null);
   const [wordIdx, setWordIdx] = useState(0);
-  const [displayWord, setDisplayWord] = useState(null);
+  const [curWord, setCurWord] = useState(null);
   const [input, setInput] = useState(null);
   const [endOfQuote, setEndOfQuote] = useState(false);
   const [fetchQuote, setFetchQuote] = useState(false);
@@ -13,8 +13,8 @@ export default function TypeBox({ start, startTest, resetTest, lang }) {
 
   //CALCULATION
   const [totalChars, setTotalChars] = useState(0);
-  const [correctChars, setcorrectChars] = useState(0);
-  // console.log({ start });
+  const [totalCorrectChars, setTotalCorrectChars] = useState(0);
+  console.log({ totalCorrectChars });
   // console.log({ allowInput });
 
   //ELEMENTS
@@ -57,18 +57,8 @@ export default function TypeBox({ start, startTest, resetTest, lang }) {
     };
 
     const disableKeys = (e) => {
-      // console.log("text", e.which);
-      // const input = inputEle.textContent;
       if (e.key === "Enter" || (e.key === " " && inputEle.textContent === "")) disableEvent(e);
     };
-
-    // const shouldStartTest = () => {
-    //   console.log("check", inputEle.textContent);
-
-    //   if (inputEle.textContent.length !== 0) {
-    //     startTest();
-    //   }
-    // };
 
     inputEle.addEventListener("input", startTest, { once: true });
     inputEle.addEventListener("keydown", disableKeys);
@@ -87,16 +77,14 @@ export default function TypeBox({ start, startTest, resetTest, lang }) {
 
   useEffect(() => {
     start === false ? setAllowInput(false) : setAllowInput(true);
-    // console.log({ start });
   }, [start]);
 
   useEffect(() => {
-    curQuoteArr && setDisplayWord(curQuoteArr[wordIdx]);
-    setDisplayWordEle(document.querySelector("#displayWord"));
+    curQuoteArr && setCurWord(curQuoteArr[wordIdx]);
+    setDisplayWordEle(document.querySelector("#curWord"));
     if (input) {
-      setTotalChars(totalChars + input.length);
       const testedWord = document.createElement("span");
-      if (input.trim() !== displayWord) {
+      if (input.trim() !== curWord) {
         displayWordEle.style.color = "red";
         testedWord.style.color = "red";
       }
@@ -119,7 +107,7 @@ export default function TypeBox({ start, startTest, resetTest, lang }) {
     curQuoteArr,
     wordIdx,
     input,
-    displayWord,
+    curWord,
     displayWordEle,
     inputEle,
     testedWordsEle,
@@ -128,21 +116,23 @@ export default function TypeBox({ start, startTest, resetTest, lang }) {
   ]);
 
   const handleInput = (e) => {
-    const lastChar = e.nativeEvent.data;
     const input = e.currentTarget.textContent;
-    const lastWord = wordIdx === curQuoteArr.length - 1;
-    const displayWordSubStr = displayWord.substring(0, input.length);
+    const isLastWord = wordIdx === curQuoteArr.length - 1;
+    const lastChar = e.nativeEvent.data;
+    const curWordSubStr = curWord.substring(0, input.length);
 
-    // if ((lastWord && inputLen === displayWord.length) || (lastWord && lastChar === " ")) {
-    //   //at the end of last word
-    //   setInput(input);
-    //   setEndOfQuote(true);
-    // }
-
-    if ((!lastWord && lastChar === " ") || (lastWord && lastChar === ".")) {
-      lastWord && setEndOfQuote(true);
+    if ((!isLastWord && lastChar === " ") || (isLastWord && lastChar === ".")) {
+      isLastWord && setEndOfQuote(true);
+      setTotalChars(totalChars + input.length);
+      console.log({ curWord });
+      console.log({ input });
+      console.log({ isLastWord });
+      const inputToPass = !isLastWord ? input.trim() : input;
+      setTotalCorrectChars(
+        totalCorrectChars + helper.getNumOfCorrectChar(curWord, inputToPass, isLastWord)
+      );
       setInput(input);
-    } else if (input === displayWordSubStr) {
+    } else if (input === curWordSubStr) {
       inputEle.style.color = "black";
     } else {
       inputEle.style.color = "red";
@@ -153,10 +143,10 @@ export default function TypeBox({ start, startTest, resetTest, lang }) {
     <section>
       <div id="curQuote">
         {curQuoteArr &&
-          curQuoteArr.map((word, idx) => {
+          curQuoteArr.map((str, idx) => {
             return (
-              <span id={wordIdx === idx ? "displayWord" : null} key={idx}>
-                {word}
+              <span id={wordIdx === idx ? "curWord" : null} key={idx}>
+                {str}
               </span>
             );
           })}

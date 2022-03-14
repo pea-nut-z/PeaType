@@ -14,3 +14,28 @@ const secrets = {
 export const credentials = JSON.parse(JSON.stringify(secrets));
 export const LANG_LIST_API_URL = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
 export const RANDOM_QUOTE_API_URL = "http://api.quotable.io/random";
+
+export const getNumOfCorrectChar = (word, input, isLastWord) => {
+  const wordLen = word.length;
+  const inputLen = input.length;
+  let count = 0;
+
+  if (input === word) {
+    count = inputLen;
+  } else {
+    const wordArr = word.split("");
+    const inputArr = input.split("");
+    const loopArr = wordLen > inputLen ? wordArr : inputArr;
+    const compareArr = loopArr === wordArr ? inputArr : wordArr;
+
+    loopArr.forEach((char, idx) => {
+      char === compareArr[idx] && count++;
+    });
+  }
+
+  if (!isLastWord && inputLen === wordLen) {
+    count++;
+    console.log({ count });
+  }
+  return count;
+};
