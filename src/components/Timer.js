@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 export default function Timer({ start, time, endTest }) {
   const [timer, setTimer] = useState(time);
+  // console.log("@Timer", start);
 
   useEffect(() => {
     let interval;

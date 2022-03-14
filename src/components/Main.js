@@ -14,10 +14,14 @@ export default function Main({ lang, time }) {
     setStart(false);
   };
 
+  const resetTest = () => {
+    setStart(null);
+  };
+
   return (
     <section>
       <Timer start={start} time={time} endTest={endTest} />
-      <TypeBox startTest={startTest} endTest={endTest} lang={lang} />
+      <TypeBox start={start} startTest={startTest} resetTest={resetTest} lang={lang} />
     </section>
   );
 }

@@ -13,7 +13,7 @@ function App() {
   const [selectedName, setSelectedName] = useState("English");
   const [lastNode, setLastNode] = useState(0);
   const [currentNode, setCurrentNode] = useState(0);
-  const [selectedTime, setSelectedTime] = useState(5);
+  const [selectedTime, setSelectedTime] = useState(10);
   const timeOptions = [15, 30, 60, 120, 240];
   // console.log({ showLangList });
   // console.log({ selectedName });
@@ -132,6 +132,7 @@ function App() {
                 <button
                   key={idx}
                   type="button"
+                  aria-label={`${option} seconds`}
                   className={selectedTime === option ? "selected-time-btn" : "time-btn"}
                   onClick={() => {
                     setSelectedTime(option);
