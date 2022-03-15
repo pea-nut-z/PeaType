@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import * as helper from "../helper";
 import Result from "./Result";
-export default function TypeBox({ start, startTest, resetTest, lang }) {
+export default function TypeBox({ start, time, startTest, resetTest, lang }) {
   const [curQuoteArr, setCurQuoteArr] = useState(null);
   const [nxtQuoteArr, setNxtQuoteArr] = useState(null);
   const [wordIdx, setWordIdx] = useState(0);
   const [curWord, setCurWord] = useState(null);
-  const [input, setInput] = useState(null);
+  const [inputSubmitted, setInputSubmitted] = useState(null);
+  const [isLastWord, setIsLastWord] = useState(false);
   const [endOfQuote, setEndOfQuote] = useState(false);
   const [fetchQuote, setFetchQuote] = useState(false);
   const [allowInput, setAllowInput] = useState(true);
@@ -14,13 +15,14 @@ export default function TypeBox({ start, startTest, resetTest, lang }) {
   //CALCULATION
   const [totalChars, setTotalChars] = useState(0);
   const [totalCorrectChars, setTotalCorrectChars] = useState(0);
-  console.log({ totalCorrectChars });
+  // console.log({ totalCorrectChars });
   // console.log({ allowInput });
 
   //ELEMENTS
   const [inputEle, setInputEle] = useState();
-  const [displayWordEle, setDisplayWordEle] = useState();
-  const [testedWordsEle, setTestedWordsEle] = useState();
+  const [curWordEle, setCurWordEle] = useState();
+  const [testedInputEle, setTestedInputEle] = useState();
+  // console.log({ inputEle });
 
   useEffect(() => {
     async function fetchData() {
@@ -40,7 +42,7 @@ export default function TypeBox({ start, startTest, resetTest, lang }) {
         const childEles = curQuoteEle.querySelectorAll("span");
         childEles.forEach((child) => (child.style.color = "black"));
       }
-      // setCurQuoteArr(nxtQuoteArr ? nxtQuoteArr : ["line1"]);
+      // setCurQuoteArr(nxtQuoteArr ? nxtQuoteArr : ["Interest", " ", "hob."]);
       // setNxtQuoteArr(["line2"]);
       setCurQuoteArr(nxtQuoteArr ? nxtQuoteArr : await fetchData());
       setNxtQuoteArr(await fetchData());
@@ -48,90 +50,118 @@ export default function TypeBox({ start, startTest, resetTest, lang }) {
     })();
   }, [fetchQuote]);
 
+  // Renders one time
   useEffect(() => {
-    const inputEle = document.querySelector("#input");
-    inputEle.focus();
+    setInputEle(document.querySelector("#input"));
+    setTestedInputEle(document.querySelector("#testedWords"));
+    setCurWordEle(document.querySelector("#curWord"));
+  }, []);
 
-    const disableEvent = (e) => {
-      e.preventDefault();
-    };
+  // useEffect(() => {
+  //   // const inputEle = document.querySelector("#input");
+  //   // setInputEle(inputEle);
+  //   // setTestedInputEle(document.querySelector("#testedWords"));
 
-    const disableKeys = (e) => {
-      if (e.key === "Enter" || (e.key === " " && inputEle.textContent === "")) disableEvent(e);
-    };
+  //   const disableEvent = (e) => {
+  //     e.preventDefault();
+  //   };
 
-    inputEle.addEventListener("input", startTest, { once: true });
-    inputEle.addEventListener("keydown", disableKeys);
-    const eventNames = ["copy", "paste", "blur", "cut", "delete", "mouseup"];
-    eventNames.forEach((name) => inputEle.addEventListener(name, disableEvent));
+  //   const disableKeys = (e) => {
+  //     if (e.key === "Enter" || (e.key === " " && inputEle.textContent === "")) disableEvent(e);
+  //   };
 
-    setInputEle(inputEle);
-    setTestedWordsEle(document.querySelector("#testedWords"));
+  //   const eventNames = ["copy", "paste", "blur", "cut", "delete", "mouseup"];
 
-    return () => {
-      inputEle.removeEventListener("keydown", startTest);
-      inputEle.removeEventListener("keydown", disableKeys);
-      eventNames.forEach((name) => inputEle.removeEventListener(name, disableEvent));
-    };
-  }, [startTest]);
+  //   if (inputEle) {
+  //     inputEle.addEventListener("input", startTest, { once: true });
+  //     inputEle.addEventListener("keydown", disableKeys);
+  //     eventNames.forEach((name) => inputEle.addEventListener(name, disableEvent));
+  //   }
+
+  //   return () => {
+  //     inputEle.removeEventListener("input", startTest);
+  //     inputEle.removeEventListener("keydown", disableKeys);
+  //     eventNames.forEach((name) => inputEle.removeEventListener(name, disableEvent));
+  //   };
+  // }, [startTest]);
 
   useEffect(() => {
-    start === false ? setAllowInput(false) : setAllowInput(true);
-  }, [start]);
+    if (start === false) {
+      console.log("trig");
+
+      const input = inputEle.textContent;
+      setAllowInput(false);
+      //include input that hasn't been submitted to calculations after time's up
+      setTotalChars(totalChars + input.length);
+      setTotalCorrectChars(
+        totalCorrectChars + helper.getNumOfCorrectChar(curWord, input, isLastWord)
+      );
+    } else {
+      inputEle && inputEle.focus();
+      setAllowInput(true);
+    }
+  }, [start, inputEle]);
 
   useEffect(() => {
     curQuoteArr && setCurWord(curQuoteArr[wordIdx]);
-    setDisplayWordEle(document.querySelector("#curWord"));
-    if (input) {
+    // setCurWordEle(document.querySelector("#curWord"));
+    // at last word index
+    if (curQuoteArr && wordIdx === curQuoteArr.length - 1) {
+      setIsLastWord(true);
+    }
+
+    if (inputSubmitted) {
+      console.log("trig");
+
       const testedWord = document.createElement("span");
-      if (input.trim() !== curWord) {
-        displayWordEle.style.color = "red";
-        testedWord.style.color = "red";
-      }
-      testedWord.textContent = input;
-      testedWordsEle.appendChild(testedWord);
+      testedWord.textContent = inputSubmitted;
+      testedInputEle.appendChild(testedWord);
       inputEle.style.color = "black";
       inputEle.textContent = null;
-      setInput(null);
+
+      if (inputSubmitted.trim() !== curWord) {
+        curWordEle.style.color = "red";
+        testedWord.style.color = "red";
+      }
 
       if (endOfQuote) {
-        // testedWordsEle.textContent = null;
-        // displayWordEle.style.color = "black";
         setWordIdx(0);
         setFetchQuote(!fetchQuote);
       } else {
         setWordIdx(wordIdx + 2);
       }
+
+      setInputSubmitted(null);
     }
   }, [
     curQuoteArr,
     wordIdx,
-    input,
+    inputSubmitted,
     curWord,
-    displayWordEle,
+    curWordEle,
     inputEle,
-    testedWordsEle,
+    testedInputEle,
     endOfQuote,
     fetchQuote,
   ]);
 
   const handleInput = (e) => {
     const input = e.currentTarget.textContent;
-    const isLastWord = wordIdx === curQuoteArr.length - 1;
     const lastChar = e.nativeEvent.data;
     const curWordSubStr = curWord.substring(0, input.length);
+
+    console.log({ isLastWord });
 
     if ((!isLastWord && lastChar === " ") || (isLastWord && lastChar === ".")) {
       isLastWord && setEndOfQuote(true);
       setTotalChars(totalChars + input.length);
-      console.log({ curWord });
-      console.log({ input });
-      console.log({ isLastWord });
       const inputToPass = !isLastWord ? input.trim() : input;
       setTotalCorrectChars(
         totalCorrectChars + helper.getNumOfCorrectChar(curWord, inputToPass, isLastWord)
       );
-      setInput(input);
+      console.log("submitted");
+
+      setInputSubmitted(input);
     } else if (input === curWordSubStr) {
       inputEle.style.color = "black";
     } else {
@@ -164,10 +194,16 @@ export default function TypeBox({ start, startTest, resetTest, lang }) {
         onInput={handleInput}
         autoFocus
       ></div>
-      <div>{start === false && <Result resetTest={resetTest} />}</div>
+      <div>
+        {start === false && (
+          <Result
+            resetTest={resetTest}
+            time={time}
+            totalChars={totalChars}
+            totalCorrectChars={totalCorrectChars}
+          />
+        )}
+      </div>
     </section>
   );
 }
-
-// wpm: total number of characters (including spaces) of words you got right divided by five then divided by the time starting from first character typed
-// acc: total number of characters (including spaces) of words you got right divided by all character in the list of words

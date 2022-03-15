@@ -25,17 +25,14 @@ export const getNumOfCorrectChar = (word, input, isLastWord) => {
   } else {
     const wordArr = word.split("");
     const inputArr = input.split("");
-    const loopArr = wordLen > inputLen ? wordArr : inputArr;
-    const compareArr = loopArr === wordArr ? inputArr : wordArr;
 
-    loopArr.forEach((char, idx) => {
-      char === compareArr[idx] && count++;
+    inputArr.forEach((char, idx) => {
+      char === wordArr[idx] && count++;
     });
   }
 
   if (!isLastWord && inputLen === wordLen) {
     count++;
-    console.log({ count });
   }
   return count;
 };
