@@ -3,19 +3,16 @@ import React, { useState, useEffect } from "react";
 import Timer from "./Timer";
 import TypeBox from "./TypeBox";
 
-export default function Main({ lang, time }) {
+export default function Main({ lang, initialTime }) {
   const [start, setStart] = useState(null);
-  // const [timeUsed, setTimeUsed] = useState();
   // console.log({ timeUsed });
 
   const startTest = () => {
     setStart(true);
-    // setTimeUsed(new Date());
   };
 
   const endTest = () => {
     setStart(false);
-    // setTimeUsed(new Date() - timeUsed / 1000);
   };
 
   const resetTest = () => {
@@ -24,8 +21,14 @@ export default function Main({ lang, time }) {
 
   return (
     <section>
-      <Timer start={start} time={time} endTest={endTest} />
-      <TypeBox start={start} time={time} startTest={startTest} resetTest={resetTest} lang={lang} />
+      <Timer start={start} initialTime={initialTime} endTest={endTest} />
+      <TypeBox
+        start={start}
+        initialTime={initialTime}
+        startTest={startTest}
+        resetTest={resetTest}
+        lang={lang}
+      />
     </section>
   );
 }

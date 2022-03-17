@@ -1,28 +1,33 @@
 import React, { useState, useEffect } from "react";
 
-export default function Timer({ start, time, endTest }) {
-  const [timer, setTimer] = useState(time);
-  // console.log("@Timer", start);
+export default function Timer({ start, initialTime, endTest }) {
+  const [timer, setTimer] = useState(initialTime);
+  // console.log({ start });
+  // console.log({ timer });
 
   useEffect(() => {
     let interval;
     if (start) {
+      // console.log("trig timer");
+
       const startTime = new Date();
       interval = setInterval(() => {
         const currentTime = new Date();
-        const timeLeft = time - Math.floor((currentTime - startTime) / 1000);
+        const timeLeft = initialTime - Math.floor((currentTime - startTime) / 1000);
         setTimer(timeLeft);
         if (timeLeft === 0) {
           clearInterval(interval);
           endTest();
         }
       }, 1000);
+    } else if (start === null) {
+      setTimer(initialTime);
     }
 
     return () => {
       clearInterval(interval);
     };
-  }, [start]);
+  }, [start, endTest, initialTime]);
 
   return <div>{timer}</div>;
 }

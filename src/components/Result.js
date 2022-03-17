@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Result({ resetTest, time, totalChars, totalCorrectChars }) {
+export default function Result({ resetTest, initialTime, totalChars, totalCorrectChars }) {
   console.log({ totalChars });
   console.log({ totalCorrectChars });
 
@@ -9,8 +9,8 @@ export default function Result({ resetTest, time, totalChars, totalCorrectChars 
       <button type="button" aria-label="Redo" onClick={resetTest}>
         REDO
       </button>
-      <div>WPM: {Math.floor(totalCorrectChars / 5 / (time / 60))}</div>
-      <div>ACC:{(totalCorrectChars / totalChars) * 100}</div>
+      <div>WPM: {Math.floor(totalCorrectChars / 5 / (initialTime / 60))}</div>
+      <div>ACC:{!totalCorrectChars ? 0 : Math.floor((totalCorrectChars / totalChars) * 100)}</div>
     </section>
   );
 }

@@ -15,6 +15,16 @@ export const credentials = JSON.parse(JSON.stringify(secrets));
 export const LANG_LIST_API_URL = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
 export const RANDOM_QUOTE_API_URL = "http://api.quotable.io/random";
 
+export const fetchQuote = async () => {
+  try {
+    return await fetch(RANDOM_QUOTE_API_URL)
+      .then((res) => res.json())
+      .then((result) => result.content.split(/(\s+)/));
+  } catch (error) {
+    console.log("Fetch quote error", error);
+  }
+};
+
 export const getNumOfCorrectChar = (word, input, isLastWord) => {
   const wordLen = word.length;
   const inputLen = input.length;
@@ -34,5 +44,7 @@ export const getNumOfCorrectChar = (word, input, isLastWord) => {
   if (!isLastWord && inputLen === wordLen) {
     count++;
   }
+  console.log({ count });
+
   return count;
 };
