@@ -1,19 +1,28 @@
 import React, { useEffect, useState, useCallback } from "react";
 import * as helper from "../helper";
 import Result from "./Result";
+
+// function reducer(state, action) {
+//   switch (action.type) {
+//     case 'fetchTwoQuotes':
+//       return {count: state.count + 1};
+//     case 'decrement':
+//       return {count: state.count - 1};
+//     default:
+//       throw new Error();
+//   }
+// }
+
 export default function TypeBox({ start, initialTime, startTest, resetTest, lang }) {
   // const [testStatus, setTestStatus] = useState();
   const [curQuoteArr, setCurQuoteArr] = useState(null);
   const [nxtQuoteArr, setNxtQuoteArr] = useState(null);
   const [wordIdx, setWordIdx] = useState(0);
   const [curWord, setCurWord] = useState(null);
-  const [inputSubmitted, setInputSubmitted] = useState(null);
   const [isLastWord, setIsLastWord] = useState(false);
-  const [endOfQuote, setEndOfQuote] = useState(false);
-  const [fetchQuote, setFetchQuote] = useState(true);
-  const [allowInput, setAllowInput] = useState(true);
-
-  // console.log({ start });
+  const [getQuote, setGetQuote] = useState(false);
+  const [prepareTest, setPrepareTest] = useState(false);
+  const [allowInput, setAllowInput] = useState(false);
 
   //CALCULATION
   const [totalChars, setTotalChars] = useState(0);
@@ -21,42 +30,9 @@ export default function TypeBox({ start, initialTime, startTest, resetTest, lang
 
   //ELEMENTS
   const [inputEle, setInputEle] = useState();
+  const [curQuoteEle, setCurQuoteEle] = useState();
   const [curWordEle, setCurWordEle] = useState();
   const [testedInputEle, setTestedInputEle] = useState();
-
-  const setUpTest = () => {
-    if (start === false) {
-      setAllowInput(false);
-    } else if (start === null) {
-      // console.log("TRIG start === null");
-      inputEle.addEventListener("input", startTest);
-      setAllowInput(true);
-      inputEle.textContent = "";
-      inputEle.focus();
-      testedInputEle.textContent = "";
-      setWordIdx(0);
-      setTotalChars(0);
-      setTotalCorrectChars(0);
-      // testedInputEle.style.color = ""
-      if (curQuoteArr) {
-        // Remove curQuote font style piror to setting nxtQuote as curQuote
-        const curQuoteEle = document.querySelector("#curQuote");
-        const childEles = curQuoteEle.querySelectorAll("span");
-        childEles.forEach((child) => (child.style.color = "black"));
-      }
-    } else {
-      // console.log("TRIG start === true");
-      inputEle.removeEventListener("input", startTest);
-    }
-  };
-
-  const memorizedCallback = useCallback(setUpTest, [
-    start,
-    curQuoteArr,
-    inputEle,
-    startTest,
-    testedInputEle,
-  ]);
 
   useEffect(() => {
     const inputEle = document.querySelector("#input");
@@ -81,27 +57,70 @@ export default function TypeBox({ start, initialTime, startTest, resetTest, lang
     };
   }, []);
 
-  useEffect(() => {
-    if (fetchQuote) {
-      (async () => {
-        setCurQuoteArr(nxtQuoteArr ? nxtQuoteArr : await helper.fetchQuote());
-        setNxtQuoteArr(await helper.fetchQuote());
-        const test =
-          "Up come house? Good a line want all, well state without around person few? Other house about one since stand look!";
-        // setCurQuoteArr(nxtQuoteArr ? nxtQuoteArr : test.split(/(\s+)/));
-        // setNxtQuoteArr(["line2"]);
-      })();
-      // const curQuoteEle = document.querySelector("#curQuote");
-      // const childEles = curQuoteEle.querySelectorAll("span");
-      // childEles.forEach((child) => (child.style.color = "black"));
-      setEndOfQuote(false);
-      setFetchQuote(false);
+  const setUpTest = () => {
+    if (start === false) {
+      setAllowInput(false);
+    } else if (start === null && prepareTest === false) {
+      console.log("TRIG start === null");
+      inputEle.addEventListener("input", startTest);
+      setAllowInput(true);
+      inputEle.textContent = "";
+      inputEle.focus();
+      testedInputEle.textContent = "";
+      setWordIdx(0);
+      setTotalChars(0);
+      setTotalCorrectChars(0);
+      setGetQuote(true);
+      setPrepareTest(true);
+    } else {
+      // console.log("TRIG start === true");
+      inputEle.removeEventListener("input", startTest);
     }
-  }, [fetchQuote, curQuoteArr, nxtQuoteArr]);
+  };
+  const setUpTestCallback = useCallback(setUpTest, [
+    prepareTest,
+    start,
+    inputEle,
+    startTest,
+    testedInputEle,
+  ]);
+
+  // const test =
+  //   "Up come house? Good a line want all, well state without around person few? Other house about one since stand look!";
+  // setCurQuoteArr(nxtQuoteArr ? nxtQuoteArr : test.split(/(\s+)/));
+  // setNxtQuoteArr(["line2"]);
+
+  // const fetchQuotes =
+  // const fetchQuoteCallback = useCallback(fetchQuote, [moveQuote]);
 
   useEffect(() => {
-    inputEle && memorizedCallback();
-  }, [start, inputEle, memorizedCallback]);
+    inputEle && setUpTestCallback();
+  }, [inputEle, setUpTestCallback]);
+
+  useEffect(() => {
+    // getQuote && fetchQuotes();
+    if (getQuote) {
+      console.log({ getQuote });
+
+      (async () => {
+        setCurQuoteArr([await helper.fetchQuote(), await helper.fetchQuote()]);
+        // setNxtQuoteArr(await helper.fetchQuote());
+        const element = document.querySelector("#curQuote");
+        element.style.color = "black";
+        setCurQuoteEle(element);
+      })();
+    }
+    setGetQuote(false);
+  }, [getQuote]);
+
+  // useEffect(() => {
+  //   if (curQuoteArr) {
+  //     console.log("TRIG fetch2");
+  //     (async () => {
+  //       check = await helper.fetchQuote();
+  //     })();
+  //   }
+  // }, [curQuoteArr]);
 
   useEffect(() => {
     if (curQuoteArr) {
@@ -112,79 +131,39 @@ export default function TypeBox({ start, initialTime, startTest, resetTest, lang
         setIsLastWord(true);
       }
     }
-
-    // if (inputSubmitted) {
-    // const testedWord = document.createElement("span");
-    // testedWord.textContent = inputSubmitted;
-    // testedInputEle.appendChild(testedWord);
-    // inputEle.style.color = "black";
-    // inputEle.textContent = null;
-
-    // if (inputSubmitted.trim() !== curWord) {
-    //   curWordEle.style.color = "red";
-    //   testedWord.style.color = "red";
-    // }
-
-    // if (endOfQuote) {
-    //   setWordIdx(0);
-    //   setFetchQuote(true);
-    // } else {
-    //   setWordIdx(wordIdx + 2);
-    // }
-
-    // setInputSubmitted(null);
-    // }
-  }, [
-    curQuoteArr,
-    wordIdx,
-    inputSubmitted,
-    curWord,
-    curWordEle,
-    inputEle,
-    testedInputEle,
-    endOfQuote,
-  ]);
+  }, [curQuoteArr, wordIdx]);
 
   const handleInput = (e) => {
     const input = e.currentTarget.textContent;
+    const inputToCheck = isLastWord ? input : input.trim();
     const lastChar = e.nativeEvent.data;
     const curWordSubStr = curWord.substring(0, input.length);
+    let fontColor = inputToCheck === curWordSubStr ? "black" : "red";
 
     if ((!isLastWord && lastChar === " ") || (isLastWord && lastChar === ".")) {
-      // if (isLastWord) {
-      //   setEndOfQuote(true);
-      // }
-
-      // FOR CALCULATIONS
+      // CALCULATIONS
       setTotalChars(totalChars + input.length);
-      const inputToPass = !isLastWord ? input.trim() : input;
       setTotalCorrectChars(
-        totalCorrectChars + helper.getNumOfCorrectChar(curWord, inputToPass, isLastWord)
+        totalCorrectChars + helper.getNumOfCorrectChar(curWord, inputToCheck, isLastWord)
       );
 
-      // FOR PUSHING TESTED WORDS TO ELEMENTS
+      // PUSH TESTED WORD TO TESTED ELEMENT
       const testedWord = document.createElement("span");
       testedWord.textContent = input;
       testedInputEle.appendChild(testedWord);
-      inputEle.style.color = "black";
       inputEle.textContent = null;
+      curWordEle.style.color = fontColor;
+      testedWord.style.color = fontColor;
 
-      if (input.trim() !== curWord) {
-        curWordEle.style.color = "red";
-        testedWord.style.color = "red";
-      }
-
+      // SET INDEX FOR NEXT WORD
       if (isLastWord) {
         setWordIdx(0);
-        setFetchQuote(true);
+        curQuoteEle.textContent = "";
       } else {
         setWordIdx(wordIdx + 2);
       }
-      // setInputSubmitted(input);
-    } else if (input === curWordSubStr) {
-      inputEle.style.color = "black";
     } else {
-      inputEle.style.color = "red";
+      inputEle.style.color = fontColor;
     }
   };
 
