@@ -4,7 +4,7 @@ import Timer from "./Timer";
 import TypeBox from "./TypeBox";
 
 export default function Main({ lang, initialTime }) {
-  const [start, setStart] = useState(null);
+  const [start, setStart] = useState("standby");
   // console.log({ timeUsed });
 
   const startTest = () => {
@@ -16,7 +16,7 @@ export default function Main({ lang, initialTime }) {
   };
 
   const resetTest = () => {
-    setStart(null);
+    setStart("standby");
   };
 
   return (

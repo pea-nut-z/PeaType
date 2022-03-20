@@ -7,9 +7,7 @@ export default function Timer({ start, initialTime, endTest }) {
 
   useEffect(() => {
     let interval;
-    if (start) {
-      // console.log("trig timer");
-
+    if (start === true) {
       const startTime = new Date();
       interval = setInterval(() => {
         const currentTime = new Date();
@@ -20,7 +18,7 @@ export default function Timer({ start, initialTime, endTest }) {
           endTest();
         }
       }, 1000);
-    } else if (start === null) {
+    } else if (start === "standby") {
       setTimer(initialTime);
     }
 
