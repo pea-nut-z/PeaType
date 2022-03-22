@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Timer from "./Timer";
 import TypeBox from "./TypeBox";
 
-export default function Main({ lang, initialTime }) {
+export default function Main({ settings, selectedLang, initialTime }) {
   const [start, setStart] = useState("standby");
   // console.log({ timeUsed });
+
+  useEffect(() => {
+    resetTest();
+  }, [selectedLang, initialTime]);
 
   const startTest = () => {
     setStart(true);
@@ -21,13 +25,13 @@ export default function Main({ lang, initialTime }) {
 
   return (
     <section>
-      <Timer start={start} initialTime={initialTime} endTest={endTest} />
+      <Timer settings={settings} start={start} initialTime={initialTime} endTest={endTest} />
       <TypeBox
         start={start}
-        initialTime={initialTime}
         startTest={startTest}
         resetTest={resetTest}
-        lang={lang}
+        selectedLang={selectedLang}
+        initialTime={initialTime}
       />
     </section>
   );
