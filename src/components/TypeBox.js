@@ -74,8 +74,14 @@ export default function TypeBox({ start, startTest, resetTest, selectedLang, ini
       setTotalCorrectChars(0);
       if (!redo) {
         (async () => {
-          setCurQuoteArr(await helper.fetchQuote());
-          setNxtQuoteArr(await helper.fetchQuote());
+          let firstQuote = await helper.fetchQuote();
+          let secondQuote = await helper.fetchQuote();
+          if (selectedLang !== "en") {
+            firstQuote = await helper.translateQuote(selectedLang, firstQuote);
+            secondQuote = await helper.translateQuote(selectedLang, secondQuote);
+          }
+          setCurQuoteArr(firstQuote);
+          setNxtQuoteArr(secondQuote);
           // setCurQuoteArr(["line", " ", "1."]);
           // setNxtQuoteArr(["line", " ", "2."]);
         })();

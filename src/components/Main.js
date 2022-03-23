@@ -5,7 +5,6 @@ import TypeBox from "./TypeBox";
 
 export default function Main({ settings, selectedLang, initialTime }) {
   const [start, setStart] = useState("standby");
-  // console.log({ timeUsed });
 
   useEffect(() => {
     resetTest();

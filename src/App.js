@@ -31,7 +31,6 @@ function App() {
       </section>
       {settings && (
         <Settings
-          // selectedLang={selectedLang}
           selectedName={selectedName}
           selectedTime={selectedTime}
           toggleSettings={toggleSettings}

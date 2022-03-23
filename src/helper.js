@@ -48,3 +48,17 @@ export const getNumOfCorrectChar = (word, input, isLastWord) => {
 
   return count;
 };
+
+export const translateQuote = async (toLang, quote) => {
+  let url = `https://translation.googleapis.com/language/translate/v2?key=${process.env.REACT_APP_API_KEY}`;
+  url += "&q=" + encodeURI(quote);
+  url += `&source=en`;
+  url += `&target=${toLang}`;
+  try {
+    return await fetch(url)
+      .then((res) => res.json())
+      .then((result) => console.log(result));
+  } catch (error) {
+    console.log("Translate quote error", error);
+  }
+};

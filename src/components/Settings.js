@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as helper from "../helper";
 
 export default function Settings({
@@ -15,8 +15,11 @@ export default function Settings({
   const [lastNode, setLastNode] = useState(0);
   const [currentNode, setCurrentNode] = useState(0);
   const [newTime, setNewTime] = useState(selectedTime);
-  const timeOptions = [15, 30, 60, 120, 240];
+  const [selectedNewLang, setSelectedNewLang] = useState(false);
 
+  const timeOptions = [15, 30, 60, 120, 240];
+  //   console.log({ filteredLang });
+  const langList = useRef();
   useEffect(() => {
     try {
       fetch(helper.LANG_LIST_API_URL)
@@ -35,28 +38,15 @@ export default function Settings({
   };
 
   const openLangList = () => {
+    setSelectedNewLang(false);
     setShowLangList(true);
   };
 
   const selectLang = (lang) => {
+    setSelectedNewLang(true);
     setSearchStr(lang.name);
     setCurrentNode(0);
     closeLangList();
-  };
-
-  const validateAndSave = () => {
-    const lang = langListData.find((lang) => {
-      const str = searchStr.toLowerCase();
-      const name = lang.name.toLowerCase();
-      return str === name;
-    });
-    if (lang) {
-      changeSettings(lang.language, lang.name, newTime);
-    }
-    changeSettings(null, null, newTime);
-
-    setfilteredLang(langListData);
-    setSearchStr("");
   };
 
   const handleLangChange = (e) => {
@@ -102,6 +92,20 @@ export default function Settings({
     }
   };
 
+  const validateAndSave = () => {
+    const newLang = langListData.find((lang) => {
+      const str = searchStr.toLowerCase();
+      const name = lang.name.toLowerCase();
+      return str === name;
+    });
+    if (newLang) {
+      changeSettings(newLang.language, newLang.name, newTime);
+    }
+    changeSettings(null, null, newTime);
+    setfilteredLang(langListData);
+    setSearchStr("");
+  };
+
   return (
     <section
       style={{
@@ -115,10 +119,12 @@ export default function Settings({
         <h4>Language</h4>
         <input
           type="text"
-          autoFocus="autoFocus"
           value={searchStr}
           placeholder={`Enter or select a language to change from ${selectedName}.`}
           onFocus={filteredLang && openLangList}
+          onBlur={() => {
+            console.log("Blur");
+          }}
           onClick={(e) => {
             e.stopPropagation();
           }}
