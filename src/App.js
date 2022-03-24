@@ -20,7 +20,7 @@ function App() {
       setSelectedLang(lang);
       setSelectedName(name);
     }
-    setSelectedTime(time);
+    time && setSelectedTime(time);
   };
 
   return (

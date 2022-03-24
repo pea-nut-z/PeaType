@@ -1,25 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as helper from "../helper";
 
-export default function Settings({
-  //   selectedLang,
-  selectedName,
-  selectedTime,
-  toggleSettings,
-  changeSettings,
-}) {
+export default function Settings({ selectedName, selectedTime, toggleSettings, changeSettings }) {
   const [langListData, setLangListData] = useState(null);
   const [showLangList, setShowLangList] = useState(false);
   const [searchStr, setSearchStr] = useState("");
-  const [filteredLang, setfilteredLang] = useState(null);
+  const [langList, setfilteredLang] = useState(null);
   const [lastNode, setLastNode] = useState(0);
   const [currentNode, setCurrentNode] = useState(0);
-  const [newTime, setNewTime] = useState(selectedTime);
-  const [selectedNewLang, setSelectedNewLang] = useState(false);
-
+  const [time, setTime] = useState(selectedTime);
+  //   const [selectedNewLang, setSelectedNewLang] = useState(false);
   const timeOptions = [15, 30, 60, 120, 240];
-  //   console.log({ filteredLang });
-  const langList = useRef();
+
+  const langListRef = useRef();
+
   useEffect(() => {
     try {
       fetch(helper.LANG_LIST_API_URL)
@@ -38,12 +32,12 @@ export default function Settings({
   };
 
   const openLangList = () => {
-    setSelectedNewLang(false);
+    // setSelectedNewLang(false);
     setShowLangList(true);
   };
 
   const selectLang = (lang) => {
-    setSelectedNewLang(true);
+    // setSelectedNewLang(true);
     setSearchStr(lang.name);
     setCurrentNode(0);
     closeLangList();
@@ -67,9 +61,9 @@ export default function Settings({
 
   const handleLangKeyDown = (e) => {
     const key = e.key;
-    const list = document.querySelectorAll("#filteredLang");
+    const list = langListRef.current.children;
 
-    if (key === "ArrowDown" && filteredLang) {
+    if (key === "ArrowDown" && showLangList) {
       list[currentNode].classList.add("hilight");
 
       if (currentNode > 0) {
@@ -93,15 +87,20 @@ export default function Settings({
   };
 
   const validateAndSave = () => {
-    const newLang = langListData.find((lang) => {
-      const str = searchStr.toLowerCase();
-      const name = lang.name.toLowerCase();
-      return str === name;
-    });
+    const newLang =
+      searchStr &&
+      langListData.find((lang) => {
+        const str = searchStr.toLowerCase();
+        const name = lang.name.toLowerCase();
+        return str === name;
+      });
+
+    const newTime = time === selectedTime ? null : time;
     if (newLang) {
       changeSettings(newLang.language, newLang.name, newTime);
+    } else if (newTime) {
+      changeSettings(null, null, newTime);
     }
-    changeSettings(null, null, newTime);
     setfilteredLang(langListData);
     setSearchStr("");
   };
@@ -121,10 +120,7 @@ export default function Settings({
           type="text"
           value={searchStr}
           placeholder={`Enter or select a language to change from ${selectedName}.`}
-          onFocus={filteredLang && openLangList}
-          onBlur={() => {
-            console.log("Blur");
-          }}
+          onFocus={langList && openLangList}
           onClick={(e) => {
             e.stopPropagation();
           }}
@@ -132,12 +128,11 @@ export default function Settings({
           onKeyDown={handleLangKeyDown}
           style={{ width: "540px" }}
         />
-        <div style={{ background: "blue" }}>
+        <div ref={langListRef} style={{ background: "blue" }}>
           {showLangList &&
-            filteredLang.map((lang, idx) => {
+            langList.map((lang, idx) => {
               return (
                 <div
-                  id="filteredLang"
                   key={idx}
                   onClick={() => {
                     selectLang(lang);
@@ -158,9 +153,9 @@ export default function Settings({
                 key={idx}
                 type="button"
                 aria-label={`${option} seconds`}
-                className={newTime === option ? "selected-time-btn" : "time-btn"}
+                className={time === option ? "selected-time-btn" : "time-btn"}
                 onClick={() => {
-                  setNewTime(option);
+                  setTime(option);
                 }}
               >
                 {option}

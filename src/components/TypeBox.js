@@ -2,7 +2,14 @@ import React, { useEffect, useState, useRef } from "react";
 import * as helper from "../helper";
 import Result from "./Result";
 
-export default function TypeBox({ start, startTest, resetTest, selectedLang, initialTime }) {
+export default function TypeBox({
+  settings,
+  start,
+  startTest,
+  resetTest,
+  selectedLang,
+  initialTime,
+}) {
   const [curQuoteArr, setCurQuoteArr] = useState(null);
   const [nxtQuoteArr, setNxtQuoteArr] = useState(null);
   const [wordIdx, setWordIdx] = useState(0);
@@ -23,7 +30,6 @@ export default function TypeBox({ start, startTest, resetTest, selectedLang, ini
   const curQuoteRef = useRef();
   const curWordRef = useRef();
   const testedInputRef = useRef();
-  // console.log({ testReady });
 
   useEffect(() => {
     const inputEle = inputRef.current;
@@ -53,15 +59,17 @@ export default function TypeBox({ start, startTest, resetTest, selectedLang, ini
   }, [selectedLang, initialTime]);
 
   useEffect(() => {
-    if (start === true) {
-      // console.log("TRIG start === true");
+    if (start === true && !settings) {
+      console.log("start & !settings");
+      setAllowInput(true);
+      inputRef.current.focus();
       inputRef.current.removeEventListener("input", startTest);
     } else if (start === false) {
       // console.log("TRIG start === false");
       setAllowInput(false);
       setTestReady(false);
     } else if (start === "standby" && testReady === false) {
-      // console.log("TRIG start === null");
+      console.log("standby");
       inputRef.current.addEventListener("input", startTest);
       inputRef.current.textContent = null;
       testedInputRef.current.textContent = null;
@@ -89,11 +97,15 @@ export default function TypeBox({ start, startTest, resetTest, selectedLang, ini
       setAllowInput(true);
       setRedo(false);
       setTestReady(true);
+    } else if (settings) {
+      console.log("settings");
+      setAllowInput(false);
     } else {
-      // console.log("last else");
+      console.log("last else focus");
       inputRef.current.focus();
+      setAllowInput(true);
     }
-  }, [start, startTest, testReady, redo]);
+  }, [settings, start, startTest, testReady, redo, selectedLang]);
 
   useEffect(() => {
     if (curQuoteArr) {

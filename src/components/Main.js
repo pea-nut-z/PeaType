@@ -26,6 +26,7 @@ export default function Main({ settings, selectedLang, initialTime }) {
     <section>
       <Timer settings={settings} start={start} initialTime={initialTime} endTest={endTest} />
       <TypeBox
+        settings={settings}
         start={start}
         startTest={startTest}
         resetTest={resetTest}

@@ -44,20 +44,18 @@ export const getNumOfCorrectChar = (word, input, isLastWord) => {
   if (!isLastWord && inputLen === wordLen) {
     count++;
   }
-  console.log({ count });
-
   return count;
 };
 
 export const translateQuote = async (toLang, quote) => {
   let url = `https://translation.googleapis.com/language/translate/v2?key=${process.env.REACT_APP_API_KEY}`;
-  url += "&q=" + encodeURI(quote);
+  url += "&q=" + encodeURI(quote.join(""));
   url += `&source=en`;
   url += `&target=${toLang}`;
   try {
     return await fetch(url)
       .then((res) => res.json())
-      .then((result) => console.log(result));
+      .then((result) => result.data.translations[0].translatedText.split(/(\s+)/));
   } catch (error) {
     console.log("Translate quote error", error);
   }

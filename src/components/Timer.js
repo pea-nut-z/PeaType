@@ -25,7 +25,7 @@ export default function Timer({ settings, start, initialTime, endTest }) {
     return () => {
       clearInterval(interval);
     };
-  }, [start, endTest, initialTime]);
+  }, [start, endTest, initialTime, settings, timer]);
 
   return <div>{timer}</div>;
 }
