@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import * as helper from "../helper";
+import * as helper from "./helper";
 
 export default function Settings({ selectedName, selectedTime, toggleSettings, changeSettings }) {
   const [langListData, setLangListData] = useState(null);
@@ -9,10 +9,10 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
   const [lastNode, setLastNode] = useState(0);
   const [currentNode, setCurrentNode] = useState(0);
   const [time, setTime] = useState(selectedTime);
-  //   const [selectedNewLang, setSelectedNewLang] = useState(false);
   const timeOptions = [15, 30, 60, 120, 240];
 
   const langListRef = useRef();
+  const inputRef = useRef();
 
   useEffect(() => {
     try {
@@ -25,6 +25,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
     } catch (error) {
       console.log("Fetch language list data error", error);
     }
+    inputRef.current.focus();
   }, []);
 
   const closeLangList = () => {
@@ -32,12 +33,10 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
   };
 
   const openLangList = () => {
-    // setSelectedNewLang(false);
     setShowLangList(true);
   };
 
   const selectLang = (lang) => {
-    // setSelectedNewLang(true);
     setSearchStr(lang.name);
     setCurrentNode(0);
     closeLangList();
@@ -118,6 +117,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         <h4>Language</h4>
         <input
           type="text"
+          ref={inputRef}
           value={searchStr}
           placeholder={`Enter or select a language to change from ${selectedName}.`}
           onFocus={langList && openLangList}

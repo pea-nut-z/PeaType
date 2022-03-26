@@ -1,18 +1,16 @@
 import "./App.css";
-import React, { useState, useEffect, useRef } from "react";
-import Main from "./components/Main";
-import Settings from "./components/Settings";
+import React, { useState } from "react";
+import Main from "./Main";
+import Settings from "./Settings";
 
 function App() {
-  const [settings, setSettings] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
   const [selectedLang, setSelectedLang] = useState("en");
   const [selectedName, setSelectedName] = useState("English");
   const [selectedTime, setSelectedTime] = useState(15);
-  // console.log({ newTime });
-  // console.log({ selectedName });
 
   const toggleSettings = () => {
-    setSettings(!settings);
+    setOpenSettings(!openSettings);
   };
 
   const changeSettings = (lang, name, time) => {
@@ -29,7 +27,7 @@ function App() {
         <header>PeaType</header>
         <button onClick={toggleSettings}>Settings</button>
       </section>
-      {settings && (
+      {openSettings && (
         <Settings
           selectedName={selectedName}
           selectedTime={selectedTime}
@@ -38,7 +36,7 @@ function App() {
         />
       )}
       <main style={{ background: "pink", height: "500px" }}>
-        {<Main settings={settings} selectedLang={selectedLang} initialTime={selectedTime} />}
+        {<Main openSettings={openSettings} selectedLang={selectedLang} initialTime={selectedTime} />}
       </main>
     </div>
   );
