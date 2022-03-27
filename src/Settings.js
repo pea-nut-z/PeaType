@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import * as helper from "./helper";
 
 export default function Settings({ selectedName, selectedTime, toggleSettings, changeSettings }) {
-  const [langListData, setLangListData] = useState(null);
+  const [langData, setLangData] = useState(null);
   const [showLangList, setShowLangList] = useState(false);
   const [searchStr, setSearchStr] = useState("");
-  const [langList, setfilteredLang] = useState(null);
+  const [filteredLang, setfilteredLang] = useState(null);
   const [lastNode, setLastNode] = useState(0);
   const [currentNode, setCurrentNode] = useState(0);
   const [time, setTime] = useState(selectedTime);
@@ -19,13 +19,15 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
       fetch(helper.LANG_LIST_API_URL)
         .then((res) => res.json())
         .then((result) => {
-          setLangListData(result.data.languages);
+          console.log(result);
+
+          setLangData(result.data.languages);
           setfilteredLang(result.data.languages);
         });
     } catch (error) {
       console.log("Fetch language list data error", error);
     }
-    inputRef.current.focus();
+    // inputRef.current.focus();
   }, []);
 
   const closeLangList = () => {
@@ -46,7 +48,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
     const value = e.target.value;
     setSearchStr(value);
     if (value) {
-      const matches = langListData.filter((data) => {
+      const matches = langData.filter((data) => {
         const str = value.toLowerCase();
         const name = data.name.toLowerCase().substring(0, str.length);
         return str === name;
@@ -54,7 +56,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
       setfilteredLang(matches);
       openLangList();
     } else {
-      setfilteredLang(langListData);
+      setfilteredLang(langData);
     }
   };
 
@@ -88,7 +90,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
   const validateAndSave = () => {
     const newLang =
       searchStr &&
-      langListData.find((lang) => {
+      langData.find((lang) => {
         const str = searchStr.toLowerCase();
         const name = lang.name.toLowerCase();
         return str === name;
@@ -100,7 +102,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
     } else if (newTime) {
       changeSettings(null, null, newTime);
     }
-    setfilteredLang(langListData);
+    setfilteredLang(langData);
     setSearchStr("");
   };
 
@@ -117,10 +119,11 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         <h4>Language</h4>
         <input
           type="text"
-          ref={inputRef}
+          data-testid="langInputField"
+          // ref={inputRef}
           value={searchStr}
           placeholder={`Enter or select a language to change from ${selectedName}.`}
-          onFocus={langList && openLangList}
+          onFocus={filteredLang && openLangList}
           onClick={(e) => {
             e.stopPropagation();
           }}
@@ -128,9 +131,9 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
           onKeyDown={handleLangKeyDown}
           style={{ width: "540px" }}
         />
-        <div ref={langListRef} style={{ background: "blue" }}>
+        <div data-testid="langList" ref={langListRef} style={{ background: "blue" }}>
           {showLangList &&
-            langList.map((lang, idx) => {
+            filteredLang.map((lang, idx) => {
               return (
                 <div
                   key={idx}
