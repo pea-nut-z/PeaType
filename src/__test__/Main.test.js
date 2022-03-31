@@ -1,7 +1,6 @@
 import { render, cleanup, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-// import React from "react";
 import Main from "../Main";
 import * as helper from "../helper";
 
@@ -174,11 +173,11 @@ describe("Main.js Unit Testing - Fetch", () => {
 });
 
 describe("Main.js Unit Testing - Buttons", () => {
-  let component, getByTestId, testedInput, inputField, curQuote, nxtQuote, timer;
+  let component, getByTestId, testedInput, inputField, curQuote, nxtQuote, timer, result;
 
   const props = {
     selectedLang: "en",
-    initialTime: 15,
+    initialTime: 1,
   };
 
   beforeEach(async () => {
@@ -199,6 +198,7 @@ describe("Main.js Unit Testing - Buttons", () => {
     curQuote = getByTestId("curQuote");
     nxtQuote = getByTestId("nxtQuote");
     timer = getByTestId("timer");
+    result = getByTestId("result");
 
     userEvent.keyboard("First ");
   });
@@ -208,27 +208,74 @@ describe("Main.js Unit Testing - Buttons", () => {
   });
 
   it("resets on click of Redo", async () => {
-    userEvent.click(getByTestId("redo"));
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 2000));
+      userEvent.click(getByTestId("redo"));
+    });
     expect(testedInput).toHaveTextContent("");
     expect(inputField).toHaveTextContent("");
     expect(curQuote.firstChild).toHaveTextContent("First");
     expect(nxtQuote).toHaveTextContent("Second English.");
     expect(timer).toHaveTextContent(props.initialTime);
+    expect(result).toHaveTextContent("");
   });
 
   it("resets and fetches new quotes on click of New Quote", async () => {
     await act(async () => {
+      await new Promise((r) => setTimeout(r, 2000));
       await userEvent.click(getByTestId("newQuote"));
     });
     expect(testedInput).toHaveTextContent("");
     expect(inputField).toHaveTextContent("");
-    expect(timer).toHaveTextContent(props.initialTime);
     expect(curQuote.firstChild).toHaveTextContent("Third");
     expect(nxtQuote).toHaveTextContent("Fourth English.");
+    expect(timer).toHaveTextContent(props.initialTime);
+    expect(result).toHaveTextContent("");
   });
 });
 
-describe.only("Main.js Unit Testing - Others", () => {
+describe("Main.js Unit Testing - Result", () => {
+  let component, getByTestId;
+
+  const props = {
+    selectedLang: "en",
+    initialTime: 1,
+  };
+
+  beforeEach(async () => {
+    jest
+      .spyOn(helper, "fetchQuote")
+      .mockImplementationOnce(() => ["First", " ", "English."])
+      .mockImplementationOnce(() => ["Second", " ", "English."]);
+
+    await act(async () => {
+      component = await render(<Main {...props} />);
+      getByTestId = component.getByTestId;
+    });
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("displays WPM at 0 second", async () => {
+    await act(async () => {
+      userEvent.keyboard("First ");
+      await new Promise((r) => setTimeout(r, 1000));
+    });
+    expect(getByTestId("wpm")).toHaveTextContent("WPM: 72");
+  });
+
+  it("displays ACC at 0 second", async () => {
+    await act(async () => {
+      userEvent.keyboard("First ");
+      await new Promise((r) => setTimeout(r, 1000));
+    });
+    expect(getByTestId("acc")).toHaveTextContent("ACC: 100");
+  });
+});
+
+describe("Main.js Unit Testing - Others", () => {
   let component, getByTestId, inputField, timer;
 
   const props = {
@@ -280,7 +327,7 @@ describe.only("Main.js Unit Testing - Others", () => {
     expect(time).toBeLessThan(props.initialTime);
   });
 
-  it.only("disables input field when time is up", async () => {
+  it("disables input field when time is up", async () => {
     await act(async () => {
       userEvent.keyboard("F");
       await new Promise((r) => setTimeout(r, 4000));

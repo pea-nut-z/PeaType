@@ -160,10 +160,10 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         firstQuote = await helper.translateQuote(selectedLang, firstQuote);
         secondQuote = await helper.translateQuote(selectedLang, secondQuote);
       }
-      setCurQuoteArr(firstQuote);
-      setNxtQuoteArr(secondQuote);
-      // setCurQuoteArr(["First."]);
-      // setNxtQuoteArr(["Second."]);
+      // setCurQuoteArr(firstQuote);
+      // setNxtQuoteArr(secondQuote);
+      setCurQuoteArr(["First", " ", "English."]);
+      setNxtQuoteArr(["Second."]);
     })();
   }, [selectedLang, fetchQuotes]);
 
@@ -248,12 +248,14 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         autoCapitalize="off"
         onInput={handleInput}
       ></div>
-      <div>
+      <div data-testid="result">
         {showResult && (
           <section>
-            <div>WPM: {Math.floor(totalCorrectChars / 5 / (initialTime / 60))}</div>
-            <div>
-              ACC:{!totalCorrectChars ? 0 : Math.floor((totalCorrectChars / totalChars) * 100)}
+            <div data-testid="wpm">
+              WPM: {Math.floor(totalCorrectChars / 5 / (initialTime / 60))}
+            </div>
+            <div data-testid="acc">
+              ACC: {!totalCorrectChars ? 0 : Math.floor((totalCorrectChars / totalChars) * 100)}
             </div>
           </section>
         )}

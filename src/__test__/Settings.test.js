@@ -1,7 +1,6 @@
 import { render, cleanup, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-// import React from "react";
 import Settings from "../Settings";
 
 describe("Settings.js Unit Testing", () => {
