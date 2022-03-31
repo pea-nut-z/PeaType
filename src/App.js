@@ -22,7 +22,13 @@ function App() {
   };
 
   return (
-    <div style={{ background: "yellow" }}>
+    <div
+      style={
+        {
+          // background: "yellow"
+        }
+      }
+    >
       <section>
         <header>PeaType</header>
         <button onClick={toggleSettings}>Settings</button>
@@ -35,7 +41,7 @@ function App() {
           changeSettings={changeSettings}
         />
       )}
-      <main style={{ background: "pink", height: "500px" }}>
+      <main style={{ height: "500px" }}>
         {<Main openSettings={openSettings} selectedLang={selectedLang} initialTime={selectedTime} />}
       </main>
     </div>

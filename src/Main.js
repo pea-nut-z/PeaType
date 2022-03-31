@@ -24,7 +24,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [totalCorrectChars, setTotalCorrectChars] = useState(0);
 
   //ELEMENTS
-  const inputRef = useRef();
+  const inputFieldRef = useRef();
   const curQuoteRef = useRef();
   const curWordRef = useRef();
   const testedInputRef = useRef();
@@ -41,8 +41,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     let fontColor = inputToCheck === curWordSubStr ? "black" : "red";
 
     if ((!isLastWord && lastChar === " ") || (isLastWord && lastChar === ".")) {
-      console.log("TRIGG", input, curWord, wordIdx);
-
       // CALCULATIONS
       setTotalChars(totalChars + input.length);
       setTotalCorrectChars(
@@ -53,7 +51,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       const testedWord = document.createElement("span");
       testedWord.textContent = input;
       testedInputRef.current.appendChild(testedWord);
-      inputRef.current.textContent = null;
+      inputFieldRef.current.textContent = null;
       curWordRef.current.style.color = fontColor;
       testedWord.style.color = fontColor;
 
@@ -65,24 +63,24 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           // setNxtQuoteArr(["line3"]);
           setNxtQuoteArr(await helper.fetchQuote());
         })();
-        // curQuoteRef.current.value = "";
+        curQuoteRef.current.value = "";
       } else {
         setWordIdx(wordIdx + 2);
       }
     } else {
-      inputRef.current.style.color = fontColor;
+      inputFieldRef.current.style.color = fontColor;
     }
   };
 
   // EVENT LISTENERS
   useEffect(() => {
-    const inputEle = inputRef.current;
+    const inputEle = inputFieldRef.current;
     const disableEvent = (e) => {
       e.preventDefault();
     };
 
     const disableKeys = (e) => {
-      if (e.key === "Enter" || (e.key === " " && inputRef.current.textContent === "")) {
+      if (e.key === "Enter" || (e.key === " " && inputFieldRef.current.textContent === "")) {
         disableEvent(e);
       }
     };
@@ -106,7 +104,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   useEffect(() => {
     if (reset) {
       // console.log("Rest = true");
-      inputRef.current.textContent = null;
+      inputFieldRef.current.textContent = null;
       testedInputRef.current.textContent = null;
       const curQuoteChildren = curQuoteRef.current.children;
       Array.from(curQuoteChildren).forEach((child) => {
@@ -154,6 +152,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       let firstQuote = await helper.fetchQuote();
       let secondQuote = await helper.fetchQuote();
       if (selectedLang !== "en") {
+        // console.log({ selectedLang });
+
         firstQuote = await helper.translateQuote(selectedLang, firstQuote);
         secondQuote = await helper.translateQuote(selectedLang, secondQuote);
       }
@@ -161,13 +161,12 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       setNxtQuoteArr(secondQuote);
       // setCurQuoteArr(["line", " ", "1."]);
       // setNxtQuoteArr(["line", " ", "2."]);
-      // setFetchQuotes(false);
     })();
   }, [selectedLang, fetchQuotes]);
 
   // INPUT STAYS FOCUS WHEN INPUT IS ALLOWED
   useEffect(() => {
-    allowInput && inputRef.current.focus();
+    allowInput && inputFieldRef.current.focus();
   }, [allowInput]);
 
   // OPENING SETTINGS DURING TEST DISABLES INPUT FIELD
@@ -175,10 +174,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     if (!showResult && !openSettings) {
       // console.log("allow input");
       setAllowInput(true);
-      // inputRef.current.focus();
     } else {
       // console.log("disable input");
-      // inputRef.current.blur();
       setAllowInput(false);
     }
   }, [showResult, openSettings]);
@@ -196,7 +193,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
   return (
     <section>
-      <div>{timer}</div>
+      <div data-testid="timer">{timer}</div>
       <button
         type="button"
         aria-label="Redo same quote"
@@ -216,7 +213,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       >
         New Quote
       </button>
-      <div ref={curQuoteRef}>
+      <div data-testid="curQuote" ref={curQuoteRef}>
         {curQuoteArr &&
           curQuoteArr.map((str, idx) => {
             return (
@@ -226,11 +223,19 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
             );
           })}
       </div>
-      <div>{nxtQuoteArr && nxtQuoteArr.join("")}</div>
-      <div ref={testedInputRef} id="testedWords"></div>
       <div
+        data-testid="nxtQuote"
+        style={{
+          opacity: 0.3,
+        }}
+      >
+        {nxtQuoteArr && nxtQuoteArr.join("")}
+      </div>
+      <div data-testid="testedInput" ref={testedInputRef}></div>
+      <div
+        data-testid="inputField"
+        ref={inputFieldRef}
         contentEditable={allowInput}
-        ref={inputRef}
         tabIndex="1"
         spellCheck="false"
         autoComplete="off"

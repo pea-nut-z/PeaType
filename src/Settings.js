@@ -19,8 +19,6 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
       fetch(helper.LANG_LIST_API_URL)
         .then((res) => res.json())
         .then((result) => {
-          console.log(result);
-
           setLangData(result.data.languages);
           setfilteredLang(result.data.languages);
         });
@@ -108,6 +106,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
 
   return (
     <section
+      data-testid="settings"
       style={{
         position: "absolute",
         background: "green",
