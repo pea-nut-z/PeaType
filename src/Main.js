@@ -36,6 +36,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
     const input = e.currentTarget.textContent;
     const inputToCheck = isLastWord ? input : input.trim();
+    const inputToPush = isLastWord ? input + " " : input;
     const lastChar = e.nativeEvent.data;
     const curWordSubStr = curWord.substring(0, input.length);
     let fontColor = inputToCheck === curWordSubStr ? "black" : "red";
@@ -49,7 +50,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
       // PUSH TESTED WORD TO ELEMENT
       const testedWord = document.createElement("span");
-      testedWord.textContent = input;
+      testedWord.textContent = inputToPush;
       testedInputRef.current.appendChild(testedWord);
       inputFieldRef.current.textContent = null;
       curWordRef.current.style.color = fontColor;
@@ -58,6 +59,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       // SET INDEX FOR NEXT WORD
       if (isLastWord) {
         setWordIdx(0);
+        setIsLastWord(false);
         setCurQuoteArr(nxtQuoteArr);
         (async () => {
           // setNxtQuoteArr(["line3"]);
@@ -113,6 +115,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       setWordIdx(0);
       setTotalChars(0);
       setTotalCorrectChars(0);
+      setIsLastWord(false);
       setShowResult(false);
       setStartTimer(false);
       setTimer(initialTime);
@@ -159,8 +162,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       }
       setCurQuoteArr(firstQuote);
       setNxtQuoteArr(secondQuote);
-      // setCurQuoteArr(["line", " ", "1."]);
-      // setNxtQuoteArr(["line", " ", "2."]);
+      // setCurQuoteArr(["First."]);
+      // setNxtQuoteArr(["Second."]);
     })();
   }, [selectedLang, fetchQuotes]);
 
@@ -195,6 +198,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     <section>
       <div data-testid="timer">{timer}</div>
       <button
+        data-testid="redo"
         type="button"
         aria-label="Redo same quote"
         onClick={() => {
@@ -204,6 +208,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         Redo
       </button>
       <button
+        data-testid="newQuote"
         type="button"
         aria-label="Get new quote"
         onClick={() => {
