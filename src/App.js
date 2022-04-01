@@ -31,7 +31,9 @@ function App() {
     >
       <section>
         <header>PeaType</header>
-        <button onClick={toggleSettings}>Settings</button>
+        <button data-testid="settings" onClick={toggleSettings}>
+          Settings
+        </button>
       </section>
       {openSettings && (
         <Settings

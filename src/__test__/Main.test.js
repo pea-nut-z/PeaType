@@ -2,10 +2,10 @@ import { render, cleanup, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import Main from "../Main";
-import * as helper from "../helper";
+import * as mockFuncs from "./mockFuncs";
 
 describe("Main.js Unit Testing - Layout", () => {
-  let getByTestId;
+  let component, getByTestId;
 
   const props = {
     selectedLang: "en",
@@ -13,15 +13,12 @@ describe("Main.js Unit Testing - Layout", () => {
   };
 
   beforeEach(async () => {
-    jest
-      .spyOn(helper, "fetchQuote")
-      .mockImplementationOnce(() => ["First", " ", "English."])
-      .mockImplementationOnce(() => ["Second", " ", "English."]);
+    mockFuncs.mock2FetchQuotes();
 
     await act(async () => {
-      const component = await render(<Main {...props} />);
-      getByTestId = component.getByTestId;
+      component = await render(<Main {...props} />);
     });
+    getByTestId = component.getByTestId;
   });
 
   afterEach(() => {
@@ -53,10 +50,7 @@ describe("Main.js Unit Testing - Style", () => {
   let component, getByTestId, inputField, testedInput;
 
   beforeEach(async () => {
-    jest
-      .spyOn(helper, "fetchQuote")
-      .mockImplementationOnce(() => ["First", " ", "English."])
-      .mockImplementationOnce(() => ["Second", " ", "English."]);
+    mockFuncs.mock2FetchQuotes();
 
     await act(async () => {
       component = await render(<Main selectedLang="en" />);
@@ -101,22 +95,16 @@ describe("Main.js Unit Testing - Style", () => {
 });
 
 describe("Main.js Unit Testing - Translation", () => {
-  let getByTestId;
-  beforeEach(async () => {
-    jest
-      .spyOn(helper, "fetchQuote")
-      .mockImplementationOnce(() => ["First", " ", "English."])
-      .mockImplementationOnce(() => ["Second", " ", "English."]);
+  let component, getByTestId;
 
-    jest
-      .spyOn(helper, "translateQuote")
-      .mockImplementationOnce(() => ["First", " ", "Spanish."])
-      .mockImplementationOnce(() => ["Second", " ", "Spanish."]);
+  beforeEach(async () => {
+    mockFuncs.mock2FetchQuotes();
+    mockFuncs.mock2TranslateQuotes();
 
     await act(async () => {
-      const component = await render(<Main selectedLang="es" />);
-      getByTestId = component.getByTestId;
+      component = await render(<Main selectedLang="es" />);
     });
+    getByTestId = component.getByTestId;
   });
 
   afterEach(() => {
@@ -135,11 +123,7 @@ describe("Main.js Unit Testing - Fetch", () => {
   let component, getByTestId, testedInput;
 
   beforeEach(async () => {
-    jest
-      .spyOn(helper, "fetchQuote")
-      .mockImplementationOnce(() => ["First", " ", "English."])
-      .mockImplementationOnce(() => ["Second", " ", "English."])
-      .mockImplementation(() => ["Third", " ", "English."]);
+    mockFuncs.mock3FetchQuotes();
 
     await act(async () => {
       component = await render(<Main selectedLang="en" />);
@@ -149,7 +133,9 @@ describe("Main.js Unit Testing - Fetch", () => {
     testedInput = getByTestId("testedInput");
 
     userEvent.keyboard("First{space}");
-    userEvent.keyboard("English.");
+    await act(async () => {
+      await userEvent.keyboard("English.");
+    });
   });
 
   afterEach(() => {
@@ -172,7 +158,7 @@ describe("Main.js Unit Testing - Fetch", () => {
   });
 });
 
-describe("Main.js Unit Testing - Buttons", () => {
+describe.only("Main.js Unit Testing - Buttons", () => {
   let component, getByTestId, testedInput, inputField, curQuote, nxtQuote, timer, result;
 
   const props = {
@@ -181,12 +167,7 @@ describe("Main.js Unit Testing - Buttons", () => {
   };
 
   beforeEach(async () => {
-    jest
-      .spyOn(helper, "fetchQuote")
-      .mockImplementationOnce(() => ["First", " ", "English."])
-      .mockImplementationOnce(() => ["Second", " ", "English."])
-      .mockImplementationOnce(() => ["Third", " ", "English."])
-      .mockImplementationOnce(() => ["Fourth", " ", "English."]);
+    mockFuncs.mock4FetchQuotes();
 
     await act(async () => {
       component = await render(<Main {...props} />);
@@ -210,8 +191,8 @@ describe("Main.js Unit Testing - Buttons", () => {
   it("resets on click of Redo", async () => {
     await act(async () => {
       await new Promise((r) => setTimeout(r, 2000));
-      userEvent.click(getByTestId("redo"));
     });
+    userEvent.click(getByTestId("redo"));
     expect(testedInput).toHaveTextContent("");
     expect(inputField).toHaveTextContent("");
     expect(curQuote.firstChild).toHaveTextContent("First");
@@ -243,22 +224,19 @@ describe("Main.js Unit Testing - Result", () => {
   };
 
   beforeEach(async () => {
-    jest
-      .spyOn(helper, "fetchQuote")
-      .mockImplementationOnce(() => ["First", " ", "English."])
-      .mockImplementationOnce(() => ["Second", " ", "English."]);
+    mockFuncs.mock2FetchQuotes();
 
     await act(async () => {
       component = await render(<Main {...props} />);
-      getByTestId = component.getByTestId;
     });
+    getByTestId = component.getByTestId;
   });
 
   afterEach(() => {
     cleanup();
   });
 
-  it("displays WPM at 0 second", async () => {
+  it("displays WPM when time is up ", async () => {
     await act(async () => {
       userEvent.keyboard("First ");
       await new Promise((r) => setTimeout(r, 1000));
@@ -266,7 +244,7 @@ describe("Main.js Unit Testing - Result", () => {
     expect(getByTestId("wpm")).toHaveTextContent("WPM: 72");
   });
 
-  it("displays ACC at 0 second", async () => {
+  it("displays ACC when time is up", async () => {
     await act(async () => {
       userEvent.keyboard("First ");
       await new Promise((r) => setTimeout(r, 1000));
@@ -284,11 +262,7 @@ describe("Main.js Unit Testing - Others", () => {
   };
 
   beforeEach(async () => {
-    jest
-      .spyOn(helper, "fetchQuote")
-      .mockImplementationOnce(() => ["First", " ", "English."])
-      .mockImplementationOnce(() => ["Second", " ", "English."])
-      .mockImplementation(() => ["Third", " ", "English."]);
+    mockFuncs.mock3FetchQuotes();
 
     await act(async () => {
       component = await render(<Main {...props} />);

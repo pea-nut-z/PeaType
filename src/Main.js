@@ -63,7 +63,11 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         setCurQuoteArr(nxtQuoteArr);
         (async () => {
           // setNxtQuoteArr(["line3"]);
-          setNxtQuoteArr(await helper.fetchQuote());
+          let nxtQuote = await helper.fetchQuote();
+          if (selectedLang !== "en") {
+            nxtQuote = helper.translateQuote(selectedLang, nxtQuote);
+          }
+          setNxtQuoteArr(nxtQuote);
         })();
         curQuoteRef.current.value = "";
       } else {
@@ -155,15 +159,13 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       let firstQuote = await helper.fetchQuote();
       let secondQuote = await helper.fetchQuote();
       if (selectedLang !== "en") {
-        // console.log({ selectedLang });
-
         firstQuote = await helper.translateQuote(selectedLang, firstQuote);
         secondQuote = await helper.translateQuote(selectedLang, secondQuote);
       }
-      // setCurQuoteArr(firstQuote);
-      // setNxtQuoteArr(secondQuote);
-      setCurQuoteArr(["First", " ", "English."]);
-      setNxtQuoteArr(["Second."]);
+      setCurQuoteArr(firstQuote);
+      setNxtQuoteArr(secondQuote);
+      // setCurQuoteArr(["First", " ", "English."]);
+      // setNxtQuoteArr(["Second."]);
     })();
   }, [selectedLang, fetchQuotes]);
 

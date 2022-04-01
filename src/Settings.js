@@ -12,7 +12,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
   const timeOptions = [15, 30, 60, 120, 240];
 
   const langListRef = useRef();
-  const inputRef = useRef();
+  // const inputRef = useRef();
 
   useEffect(() => {
     try {
@@ -106,7 +106,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
 
   return (
     <section
-      data-testid="settings"
+      data-testid="settingsMenu"
       style={{
         position: "absolute",
         background: "green",
@@ -119,7 +119,6 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         <input
           type="text"
           data-testid="langInputField"
-          // ref={inputRef}
           value={searchStr}
           placeholder={`Enter or select a language to change from ${selectedName}.`}
           onFocus={filteredLang && openLangList}

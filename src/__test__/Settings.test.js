@@ -2,9 +2,11 @@ import { render, cleanup, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import Settings from "../Settings";
+import * as mockFuns from "./mockFuncs";
 
 describe("Settings.js Unit Testing", () => {
-  let component, getByTestId, queryByText;
+  let component, getByTestId, queryByText, field;
+
   const props = {
     selectedName: "English",
     selectedTime: 15,
@@ -13,24 +15,13 @@ describe("Settings.js Unit Testing", () => {
   };
 
   beforeEach(async () => {
-    jest.spyOn(global, "fetch").mockImplementation(() =>
-      Promise.resolve({
-        json: () =>
-          Promise.resolve({
-            data: {
-              languages: [
-                { language: "es", name: "Spanish" },
-                { language: "nl", name: "Dutch" },
-              ],
-            },
-          }),
-      })
-    );
+    mockFuns.mockFetchLangData();
 
     await act(async () => {
       component = await render(<Settings {...props} />);
       getByTestId = component.getByTestId;
       queryByText = component.queryByText;
+      field = getByTestId("langInputField");
     });
   });
 
@@ -39,57 +30,39 @@ describe("Settings.js Unit Testing", () => {
   });
 
   it("displays a dropdown list of languages on focus", () => {
+    userEvent.click(field);
     expect(queryByText("Spanish")).toBeInTheDocument();
   });
 
   it("selects a language using keys", () => {
-    const inputField = getByTestId("langInputField");
-    userEvent.click(inputField);
+    userEvent.click(field);
     userEvent.keyboard("{arrowdown}{enter}");
-    expect(inputField).toHaveValue("Spanish");
+    expect(field).toHaveValue("Spanish");
   });
 
   it("only displays languages that match input", () => {
-    userEvent.click(getByTestId("langInputField"));
     userEvent.keyboard("S");
     expect(queryByText("Dutch")).not.toBeInTheDocument();
   });
 
   it("selects a language on click", () => {
-    const inputField = getByTestId("langInputField");
-    userEvent.click(inputField);
+    userEvent.click(field);
     userEvent.click(queryByText("Spanish"));
-    expect(inputField).toHaveValue("Spanish");
+    expect(field).toHaveValue("Spanish");
   });
 
   it("clicks outside of the language list and the list closes", () => {
-    userEvent.click(getByTestId("langInputField"));
-    userEvent.click(getByTestId("settings"));
+    userEvent.click(field);
+    userEvent.click(getByTestId("settingsMenu"));
     expect(queryByText("Spanish")).not.toBeInTheDocument();
   });
 
   it("shows current selected language in input placeholder", () => {
-    expect(getByTestId("langInputField").placeholder).toContain(props.selectedName);
+    expect(field.placeholder).toContain(props.selectedName);
   });
 
   it("shows current selected time in the corresponding button", () => {
     const selectedTime = props.selectedTime.toString();
     expect(queryByText(selectedTime)).toHaveClass("selected-time-btn");
   });
-
-  //     it.only("toggles Settings", () => {
-
-  //   });
-
-  //   it.only("calls changeSettings with updated language and time", () => {
-  // userEvent.click(queryByText("30"));
-  // const inputField = getByTestId("langInputField");
-  // userEvent.click(inputField);
-  // userEvent.click(queryByText("Spanish"));
-  // userEvent.click(queryByText("Save"));
-  // console.log(component.debug());
-
-  // expect(toggleSettings).toHaveBeenCalled();
-  // expect(changeSettings).toHaveBeenCalledWith("es", "Spanish", "30");
-  //   });
 });
