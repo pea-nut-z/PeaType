@@ -240,7 +240,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       </div>
       <div data-testid="testedInput" ref={testedInputRef}></div>
       <div
-        data-testid="inputField"
+        data-testid="testInputField"
         ref={inputFieldRef}
         contentEditable={allowInput}
         tabIndex="1"

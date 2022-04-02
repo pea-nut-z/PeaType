@@ -5,7 +5,7 @@ import Settings from "../Settings";
 import * as mockFuns from "./mockFuncs";
 
 describe("Settings.js Unit Testing", () => {
-  let component, getByTestId, queryByText, field;
+  let component, getByTestId, queryByText, getByText, field;
 
   const props = {
     selectedName: "English",
@@ -19,20 +19,27 @@ describe("Settings.js Unit Testing", () => {
 
     await act(async () => {
       component = await render(<Settings {...props} />);
-      getByTestId = component.getByTestId;
-      queryByText = component.queryByText;
-      field = getByTestId("langInputField");
     });
+    getByTestId = component.getByTestId;
+    getByText = component.getByText;
+    queryByText = component.queryByText;
+    field = getByTestId("langInputField");
   });
 
   afterEach(() => {
     cleanup();
   });
 
-  it("displays a dropdown list of languages on focus", () => {
+  it("displays a language dropdown on focus", () => {
     userEvent.click(field);
-    expect(queryByText("Spanish")).toBeInTheDocument();
+    expect(getByText("Spanish")).toBeInTheDocument();
   });
+
+  // it("hilights a language using keys", () => {
+  //   userEvent.click(field);
+  //   userEvent.keyboard("{arrowdown}{arrowdown}{arrowdown}");
+  //   expect(field).toHaveValue("Spanish");
+  // });
 
   it("selects a language using keys", () => {
     userEvent.click(field);
@@ -40,18 +47,27 @@ describe("Settings.js Unit Testing", () => {
     expect(field).toHaveValue("Spanish");
   });
 
-  it("only displays languages that match input", () => {
+  it("displays languages that match input", async () => {
+    userEvent.click(field);
     userEvent.keyboard("S");
     expect(queryByText("Dutch")).not.toBeInTheDocument();
   });
 
-  it("selects a language on click", () => {
+  it("resets dropdown when input is deleted", async () => {
     userEvent.click(field);
-    userEvent.click(queryByText("Spanish"));
-    expect(field).toHaveValue("Spanish");
+    userEvent.keyboard("S");
+    userEvent.keyboard("{backspace}");
+    expect(getByText("Dutch")).toBeInTheDocument();
   });
 
-  it("clicks outside of the language list and the list closes", () => {
+  it("selects a language then dropdown closes", () => {
+    userEvent.click(field);
+    userEvent.click(getByText("Spanish"));
+    expect(field).toHaveValue("Spanish");
+    expect(getByTestId("langList")).toHaveTextContent("");
+  });
+
+  it("closes dropdown when there is a click elsewhere within Settings", () => {
     userEvent.click(field);
     userEvent.click(getByTestId("settingsMenu"));
     expect(queryByText("Spanish")).not.toBeInTheDocument();
@@ -63,6 +79,6 @@ describe("Settings.js Unit Testing", () => {
 
   it("shows current selected time in the corresponding button", () => {
     const selectedTime = props.selectedTime.toString();
-    expect(queryByText(selectedTime)).toHaveClass("selected-time-btn");
+    expect(getByText(selectedTime)).toHaveClass("selected-time-btn");
   });
 });

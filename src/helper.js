@@ -12,8 +12,8 @@ const secrets = {
 };
 
 export const credentials = JSON.parse(JSON.stringify(secrets));
-export const LANG_LIST_API_URL = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
-export const RANDOM_QUOTE_API_URL = "http://api.quotable.io/random";
+const LANG_DATA_API_URL = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
+const RANDOM_QUOTE_API_URL = "http://api.quotable.io/random";
 
 export const fetchQuote = async () => {
   try {
@@ -22,6 +22,22 @@ export const fetchQuote = async () => {
       .then((result) => result.content.split(/(\s+)/));
   } catch (error) {
     console.log("Fetch quote error", error);
+  }
+};
+
+export const translateQuote = async (toLang, quote) => {
+  console.log({ quote });
+
+  let url = `https://translation.googleapis.com/language/translate/v2?key=${process.env.REACT_APP_API_KEY}`;
+  url += "&q=" + encodeURI(quote.join(""));
+  url += `&source=en`;
+  url += `&target=${toLang}`;
+  try {
+    return await fetch(url)
+      .then((res) => res.json())
+      .then((result) => result.data.translations[0].translatedText.split(/(\s+)/));
+  } catch (error) {
+    console.log("Translate quote error", error);
   }
 };
 
@@ -47,18 +63,12 @@ export const getNumOfCorrectChar = (word, input, isLastWord) => {
   return count;
 };
 
-export const translateQuote = async (toLang, quote) => {
-  console.log({ quote });
-
-  let url = `https://translation.googleapis.com/language/translate/v2?key=${process.env.REACT_APP_API_KEY}`;
-  url += "&q=" + encodeURI(quote.join(""));
-  url += `&source=en`;
-  url += `&target=${toLang}`;
+export const fetchLangData = async () => {
   try {
-    return await fetch(url)
+    return await fetch(LANG_DATA_API_URL)
       .then((res) => res.json())
-      .then((result) => result.data.translations[0].translatedText.split(/(\s+)/));
+      .then((result) => result.data.languages);
   } catch (error) {
-    console.log("Translate quote error", error);
+    console.log("Fetch language list data error", error);
   }
 };

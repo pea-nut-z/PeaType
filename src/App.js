@@ -7,7 +7,7 @@ function App() {
   const [openSettings, setOpenSettings] = useState(false);
   const [selectedLang, setSelectedLang] = useState("en");
   const [selectedName, setSelectedName] = useState("English");
-  const [selectedTime, setSelectedTime] = useState(1);
+  const [selectedTime, setSelectedTime] = useState(15);
 
   const toggleSettings = () => {
     setOpenSettings(!openSettings);
@@ -23,11 +23,10 @@ function App() {
 
   return (
     <div
-      style={
-        {
-          // background: "yellow"
-        }
-      }
+      data-testid="app"
+      onClick={() => {
+        openSettings && toggleSettings();
+      }}
     >
       <section>
         <header>PeaType</header>

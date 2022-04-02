@@ -15,17 +15,11 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
   // const inputRef = useRef();
 
   useEffect(() => {
-    try {
-      fetch(helper.LANG_LIST_API_URL)
-        .then((res) => res.json())
-        .then((result) => {
-          setLangData(result.data.languages);
-          setfilteredLang(result.data.languages);
-        });
-    } catch (error) {
-      console.log("Fetch language list data error", error);
-    }
-    // inputRef.current.focus();
+    (async () => {
+      const data = await helper.fetchLangData();
+      setLangData(data);
+      setfilteredLang(data);
+    })();
   }, []);
 
   const closeLangList = () => {
@@ -111,7 +105,10 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         position: "absolute",
         background: "green",
       }}
-      onClick={closeLangList}
+      onClick={(e) => {
+        e.stopPropagation();
+        closeLangList();
+      }}
     >
       <h1>Settings</h1>
       <div>
@@ -135,7 +132,8 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
               return (
                 <div
                   key={idx}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     selectLang(lang);
                   }}
                 >
@@ -155,7 +153,8 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
                 type="button"
                 aria-label={`${option} seconds`}
                 className={time === option ? "selected-time-btn" : "time-btn"}
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   setTime(option);
                 }}
               >
