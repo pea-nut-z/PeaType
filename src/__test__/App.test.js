@@ -48,7 +48,20 @@ describe("App.js Intergration Testing", () => {
     expect(testInputField).toHaveFocus();
   });
 
-  it("sets up test as stated in Settings", async () => {
+  it("sets up test with updated time", async () => {
+    userEvent.click(settings);
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 1000));
+    });
+    userEvent.click(getByText("60"));
+    userEvent.click(getByText("Save"));
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 1000));
+    });
+    expect(getByTestId("timer")).toHaveTextContent("60");
+  });
+
+  it("sets up test with updated time and language", async () => {
     userEvent.click(settings);
     await act(async () => {
       await new Promise((r) => setTimeout(r, 1000));

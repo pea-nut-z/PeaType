@@ -35,11 +35,12 @@ describe("Settings.js Unit Testing", () => {
     expect(getByText("Spanish")).toBeInTheDocument();
   });
 
-  // it("hilights a language using keys", () => {
-  //   userEvent.click(field);
-  //   userEvent.keyboard("{arrowdown}{arrowdown}{arrowdown}");
-  //   expect(field).toHaveValue("Spanish");
-  // });
+  it("hilights a language using keys", () => {
+    userEvent.click(field);
+    userEvent.keyboard("{arrowdown}{arrowdown}{arrowdown}");
+    expect(getByText("Dutch")).not.toHaveClass("hilight");
+    expect(getByText("Spanish")).toHaveClass("hilight");
+  });
 
   it("selects a language using keys", () => {
     userEvent.click(field);
@@ -57,6 +58,7 @@ describe("Settings.js Unit Testing", () => {
     userEvent.click(field);
     userEvent.keyboard("S");
     userEvent.keyboard("{backspace}");
+    expect(getByText("Spanish")).toBeInTheDocument();
     expect(getByText("Dutch")).toBeInTheDocument();
   });
 

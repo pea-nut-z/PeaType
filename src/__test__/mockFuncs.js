@@ -21,6 +21,5 @@ export const mockTranslateQuote = () => {
     .spyOn(helper, "translateQuote")
     .mockImplementationOnce(() => ["First", " ", "Spanish."])
     .mockImplementationOnce(() => ["Second", " ", "Spanish."])
-    .mockImplementationOnce(() => ["Third", " ", "Spanish."])
-    .mockImplementationOnce(() => ["Fourth", " ", "Spanish."]);
+    .mockImplementationOnce(() => ["Third", " ", "Spanish."]);
 };
