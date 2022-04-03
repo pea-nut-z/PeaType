@@ -27,13 +27,28 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const inputFieldRef = useRef();
   const curQuoteRef = useRef();
   const curWordRef = useRef();
+  const testedLinesRef = useRef();
   const testedInputRef = useRef();
+  const inputContainer = useRef();
+  // const testContainer = useRef();
 
   const handleInput = (e) => {
-    if (!startTimer) {
-      setStartTimer(true);
-    }
+    // if (!startTimer) {
+    //   setStartTimer(true);
+    // }
+    const container = inputFieldRef.current;
+    const overflow =
+      container.offsetHeight < container.scrollHeight ||
+      container.offsetWidth < container.scrollWidth;
+    console.log({ overflow });
 
+    if (overflow) {
+      console.log("OVER");
+      const testedLine = document.createElement("div");
+      testedLine.textContent = testedInputRef.current.children;
+      testedLinesRef.current.appendChild(testedLine);
+      testedInputRef.current.textContent = null;
+    }
     const input = e.currentTarget.textContent;
     const inputToCheck = isLastWord ? input : input.trim();
     const inputToPush = isLastWord ? input + " " : input;
@@ -60,16 +75,22 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       if (isLastWord) {
         setWordIdx(0);
         setIsLastWord(false);
+
+        // RESET CURRENT QUOTE STYLES
+        const curQuoteChildren = curQuoteRef.current.children;
+        Array.from(curQuoteChildren).forEach((child) => {
+          child.style.color = "black";
+        });
+
         setCurQuoteArr(nxtQuoteArr);
-        (async () => {
-          // setNxtQuoteArr(["line3"]);
-          let nxtQuote = await helper.fetchQuote();
-          if (selectedLang !== "en") {
-            nxtQuote = helper.translateQuote(selectedLang, nxtQuote);
-          }
-          setNxtQuoteArr(nxtQuote);
-        })();
-        curQuoteRef.current.value = "";
+        setNxtQuoteArr(["line3."]);
+        // (async () => {
+        //   let nxtQuote = await helper.fetchQuote();
+        //   if (selectedLang !== "en") {
+        //     nxtQuote = helper.translateQuote(selectedLang, nxtQuote);
+        //   }
+        //   setNxtQuoteArr(nxtQuote);
+        // })();
       } else {
         setWordIdx(wordIdx + 2);
       }
@@ -162,10 +183,10 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         firstQuote = await helper.translateQuote(selectedLang, firstQuote);
         secondQuote = await helper.translateQuote(selectedLang, secondQuote);
       }
-      setCurQuoteArr(firstQuote);
-      setNxtQuoteArr(secondQuote);
-      // setCurQuoteArr(["First", " ", "English."]);
-      // setNxtQuoteArr(["Second."]);
+      // setCurQuoteArr(firstQuote);
+      // setNxtQuoteArr(secondQuote);
+      setCurQuoteArr(["First", " ", "English."]);
+      setNxtQuoteArr(["Second."]);
     })();
   }, [selectedLang, fetchQuotes]);
 
@@ -197,59 +218,72 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   }, [curQuoteArr, wordIdx]);
 
   return (
-    <section>
-      <div data-testid="timer">{timer}</div>
-      <button
-        data-testid="redo"
-        type="button"
-        aria-label="Redo same quote"
-        onClick={() => {
-          setReset(true);
-        }}
-      >
-        Redo
-      </button>
-      <button
-        data-testid="newQuote"
-        type="button"
-        aria-label="Get new quote"
-        onClick={() => {
-          setReset(true);
-          setFetchQuotes(!fetchQuotes);
-        }}
-      >
-        New Quote
-      </button>
-      <div data-testid="curQuote" ref={curQuoteRef}>
-        {curQuoteArr &&
-          curQuoteArr.map((str, idx) => {
-            return (
-              <span ref={wordIdx === idx ? curWordRef : null} key={idx}>
-                {str}
-              </span>
-            );
-          })}
+    <section className="main-container">
+      <div className="timer" data-testid="timer">
+        {timer}
       </div>
-      <div
-        data-testid="nxtQuote"
-        style={{
-          opacity: 0.3,
-        }}
-      >
-        {nxtQuoteArr && nxtQuoteArr.join("")}
+      <div className="button-container">
+        <button
+          data-testid="redo"
+          type="button"
+          aria-label="Redo same quote"
+          onClick={() => {
+            setReset(true);
+          }}
+        >
+          Redo
+        </button>
+        <button
+          className="new-quote-btn"
+          data-testid="newQuote"
+          type="button"
+          aria-label="Get new quote"
+          onClick={() => {
+            setReset(true);
+            setFetchQuotes(!fetchQuotes);
+          }}
+        >
+          New Quote
+        </button>
       </div>
-      <div data-testid="testedInput" ref={testedInputRef}></div>
-      <div
-        data-testid="testInputField"
-        ref={inputFieldRef}
-        contentEditable={allowInput}
-        tabIndex="1"
-        spellCheck="false"
-        autoComplete="off"
-        autoCorrect="off"
-        autoCapitalize="off"
-        onInput={handleInput}
-      ></div>
+      <div className="quotes-input-container">
+        <div data-testid="curQuote" ref={curQuoteRef}>
+          {curQuoteArr &&
+            curQuoteArr.map((str, idx) => {
+              return (
+                <span ref={wordIdx === idx ? curWordRef : null} key={idx}>
+                  {str}
+                </span>
+              );
+            })}
+        </div>
+        <div
+          data-testid="nxtQuote"
+          style={{
+            opacity: 0.3,
+          }}
+        >
+          {nxtQuoteArr && nxtQuoteArr.join("")}
+        </div>
+        <div className="test-container">
+          <div className="tested-lines" ref={testedLinesRef}></div>
+          <div ref={inputContainer} className="input-container">
+            <div className="tested-input" data-testid="testedInput" ref={testedInputRef}></div>
+            <div
+              className="quote-input"
+              data-testid="quoteInputField"
+              ref={inputFieldRef}
+              contentEditable={allowInput}
+              tabIndex="1"
+              spellCheck="false"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
+              onInput={handleInput}
+            ></div>
+          </div>
+        </div>
+      </div>
       <div data-testid="result">
         {showResult && (
           <section>

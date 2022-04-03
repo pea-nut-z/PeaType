@@ -42,12 +42,12 @@ describe("Main.js Unit Testing - Layout", () => {
   });
 
   it("focuses to input field", () => {
-    expect(getByTestId("testInputField")).toHaveFocus();
+    expect(getByTestId("quoteInputField")).toHaveFocus();
   });
 });
 
 describe("Main.js Unit Testing - Style", () => {
-  let component, getByTestId, testInputField, testedInput;
+  let component, getByTestId, quoteInputField, testedInput;
 
   beforeEach(async () => {
     mockFuncs.mockFetchQuote();
@@ -57,7 +57,7 @@ describe("Main.js Unit Testing - Style", () => {
     });
 
     getByTestId = component.getByTestId;
-    testInputField = getByTestId("testInputField");
+    quoteInputField = getByTestId("quoteInputField");
     testedInput = getByTestId("testedInput");
   });
 
@@ -67,13 +67,13 @@ describe("Main.js Unit Testing - Style", () => {
 
   it("styles correct input in black", () => {
     userEvent.keyboard("F");
-    const styles = window.getComputedStyle(testInputField);
+    const styles = window.getComputedStyle(quoteInputField);
     expect(styles.color).toBe("black");
   });
 
   it("styles incorrect input in red", () => {
     userEvent.keyboard("Ff");
-    const styles = window.getComputedStyle(testInputField);
+    const styles = window.getComputedStyle(quoteInputField);
     expect(styles.color).toBe("red");
   });
 
@@ -160,7 +160,7 @@ describe("Main.js Unit Testing - Fetch", () => {
 });
 
 describe("Main.js Unit Testing - Buttons", () => {
-  let component, getByTestId, testedInput, testInputField, curQuote, nxtQuote, timer, result;
+  let component, getByTestId, testedInput, quoteInputField, curQuote, nxtQuote, timer, result;
 
   const props = {
     selectedLang: "en",
@@ -176,7 +176,7 @@ describe("Main.js Unit Testing - Buttons", () => {
 
     getByTestId = component.getByTestId;
     testedInput = getByTestId("testedInput");
-    testInputField = getByTestId("testInputField");
+    quoteInputField = getByTestId("quoteInputField");
     curQuote = getByTestId("curQuote");
     nxtQuote = getByTestId("nxtQuote");
     timer = getByTestId("timer");
@@ -195,7 +195,7 @@ describe("Main.js Unit Testing - Buttons", () => {
     });
     userEvent.click(getByTestId("redo"));
     expect(testedInput).toHaveTextContent("");
-    expect(testInputField).toHaveTextContent("");
+    expect(quoteInputField).toHaveTextContent("");
     expect(curQuote.firstChild).toHaveTextContent("First");
     expect(nxtQuote).toHaveTextContent("Second English.");
     expect(timer).toHaveTextContent(props.initialTime);
@@ -208,7 +208,7 @@ describe("Main.js Unit Testing - Buttons", () => {
       await userEvent.click(getByTestId("newQuote"));
     });
     expect(testedInput).toHaveTextContent("");
-    expect(testInputField).toHaveTextContent("");
+    expect(quoteInputField).toHaveTextContent("");
     expect(curQuote.firstChild).toHaveTextContent("Third");
     expect(nxtQuote).toHaveTextContent("Fourth English.");
     expect(timer).toHaveTextContent(props.initialTime);
@@ -255,7 +255,7 @@ describe("Main.js Unit Testing - Result", () => {
 });
 
 describe("Main.js Unit Testing - Others", () => {
-  let component, getByTestId, testInputField, timer;
+  let component, getByTestId, quoteInputField, timer;
 
   const props = {
     selectedLang: "en",
@@ -270,7 +270,7 @@ describe("Main.js Unit Testing - Others", () => {
     });
 
     getByTestId = component.getByTestId;
-    testInputField = getByTestId("testInputField");
+    quoteInputField = getByTestId("quoteInputField");
     timer = getByTestId("timer");
   });
 
@@ -280,17 +280,17 @@ describe("Main.js Unit Testing - Others", () => {
 
   it("clears input field after pressing space", () => {
     userEvent.keyboard("Ff{space}");
-    expect(testInputField).toHaveTextContent("");
+    expect(quoteInputField).toHaveTextContent("");
   });
 
   it("stays focussed to input field after entering input and space", () => {
     userEvent.keyboard("F{space}");
-    expect(testInputField).toHaveFocus();
+    expect(quoteInputField).toHaveFocus();
   });
 
   it("disregards entry of space without input", () => {
     userEvent.keyboard("{space}");
-    expect(testInputField).toHaveTextContent("");
+    expect(quoteInputField).toHaveTextContent("");
   });
 
   it("starts timer at first input", async () => {
@@ -308,6 +308,6 @@ describe("Main.js Unit Testing - Others", () => {
       await new Promise((r) => setTimeout(r, 4000));
     });
     userEvent.keyboard("i");
-    expect(testInputField).toHaveTextContent("F");
+    expect(quoteInputField).toHaveTextContent("F");
   });
 });

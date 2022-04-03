@@ -5,7 +5,7 @@ import App from "../App";
 import * as mockFuncs from "./mockFuncs";
 
 describe("App.js Intergration Testing", () => {
-  let component, getByTestId, queryByText, getByText, settings, testInputField;
+  let component, getByTestId, queryByText, getByText, settings, quoteInputField;
 
   beforeEach(async () => {
     mockFuncs.mockFetchLangData();
@@ -19,7 +19,7 @@ describe("App.js Intergration Testing", () => {
     getByText = component.getByText;
     queryByText = component.queryByText;
     settings = getByTestId("settings");
-    testInputField = getByTestId("testInputField");
+    quoteInputField = getByTestId("quoteInputField");
   });
 
   afterEach(() => {
@@ -31,7 +31,7 @@ describe("App.js Intergration Testing", () => {
     await act(async () => {
       await new Promise((r) => setTimeout(r, 1000));
     });
-    expect(testInputField).not.toHaveFocus();
+    expect(quoteInputField).not.toHaveFocus();
   });
 
   it("enables input field when Settings is closed", async () => {
@@ -45,7 +45,7 @@ describe("App.js Intergration Testing", () => {
       await new Promise((r) => setTimeout(r, 1000));
     });
 
-    expect(testInputField).toHaveFocus();
+    expect(quoteInputField).toHaveFocus();
   });
 
   it("sets up test with updated time", async () => {
@@ -98,7 +98,7 @@ describe("App.js Intergration Testing", () => {
   });
 
   it("pauses timer when Settings is open", async () => {
-    userEvent.click(testInputField);
+    userEvent.click(quoteInputField);
     userEvent.keyboard("F");
     await act(async () => {
       await new Promise((r) => setTimeout(r, 1000));

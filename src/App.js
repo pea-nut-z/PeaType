@@ -28,7 +28,7 @@ function App() {
         openSettings && toggleSettings();
       }}
     >
-      <section>
+      <section className="header-settings-container">
         <header>PeaType</header>
         <button data-testid="settings" onClick={toggleSettings}>
           Settings
