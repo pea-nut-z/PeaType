@@ -16,6 +16,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [wordIdx, setWordIdx] = useState(0);
   const [curWord, setCurWord] = useState(null);
   const [isLastWord, setIsLastWord] = useState(false);
+  // const [numOfLines, setNumOfLines] = useState(0);
   const [allowInput, setAllowInput] = useState(false);
   const [fetchQuotes, setFetchQuotes] = useState(true);
 
@@ -27,7 +28,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const inputFieldRef = useRef();
   const curQuoteRef = useRef();
   const curWordRef = useRef();
-  const testContainerRef = useRef();
+  const inputContainerRef = useRef();
+  const testedLinesRef = useRef();
 
   const handleInput = (e) => {
     // if (!startTimer) {
@@ -49,26 +51,25 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       );
 
       // PUSH TESTED WORD TO AN ELEMENT
-      const testedWord = document.createElement("span");
-      testedWord.textContent = inputToPush;
-
-      const secLastIdx = testContainerRef.current.children.length - 1;
-      testContainerRef.current.insertBefore(
-        testedWord,
-        testContainerRef.current.children[secLastIdx]
-      );
+      const span = document.createElement("span");
+      span.setAttribute("class", "testedWord");
+      span.textContent = inputToPush;
+      inputContainerRef.current.insertBefore(span, inputContainerRef.current.lastChild);
       inputFieldRef.current.textContent = null;
       curWordRef.current.style.color = fontColor;
-      testedWord.style.color = fontColor;
+      span.style.color = fontColor;
 
       // SET UP FOR NEXT QUOTE
       if (isLastWord) {
-        const testedWords = testContainerRef.current.children;
-        const testedLine = document.createElement("span");
-        while (testedWords.length > 1) {}
-        testedLine.appendChild(testContainerRef.cur);
-        setWordIdx(0);
-        setIsLastWord(false);
+        // Append words for current quote to one element
+        const testedLine = document.createElement("div");
+        testedLine.setAttribute("class", "tested-line");
+        const testedWords = document.getElementsByClassName("testedWord");
+        Array.from(testedWords).forEach((word) => {
+          word.removeAttribute("class");
+          testedLine.appendChild(word);
+        });
+        testedLinesRef.current.appendChild(testedLine);
 
         // RESET CURRENT QUOTE STYLES
         const curQuoteChildren = curQuoteRef.current.children;
@@ -76,8 +77,10 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           child.style.color = "black";
         });
 
+        setWordIdx(0);
+        setIsLastWord(false);
         setCurQuoteArr(nxtQuoteArr);
-        setNxtQuoteArr(["line3."]);
+        setNxtQuoteArr(["Test", " ", "test", " ", "line3."]);
         // (async () => {
         //   let nxtQuote = await helper.fetchQuote();
         //   if (selectedLang !== "en") {
@@ -126,9 +129,10 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     if (reset) {
       // console.log("Rest = true");
       inputFieldRef.current.textContent = null;
-      while (testContainerRef.current.children.length > 1) {
-        testContainerRef.current.removeChild(testContainerRef.current.firstChild);
+      while (inputContainerRef.current.children.length > 1) {
+        inputContainerRef.current.removeChild(inputContainerRef.current.firstChild);
       }
+      testedLinesRef.current.textContent = null;
       const curQuoteChildren = curQuoteRef.current.children;
       Array.from(curQuoteChildren).forEach((child) => {
         child.style.color = "black";
@@ -242,7 +246,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           New Quote
         </button>
       </div>
-      <div className="quotes-input-container">
+      <div className="test-container">
         <div data-testid="curQuote" ref={curQuoteRef}>
           {curQuoteArr &&
             curQuoteArr.map((str, idx) => {
@@ -261,12 +265,10 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         >
           {nxtQuoteArr && nxtQuoteArr.join("")}
         </div>
-        <div ref={testContainerRef} className="test-container">
-          {/* <div ref={testedLinesRef} className="tested-lines"></div> */}
-          {/* <div ref={inputContainer} className="input-container"> */}
-          {/* <div className="tested-input" data-testid="testedInput" ref={testedInputRef}></div> */}
+        <div ref={testedLinesRef}></div>
+        <div ref={inputContainerRef} className="input-container">
           <div
-            className="quote-input"
+            className="quote-input-field"
             data-testid="quoteInputField"
             ref={inputFieldRef}
             contentEditable={allowInput}
@@ -277,7 +279,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
             autoCapitalize="off"
             onInput={handleInput}
           ></div>
-          {/* </div> */}
         </div>
       </div>
       <div data-testid="result">

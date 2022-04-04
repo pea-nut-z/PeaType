@@ -43,11 +43,11 @@ header {
   margin-left: 3%;
 }
 
-.quotes-input-container {
+.test-container {
   margin: 5%;
 }
 
-.test-container {
+.input-container {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
@@ -58,8 +58,12 @@ header {
   background-color: yellow;
 }
 
-.quote-input {
+.quote-input-field {
   /* overflow: scroll; */
   background-color: pink;
   min-width: 10%;
+}
+
+.tested-line {
+  display: block;
 }
