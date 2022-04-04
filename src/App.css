@@ -1,5 +1,5 @@
-@import url("https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@500&family=Rubik+Puddles&display=swap");
+/* @import url("https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap"); */
+/* @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@500&family=Rubik+Puddles&display=swap"); */
 body {
   margin: 10%;
   /* padding: 10%; */
@@ -9,6 +9,7 @@ body {
   /* align-items: center; */
   /* justify-content: space-between; */
   font-family: Roboto Mono;
+  font-size: 20px;
   /* line-height: 1.6rem;  */
 }
 
@@ -46,8 +47,9 @@ header {
   margin: 5%;
 }
 
-.input-container {
+.test-container {
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
 }
 

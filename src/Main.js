@@ -27,28 +27,13 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const inputFieldRef = useRef();
   const curQuoteRef = useRef();
   const curWordRef = useRef();
-  const testedLinesRef = useRef();
-  const testedInputRef = useRef();
-  const inputContainer = useRef();
-  // const testContainer = useRef();
+  const testContainerRef = useRef();
 
   const handleInput = (e) => {
     // if (!startTimer) {
     //   setStartTimer(true);
     // }
-    const container = inputFieldRef.current;
-    const overflow =
-      container.offsetHeight < container.scrollHeight ||
-      container.offsetWidth < container.scrollWidth;
-    console.log({ overflow });
 
-    if (overflow) {
-      console.log("OVER");
-      const testedLine = document.createElement("div");
-      testedLine.textContent = testedInputRef.current.children;
-      testedLinesRef.current.appendChild(testedLine);
-      testedInputRef.current.textContent = null;
-    }
     const input = e.currentTarget.textContent;
     const inputToCheck = isLastWord ? input : input.trim();
     const inputToPush = isLastWord ? input + " " : input;
@@ -63,16 +48,25 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         totalCorrectChars + helper.getNumOfCorrectChar(curWord, inputToCheck, isLastWord)
       );
 
-      // PUSH TESTED WORD TO ELEMENT
+      // PUSH TESTED WORD TO AN ELEMENT
       const testedWord = document.createElement("span");
       testedWord.textContent = inputToPush;
-      testedInputRef.current.appendChild(testedWord);
+
+      const secLastIdx = testContainerRef.current.children.length - 1;
+      testContainerRef.current.insertBefore(
+        testedWord,
+        testContainerRef.current.children[secLastIdx]
+      );
       inputFieldRef.current.textContent = null;
       curWordRef.current.style.color = fontColor;
       testedWord.style.color = fontColor;
 
-      // SET INDEX FOR NEXT WORD
+      // SET UP FOR NEXT QUOTE
       if (isLastWord) {
+        const testedWords = testContainerRef.current.children;
+        const testedLine = document.createElement("span");
+        while (testedWords.length > 1) {}
+        testedLine.appendChild(testContainerRef.cur);
         setWordIdx(0);
         setIsLastWord(false);
 
@@ -132,7 +126,9 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     if (reset) {
       // console.log("Rest = true");
       inputFieldRef.current.textContent = null;
-      testedInputRef.current.textContent = null;
+      while (testContainerRef.current.children.length > 1) {
+        testContainerRef.current.removeChild(testContainerRef.current.firstChild);
+      }
       const curQuoteChildren = curQuoteRef.current.children;
       Array.from(curQuoteChildren).forEach((child) => {
         child.style.color = "black";
@@ -176,18 +172,18 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
   // FETCH QUOTES
   useEffect(() => {
-    (async () => {
-      let firstQuote = await helper.fetchQuote();
-      let secondQuote = await helper.fetchQuote();
-      if (selectedLang !== "en") {
-        firstQuote = await helper.translateQuote(selectedLang, firstQuote);
-        secondQuote = await helper.translateQuote(selectedLang, secondQuote);
-      }
-      // setCurQuoteArr(firstQuote);
-      // setNxtQuoteArr(secondQuote);
-      setCurQuoteArr(["First", " ", "English."]);
-      setNxtQuoteArr(["Second."]);
-    })();
+    // (async () => {
+    //   let firstQuote = await helper.fetchQuote();
+    //   let secondQuote = await helper.fetchQuote();
+    //   if (selectedLang !== "en") {
+    //     firstQuote = await helper.translateQuote(selectedLang, firstQuote);
+    //     secondQuote = await helper.translateQuote(selectedLang, secondQuote);
+    //   }
+    // setCurQuoteArr(firstQuote);
+    // setNxtQuoteArr(secondQuote);
+    setCurQuoteArr(["First", " ", "English."]);
+    setNxtQuoteArr(["Second."]);
+    // })();
   }, [selectedLang, fetchQuotes]);
 
   // INPUT STAYS FOCUS WHEN INPUT IS ALLOWED
@@ -215,7 +211,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         setIsLastWord(true);
       }
     }
-  }, [curQuoteArr, wordIdx]);
+  }, [curQuoteArr, wordIdx, reset]);
 
   return (
     <section className="main-container">
@@ -265,23 +261,23 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         >
           {nxtQuoteArr && nxtQuoteArr.join("")}
         </div>
-        <div className="test-container">
-          <div className="tested-lines" ref={testedLinesRef}></div>
-          <div ref={inputContainer} className="input-container">
-            <div className="tested-input" data-testid="testedInput" ref={testedInputRef}></div>
-            <div
-              className="quote-input"
-              data-testid="quoteInputField"
-              ref={inputFieldRef}
-              contentEditable={allowInput}
-              tabIndex="1"
-              spellCheck="false"
-              autoComplete="off"
-              autoCorrect="off"
-              autoCapitalize="off"
-              onInput={handleInput}
-            ></div>
-          </div>
+        <div ref={testContainerRef} className="test-container">
+          {/* <div ref={testedLinesRef} className="tested-lines"></div> */}
+          {/* <div ref={inputContainer} className="input-container"> */}
+          {/* <div className="tested-input" data-testid="testedInput" ref={testedInputRef}></div> */}
+          <div
+            className="quote-input"
+            data-testid="quoteInputField"
+            ref={inputFieldRef}
+            contentEditable={allowInput}
+            tabIndex="1"
+            spellCheck="false"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            onInput={handleInput}
+          ></div>
+          {/* </div> */}
         </div>
       </div>
       <div data-testid="result">
