@@ -34,6 +34,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const curWordRef = useRef();
   const curInputContainerRef = useRef();
   const testedLinesRef = useRef();
+  const buttonRef = useRef();
 
   const handleInput = (e) => {
     // if (!startTimer) {
@@ -95,9 +96,15 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     }
   };
 
+  const togglePressEffect = (e) => {
+    e.target.classList.toggle("active");
+  };
+
   // EVENT LISTENERS
   useEffect(() => {
     const inputEle = inputFieldRef.current;
+    // const button = buttonRef.current;
+
     const disableEvent = (e) => {
       e.preventDefault();
     };
@@ -264,19 +271,23 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           data-testid="redo"
           type="button"
           aria-label="Redo same quote"
-          onClick={() => {
+          onClick={(e) => {
+            togglePressEffect(e);
             setRedo(true);
             setReset(true);
           }}
+          onMouseDown={togglePressEffect}
         >
           Redo
         </button>
         <button
-          className="new-quote-btn"
           data-testid="newQuote"
+          className="new-quote-btn"
           type="button"
           aria-label="Get new quote"
-          onClick={() => {
+          onMouseDown={togglePressEffect}
+          onClick={(e) => {
+            togglePressEffect(e);
             setReset(true);
             setFetchQuotes(!fetchQuotes);
           }}

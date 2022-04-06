@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Main from "./Main";
 import Settings from "./Settings";
 
@@ -9,8 +9,11 @@ function App() {
   const [selectedName, setSelectedName] = useState("English");
   const [selectedTime, setSelectedTime] = useState(15);
 
+  const buttonRef = useRef();
+
   const toggleSettings = () => {
     setOpenSettings(!openSettings);
+    // buttonRef.current.classList.toggle("active");
   };
 
   const changeSettings = (lang, name, time) => {

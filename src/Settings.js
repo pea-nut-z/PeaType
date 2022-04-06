@@ -107,12 +107,12 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         closeLangList();
       }}
     >
-      <h1>Settings</h1>
       <div>
         <h4>Language</h4>
         <input
           type="text"
           data-testid="langInputField"
+          className="lang-input-field"
           value={searchStr}
           placeholder={`Enter or select a language to change from ${selectedName}.`}
           onFocus={filteredLang && openLangList}
