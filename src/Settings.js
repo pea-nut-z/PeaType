@@ -101,10 +101,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
   return (
     <section
       data-testid="settingsMenu"
-      style={{
-        position: "absolute",
-        background: "green",
-      }}
+      className="settings-menu"
       onClick={(e) => {
         e.stopPropagation();
         closeLangList();

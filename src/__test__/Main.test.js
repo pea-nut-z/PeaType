@@ -47,7 +47,7 @@ describe("Main.js Unit Testing - Layout", () => {
 });
 
 describe("Main.js Unit Testing - Style", () => {
-  let component, getByTestId, quoteInputField, testedInput;
+  let component, getByTestId, getAllByTestId, quoteInputField;
 
   beforeEach(async () => {
     mockFuncs.mockFetchQuote();
@@ -57,8 +57,8 @@ describe("Main.js Unit Testing - Style", () => {
     });
 
     getByTestId = component.getByTestId;
+    getAllByTestId = component.getAllByTestId;
     quoteInputField = getByTestId("quoteInputField");
-    testedInput = getByTestId("testedInput");
   });
 
   afterEach(() => {
@@ -79,7 +79,8 @@ describe("Main.js Unit Testing - Style", () => {
 
   it("pushes correct input to an element after pressing space, and styles it in black", () => {
     userEvent.keyboard("First{space}");
-    const span = testedInput.firstChild;
+    let testedInput = getAllByTestId("testedWord");
+    const span = testedInput[0];
     const styles = window.getComputedStyle(span);
     expect(span).toHaveTextContent("First");
     expect(styles.color).toBe("black");
@@ -87,7 +88,8 @@ describe("Main.js Unit Testing - Style", () => {
 
   it("pushes incorrect input to an element after pressing space, and styles it in red", () => {
     userEvent.keyboard("F{space}");
-    const span = testedInput.firstChild;
+    let testedInput = getAllByTestId("testedWord");
+    const span = testedInput[0];
     const styles = window.getComputedStyle(span);
     expect(span).toHaveTextContent("F");
     expect(styles.color).toBe("red");
@@ -120,7 +122,7 @@ describe("Main.js Unit Testing - Translation", () => {
 });
 
 describe("Main.js Unit Testing - Fetch", () => {
-  let component, getByTestId, testedInput;
+  let component, getByTestId, getAllByTestId;
 
   beforeEach(async () => {
     mockFuncs.mockFetchQuote();
@@ -131,7 +133,7 @@ describe("Main.js Unit Testing - Fetch", () => {
     });
 
     getByTestId = component.getByTestId;
-    testedInput = getByTestId("testedInput");
+    getAllByTestId = component.getAllByTestId;
 
     userEvent.keyboard("First{space}");
     await act(async () => {
@@ -155,12 +157,14 @@ describe("Main.js Unit Testing - Fetch", () => {
 
   it("resets and works for input of next quote", async () => {
     userEvent.keyboard("Second{space}");
-    expect(testedInput).toHaveTextContent("First Spanish. Second");
+    let testedInput = getAllByTestId("testedWord");
+    expect(testedInput.length).toEqual(1);
+    expect(testedInput[0]).toHaveTextContent("Second");
   });
 });
 
 describe("Main.js Unit Testing - Buttons", () => {
-  let component, getByTestId, testedInput, quoteInputField, curQuote, nxtQuote, timer, result;
+  let component, getByTestId, curInputContainer, quoteInputField, curQuote, nxtQuote, timer, result;
 
   const props = {
     selectedLang: "en",
@@ -175,7 +179,7 @@ describe("Main.js Unit Testing - Buttons", () => {
     });
 
     getByTestId = component.getByTestId;
-    testedInput = getByTestId("testedInput");
+    curInputContainer = getByTestId("curInputContainer");
     quoteInputField = getByTestId("quoteInputField");
     curQuote = getByTestId("curQuote");
     nxtQuote = getByTestId("nxtQuote");
@@ -194,8 +198,9 @@ describe("Main.js Unit Testing - Buttons", () => {
       await new Promise((r) => setTimeout(r, 2000));
     });
     userEvent.click(getByTestId("redo"));
-    expect(testedInput).toHaveTextContent("");
-    expect(quoteInputField).toHaveTextContent("");
+    console.log(curInputContainer.children);
+
+    expect(curInputContainer.children.length).toEqual(1);
     expect(curQuote.firstChild).toHaveTextContent("First");
     expect(nxtQuote).toHaveTextContent("Second English.");
     expect(timer).toHaveTextContent(props.initialTime);
@@ -207,7 +212,7 @@ describe("Main.js Unit Testing - Buttons", () => {
       await new Promise((r) => setTimeout(r, 2000));
       await userEvent.click(getByTestId("newQuote"));
     });
-    expect(testedInput).toHaveTextContent("");
+    expect(curInputContainer.children.length).toEqual(1);
     expect(quoteInputField).toHaveTextContent("");
     expect(curQuote.firstChild).toHaveTextContent("Third");
     expect(nxtQuote).toHaveTextContent("Fourth English.");
