@@ -7,13 +7,15 @@ function App() {
   const [openSettings, setOpenSettings] = useState(false);
   const [selectedLang, setSelectedLang] = useState("en");
   const [selectedName, setSelectedName] = useState("English");
-  const [selectedTime, setSelectedTime] = useState(15);
+  const [selectedTime, setSelectedTime] = useState(3);
 
   const buttonRef = useRef();
 
   const toggleSettings = () => {
     setOpenSettings(!openSettings);
-    // buttonRef.current.classList.toggle("active");
+    openSettings
+      ? buttonRef.current.classList.remove("active")
+      : buttonRef.current.classList.add("active");
   };
 
   const changeSettings = (lang, name, time) => {
@@ -33,7 +35,7 @@ function App() {
     >
       <section className="header-settings-container">
         <header>PeaType</header>
-        <button data-testid="settings" onClick={toggleSettings}>
+        <button ref={buttonRef} data-testid="settings" onClick={toggleSettings}>
           Settings
         </button>
       </section>

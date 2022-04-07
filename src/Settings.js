@@ -6,13 +6,11 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
   const [showLangList, setShowLangList] = useState(false);
   const [searchStr, setSearchStr] = useState("");
   const [filteredLang, setfilteredLang] = useState(null);
-  const [lastNode, setLastNode] = useState(0);
-  const [currentNode, setCurrentNode] = useState(0);
+  const [currentNode, setCurrentNode] = useState(null);
   const [time, setTime] = useState(selectedTime);
   const timeOptions = [15, 30, 60, 120, 240];
 
   const langListRef = useRef();
-  // const inputRef = useRef();
 
   useEffect(() => {
     (async () => {
@@ -32,7 +30,8 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
 
   const selectLang = (lang) => {
     setSearchStr(lang.name);
-    setCurrentNode(0);
+    setCurrentNode(null);
+    setfilteredLang([lang]);
     closeLangList();
   };
 
@@ -54,28 +53,42 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
 
   const handleLangKeyDown = (e) => {
     const key = e.key;
-    const list = langListRef.current.children;
+    const list = showLangList && langListRef.current.children;
+    const lastNode = showLangList && list.length - 1;
+    const nxtNode = currentNode + 1;
+    const preNode = currentNode - 1;
 
     if (key === "ArrowDown" && showLangList) {
-      list[currentNode].classList.add("hilight");
-
-      if (currentNode > 0) {
-        list[currentNode - 1].classList.remove("hilight");
-      } else {
-        list[list.length - 1].classList.remove("hilight");
-      }
-
-      if (currentNode === list.length - 1) {
+      if (currentNode === 0 && list.length === 1) return;
+      if (currentNode === null) {
+        list[0].classList.add("hilight");
+        setCurrentNode(0);
+      } else if (currentNode === lastNode && list.length > 1) {
+        list[0].classList.add("hilight");
+        list[currentNode].classList.remove("hilight");
         setCurrentNode(0);
       } else {
-        setCurrentNode(currentNode + 1);
+        list[nxtNode].classList.add("hilight");
+        list[currentNode].classList.remove("hilight");
+        setCurrentNode(nxtNode);
       }
+    }
 
-      setLastNode(currentNode);
+    if (key === "ArrowUp" && showLangList && currentNode !== null) {
+      if (list.length === 1) return;
+      if (currentNode === 0) {
+        list[lastNode].classList.add("hilight");
+        list[0].classList.remove("hilight");
+        setCurrentNode(lastNode);
+      } else {
+        list[preNode].classList.add("hilight");
+        list[currentNode].classList.remove("hilight");
+        setCurrentNode(preNode);
+      }
     }
 
     if (key === "Enter" && showLangList) {
-      list[lastNode].click();
+      list[currentNode].click();
     }
   };
 
@@ -107,7 +120,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         closeLangList();
       }}
     >
-      <div>
+      <div className="lang-selection">
         <h4>Language</h4>
         <input
           type="text"
@@ -121,11 +134,10 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
           }}
           onChange={handleLangChange}
           onKeyDown={handleLangKeyDown}
-          style={{ width: "540px" }}
         />
-        <div data-testid="langList" ref={langListRef} style={{ background: "blue" }}>
-          {showLangList &&
-            filteredLang.map((lang, idx) => {
+        {showLangList && (
+          <div data-testid="langList" ref={langListRef} className="lang-list">
+            {filteredLang.map((lang, idx) => {
               return (
                 <div
                   key={idx}
@@ -133,12 +145,19 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
                     e.stopPropagation();
                     selectLang(lang);
                   }}
+                  onMouseOver={(e) => {
+                    e.target.classList.add("hilight");
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.classList.remove("hilight");
+                  }}
                 >
                   {lang.name}
                 </div>
               );
             })}
-        </div>
+          </div>
+        )}
       </div>
       <div>
         <h4>Time</h4>
@@ -149,7 +168,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
                 key={idx}
                 type="button"
                 aria-label={`${option} seconds`}
-                className={time === option ? "selected-time-btn" : "time-btn"}
+                className={`time-button ${time === option ? "active" : null}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   setTime(option);
@@ -164,9 +183,9 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
       <button
         type="button"
         aria-label="Save"
-        onClick={() => {
+        onClick={(e) => {
           validateAndSave();
-          toggleSettings();
+          toggleSettings(e);
         }}
       >
         Save

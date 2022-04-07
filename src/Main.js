@@ -6,35 +6,44 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [reset, setReset] = useState(true);
   const [showResult, setShowResult] = useState(false);
 
+  // BUTTON
+  const [redo, setRedo] = useState(false);
+
   // TIMER
   const [startTimer, setStartTimer] = useState(false);
   const [timer, setTimer] = useState(initialTime);
 
-  // QUOTE DISPLAY AND INPUT FIELD
+  // QUOTE DISPLAY
   const [curQuoteArr, setCurQuoteArr] = useState(null);
   const [nxtQuoteArr, setNxtQuoteArr] = useState(null);
   const [wordIdx, setWordIdx] = useState(0);
   const [curWord, setCurWord] = useState(null);
   const [isLastWord, setIsLastWord] = useState(false);
-  const [allowInput, setAllowInput] = useState(false);
   const [fetchQuotes, setFetchQuotes] = useState(true);
   const [previousQuotes, setPreviousQuotes] = useState([]);
-  const [redo, setRedo] = useState(false);
   const [usePreQuotes, setUsePreQuotes] = useState(false);
   const [preQuoteIdx, setPreQuoteIdx] = useState(0);
   const [fetchNxtQuote, setFetchNxtQuote] = useState(false);
+  const [curWordTop, setCurWordTop] = useState(0);
+  const [scrollQuote, setScrollQuote] = useState(false);
 
-  //CALCULATION
+  // INPUT FIELD
+  const [allowInput, setAllowInput] = useState(false);
+
+  //CALCULATIONS
   const [totalChars, setTotalChars] = useState(0);
   const [totalCorrectChars, setTotalCorrectChars] = useState(0);
 
   //ELEMENTS
-  const inputFieldRef = useRef();
+  const quotesDisplayRef = useRef();
   const curQuoteRef = useRef();
   const curWordRef = useRef();
   const curInputContainerRef = useRef();
+  const inputFieldRef = useRef();
   const testedLinesRef = useRef();
-  const buttonRef = useRef();
+
+  //REF
+  const preWordTopRef = useRef();
 
   const handleInput = (e) => {
     // if (!startTimer) {
@@ -93,6 +102,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       }
     } else {
       inputFieldRef.current.style.color = fontColor;
+      curWordRef.current.style.color = fontColor;
     }
   };
 
@@ -103,7 +113,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   // EVENT LISTENERS
   useEffect(() => {
     const inputEle = inputFieldRef.current;
-    // const button = buttonRef.current;
 
     const disableEvent = (e) => {
       e.preventDefault();
@@ -133,7 +142,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
   useEffect(() => {
     if (reset) {
-      // console.log("Rest = true");
       inputFieldRef.current.textContent = null;
       while (curInputContainerRef.current.children.length > 1) {
         curInputContainerRef.current.removeChild(curInputContainerRef.current.firstChild);
@@ -159,19 +167,19 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
   // FETCH QUOTES
   useEffect(() => {
-    // (async () => {
-    //   let firstQuote = await helper.fetchQuote();
-    //   let secondQuote = await helper.fetchQuote();
-    //   if (selectedLang !== "en") {
-    //     firstQuote = await helper.translateQuote(selectedLang, firstQuote);
-    //     secondQuote = await helper.translateQuote(selectedLang, secondQuote);
-    //   }
-    let firstQuote = ["First", " ", "English."];
-    let secondQuote = ["Second."];
-    setCurQuoteArr(firstQuote);
-    setNxtQuoteArr(secondQuote);
-    setPreviousQuotes([firstQuote, secondQuote]);
-    // })();
+    (async () => {
+      let firstQuote = await helper.fetchQuote();
+      let secondQuote = await helper.fetchQuote();
+      if (selectedLang !== "en") {
+        firstQuote = await helper.translateQuote(selectedLang, firstQuote);
+        secondQuote = await helper.translateQuote(selectedLang, secondQuote);
+      }
+      // let firstQuote = ["First", " ", "English."];
+      // let secondQuote = ["Second."];
+      setCurQuoteArr(firstQuote);
+      setNxtQuoteArr(secondQuote);
+      setPreviousQuotes([firstQuote, secondQuote]);
+    })();
   }, [selectedLang, fetchQuotes]);
 
   // FETCH NEXT QUOTE
@@ -183,17 +191,19 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           ? setUsePreQuotes(false)
           : setPreQuoteIdx(preQuoteIdx + 1);
       } else {
-        // (async () => {
-        //   let nxtQuote = await helper.fetchQuote();
-        //   if (selectedLang !== "en") {
-        //     nxtQuote = helper.translateQuote(selectedLang, nxtQuote);
-        //   }
-        //   setNxtQuoteArr(nxtQuote);
-        let nxtQuote = ["Test", " ", "test", " ", "line3."];
-        setNxtQuoteArr(nxtQuote);
-        setPreviousQuotes([...previousQuotes, nxtQuote]);
-        // })();
+        (async () => {
+          let nxtQuote = await helper.fetchQuote();
+          if (selectedLang !== "en") {
+            nxtQuote = helper.translateQuote(selectedLang, nxtQuote);
+          }
+          setNxtQuoteArr(nxtQuote);
+          // let nxtQuote = ["Test", " ", "test", " ", "line3."];
+          setNxtQuoteArr(nxtQuote);
+          setPreviousQuotes([...previousQuotes, nxtQuote]);
+        })();
       }
+      // setCurWordTop(0);
+      // quotesDisplayRef.current.scrollTo(0, 0);
       setFetchNxtQuote(false);
     }
   }, [fetchNxtQuote, preQuoteIdx, previousQuotes, selectedLang, usePreQuotes]);
@@ -259,13 +269,19 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         setIsLastWord(true);
       }
     }
-  }, [curQuoteArr, wordIdx, reset]);
+  }, [curQuoteArr, wordIdx, reset, curWordTop]);
+
+  useEffect(() => {
+    // console.log(curWordTop);
+    const newTop = curQuoteArr && curWordRef.current.getBoundingClientRect().top;
+    if (wordIdx === 0 || (curWordTop && curWordTop < newTop)) {
+      quotesDisplayRef.current.scrollTo(0, newTop - curWordTop);
+    }
+    setCurWordTop(newTop);
+  }, [curQuoteArr, wordIdx, curWordTop]);
 
   return (
     <section className="main-container">
-      <div className="timer" data-testid="timer">
-        {timer}
-      </div>
       <div className="button-container">
         <button
           data-testid="redo"
@@ -295,8 +311,22 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           New Quote
         </button>
       </div>
+      {!showResult && (
+        <section className="timer" data-testid="timer">
+          {timer}
+        </section>
+      )}
+      {showResult && (
+        <section data-testid="result" className="result">
+          <div data-testid="wpm">WPM: {Math.floor(totalCorrectChars / 5 / (initialTime / 60))}</div>
+          <div data-testid="acc">
+            ACC: {!totalCorrectChars ? 0 : Math.floor((totalCorrectChars / totalChars) * 100)}
+          </div>
+        </section>
+      )}
       <div className="test-container">
-        <div className="quotes-display">
+        {/* {!showResult && ( */}
+        <div ref={quotesDisplayRef} className="quotes-display">
           <div data-testid="curQuote" className="cur-quote" ref={curQuoteRef}>
             {curQuoteArr &&
               curQuoteArr.map((str, idx) => {
@@ -321,6 +351,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
             {nxtQuoteArr && nxtQuoteArr.join("")}
           </div>
         </div>
+        {/* )} */}
 
         <div className="input-container">
           <div ref={testedLinesRef} className="tested-lines"></div>
@@ -343,18 +374,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
             ></div>
           </div>
         </div>
-      </div>
-      <div data-testid="result">
-        {showResult && (
-          <section>
-            <div data-testid="wpm">
-              WPM: {Math.floor(totalCorrectChars / 5 / (initialTime / 60))}
-            </div>
-            <div data-testid="acc">
-              ACC: {!totalCorrectChars ? 0 : Math.floor((totalCorrectChars / totalChars) * 100)}
-            </div>
-          </section>
-        )}
       </div>
     </section>
   );

@@ -1,31 +1,38 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@500&family=Rubik+Puddles&display=swap");
-/* header 30; btn 15; timer 25; body 15; */
+/* header 30; btn 15; timer 20; body 15; */
 
 :root {
   --green: #c5f7eb;
 }
 
 body {
-  margin: 4%;
+  margin: 0;
   max-height: 100vh;
+  width: 100vw;
   font-family: Roboto Mono;
   font-size: 15px;
   overflow-x: hidden;
-  padding: 0;
+  padding: 3%;
+  box-sizing: border-box;
 }
 
-/* MAIN.JS */
 .header-settings-container {
   display: flex;
   justify-content: space-between;
 }
 
 header {
-  font-family: Quicksand, sans-serif;
+  font-family: "Quicksand", sans-serif;
   font-size: 30px;
-  margin: 0;
+  margin: 0% 0 1% 0;
   padding: 0;
+}
+
+.button-container {
+  margin: 1% 0 1% 0;
+  font-size: 15px;
+  display: flex;
 }
 
 button {
@@ -44,16 +51,15 @@ button.active {
   top: 3px;
   left: 2px;
   box-shadow: none;
+  background-color: white;
 }
 
-.timer {
+.timer,
+.result {
   text-align: center;
-  font-size: 25px;
-}
-
-.button-container {
-  font-size: 15px;
-  display: flex;
+  font-size: 20px;
+  margin: 1% 0 1% 0%;
+  height: 26.5px;
 }
 
 .new-quote-btn {
@@ -61,14 +67,17 @@ button.active {
 }
 
 .test-container {
-  margin: 4% 0% 4% 16%;
+  margin-left: 20%;
   display: flex;
   flex-direction: column;
   width: 60%;
 }
 
 .quotes-display {
-  margin: 4%;
+  margin: 1% 0 1% 2%;
+  max-height: 39px;
+  overflow: hidden;
+  /* overflow: scroll; */
 }
 
 .curWord {
@@ -78,7 +87,7 @@ button.active {
 }
 
 .input-container {
-  margin: 2% 0 2% 0;
+  margin: 2% 0 1% 0;
   height: 50vh;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -100,11 +109,17 @@ button.active {
 
 ::-webkit-scrollbar-thumb {
   background-color: var(--green);
+  border: 1px solid darkgray;
   border-radius: 10px;
 }
 
 .tested-lines {
-  margin: 4%;
+  margin: 1% 0 1% 4%;
+}
+
+.tested-line {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .cur-input-container {
@@ -118,6 +133,7 @@ button.active {
   padding: 1% 0 1% 1%;
   min-width: 10%;
   border: 1px solid lightgray;
+  height: 19.5px;
   border-radius: 5px;
 }
 
@@ -132,25 +148,57 @@ button.active {
 /* SETTINGS.JS */
 .settings-menu {
   position: absolute;
+  width: 50%;
   right: 4%;
   padding: 2%;
   background-color: #fdfd96;
   outline: black solid 1px;
   border-radius: 10px;
+  z-index: 2;
 }
 
 h4 {
   margin: 0;
-  padding: 0 0 1% 0;
+}
+
+.lang-selection {
+  width: 100%;
+  height: 100%;
 }
 
 .lang-input-field {
+  font-size: 15px;
+  margin: 2% 0 2% 0%;
   padding: 1% 0 1% 1%;
-  margin-bottom: 2%;
   border: 1px solid lightgray;
   border-radius: 5px;
+  width: 100%;
 }
 
 .lang-input-field:focus {
   outline: none;
+}
+
+.lang-list {
+  position: absolute;
+  background-color: white;
+  padding: 2%;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  width: 80%;
+  max-height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  cursor: pointer;
+}
+
+.hilight {
+  background-color: #fdfd96;
+  border-radius: 5px;
+}
+
+.time-button {
+  width: 50px;
+  margin: 2% 2% 2% 0%;
+  cursor: pointer;
 }
