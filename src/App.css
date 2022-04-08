@@ -86,6 +86,10 @@ button.active {
   text-underline-offset: 2px;
 }
 
+.grayout {
+  opacity: 0.3;
+}
+
 .input-container {
   margin: 2% 0 1% 0;
   height: 50vh;

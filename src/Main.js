@@ -24,8 +24,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [usePreQuotes, setUsePreQuotes] = useState(false);
   const [preQuoteIdx, setPreQuoteIdx] = useState(0);
   const [fetchNxtQuote, setFetchNxtQuote] = useState(false);
-  const [curWordTop, setCurWordTop] = useState(0);
-  const [scrollQuote, setScrollQuote] = useState(false);
+  const [scrolled, setScrolled] = useState(true);
 
   // INPUT FIELD
   const [allowInput, setAllowInput] = useState(false);
@@ -41,9 +40,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const curInputContainerRef = useRef();
   const inputFieldRef = useRef();
   const testedLinesRef = useRef();
-
-  //REF
-  const preWordTopRef = useRef();
 
   const handleInput = (e) => {
     // if (!startTimer) {
@@ -113,6 +109,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   // EVENT LISTENERS
   useEffect(() => {
     const inputEle = inputFieldRef.current;
+    const quotesDisplay = quotesDisplayRef.current;
 
     const disableEvent = (e) => {
       e.preventDefault();
@@ -128,10 +125,11 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
     inputEle.addEventListener("keydown", disableKeys);
     eventNames.forEach((name) => inputEle.addEventListener(name, disableEvent));
-
+    quotesDisplay.addEventListener("scroll", () => setScrolled(true));
     return () => {
       inputEle.removeEventListener("keydown", disableKeys);
       eventNames.forEach((name) => inputEle.removeEventListener(name, disableEvent));
+      quotesDisplay.addEventListener("scroll", () => setScrolled(true));
     };
   }, []);
 
@@ -174,7 +172,19 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         firstQuote = await helper.translateQuote(selectedLang, firstQuote);
         secondQuote = await helper.translateQuote(selectedLang, secondQuote);
       }
-      // let firstQuote = ["First", " ", "English."];
+      // let firstQuote = [
+      //   "First",
+      //   " ",
+      //   "English.",
+      //   " ",
+      //   "First",
+      //   " ",
+      //   "English.",
+      //   " ",
+      //   "First",
+      //   " ",
+      //   "English.",
+      // ];
       // let secondQuote = ["Second."];
       setCurQuoteArr(firstQuote);
       setNxtQuoteArr(secondQuote);
@@ -191,19 +201,16 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           ? setUsePreQuotes(false)
           : setPreQuoteIdx(preQuoteIdx + 1);
       } else {
-        (async () => {
-          let nxtQuote = await helper.fetchQuote();
-          if (selectedLang !== "en") {
-            nxtQuote = helper.translateQuote(selectedLang, nxtQuote);
-          }
-          setNxtQuoteArr(nxtQuote);
-          // let nxtQuote = ["Test", " ", "test", " ", "line3."];
-          setNxtQuoteArr(nxtQuote);
-          setPreviousQuotes([...previousQuotes, nxtQuote]);
-        })();
+        // (async () => {
+        //   let nxtQuote = await helper.fetchQuote();
+        //   if (selectedLang !== "en") {
+        //     nxtQuote = helper.translateQuote(selectedLang, nxtQuote);
+        //   }
+        let nxtQuote = ["Test", " ", "test", " ", "line3."];
+        setNxtQuoteArr(nxtQuote);
+        setPreviousQuotes([...previousQuotes, nxtQuote]);
+        // })();
       }
-      // setCurWordTop(0);
-      // quotesDisplayRef.current.scrollTo(0, 0);
       setFetchNxtQuote(false);
     }
   }, [fetchNxtQuote, preQuoteIdx, previousQuotes, selectedLang, usePreQuotes]);
@@ -263,22 +270,37 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   // CURRENT WORD
   useEffect(() => {
     if (curQuoteArr) {
+      curWordRef.current.scrollIntoView();
       setCurWord(curQuoteArr[wordIdx]);
       // at last word index
       if (wordIdx === curQuoteArr.length - 1) {
         setIsLastWord(true);
       }
     }
-  }, [curQuoteArr, wordIdx, reset, curWordTop]);
+  }, [curQuoteArr, wordIdx, reset]);
 
+  // REMOVE GRAYOUT FOR CURRENT LINE
   useEffect(() => {
-    // console.log(curWordTop);
-    const newTop = curQuoteArr && curWordRef.current.getBoundingClientRect().top;
-    if (wordIdx === 0 || (curWordTop && curWordTop < newTop)) {
-      quotesDisplayRef.current.scrollTo(0, newTop - curWordTop);
+    // setCurTop(newTop);
+    if (curQuoteArr) {
+      // console.log("Trig");
+      let curLineEles = curQuoteRef.current.children;
+
+      const curTop = curWordRef.current.getBoundingClientRect().top;
+      Array.from(curLineEles).forEach((ele) => {
+        ele.classList.remove("grayout");
+
+        const wordTop = ele.getBoundingClientRect().top;
+        // console.log("Each Word top", wordTop);
+        if (wordTop !== curTop) {
+          // console.log("same line", wordTop);
+          // console.log(ele);
+          ele.classList.add("grayout");
+        }
+      });
+      setScrolled(false);
     }
-    setCurWordTop(newTop);
-  }, [curQuoteArr, wordIdx, curWordTop]);
+  }, [curQuoteArr, scrolled]);
 
   return (
     <section className="main-container">
