@@ -6,7 +6,8 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
   const [showLangList, setShowLangList] = useState(false);
   const [searchStr, setSearchStr] = useState("");
   const [filteredLang, setfilteredLang] = useState(null);
-  const [currentNode, setCurrentNode] = useState(null);
+  const [keyNode, setKeyNode] = useState(null);
+  const [mouseNode, setMouseNode] = useState(null);
   const [time, setTime] = useState(selectedTime);
   const timeOptions = [15, 30, 60, 120, 240];
 
@@ -22,6 +23,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
 
   const closeLangList = () => {
     setShowLangList(false);
+    setKeyNode(null);
   };
 
   const openLangList = () => {
@@ -30,7 +32,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
 
   const selectLang = (lang) => {
     setSearchStr(lang.name);
-    setCurrentNode(null);
+    setKeyNode(null);
     setfilteredLang([lang]);
     closeLangList();
   };
@@ -44,8 +46,13 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         const name = data.name.toLowerCase().substring(0, str.length);
         return str === name;
       });
-      setfilteredLang(matches);
-      openLangList();
+
+      if (matches.length) {
+        setfilteredLang(matches);
+        openLangList();
+      } else {
+        closeLangList();
+      }
     } else {
       setfilteredLang(langData);
     }
@@ -55,40 +62,34 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
     const key = e.key;
     const list = showLangList && langListRef.current.children;
     const lastNode = showLangList && list.length - 1;
-    const nxtNode = currentNode + 1;
-    const preNode = currentNode - 1;
 
-    if (key === "ArrowDown" && showLangList) {
-      if (currentNode === 0 && list.length === 1) return;
-      if (currentNode === null) {
-        list[0].classList.add("hilight");
-        setCurrentNode(0);
-      } else if (currentNode === lastNode && list.length > 1) {
-        list[0].classList.add("hilight");
-        list[currentNode].classList.remove("hilight");
-        setCurrentNode(0);
-      } else {
-        list[nxtNode].classList.add("hilight");
-        list[currentNode].classList.remove("hilight");
-        setCurrentNode(nxtNode);
-      }
+    if (!showLangList || (key === "ArrowUp" && keyNode === null)) return;
+
+    if (list.length === 1 && keyNode === 0) {
+      if (key === "ArrowDown" || key === "ArrowUp") return;
     }
 
-    if (key === "ArrowUp" && showLangList && currentNode !== null) {
-      if (list.length === 1) return;
-      if (currentNode === 0) {
-        list[lastNode].classList.add("hilight");
-        list[0].classList.remove("hilight");
-        setCurrentNode(lastNode);
-      } else {
-        list[preNode].classList.add("hilight");
-        list[currentNode].classList.remove("hilight");
-        setCurrentNode(preNode);
-      }
+    if (key === "ArrowDown") {
+      const nxtNode = keyNode === null || keyNode === lastNode ? 0 : keyNode + 1;
+      list[nxtNode].classList.add("hilight");
+      setKeyNode(nxtNode);
+      langListRef.current.children[nxtNode].scrollIntoView();
+    }
+
+    if (key === "ArrowUp") {
+      const preNode = keyNode === 0 ? lastNode : keyNode - 1;
+      list[preNode].classList.add("hilight");
+      setKeyNode(preNode);
+      langListRef.current.children[preNode].scrollIntoView();
+    }
+
+    // KEY SELECTOR DOES NOT OVERWRITE MOUSE SELECTOR
+    if (keyNode !== mouseNode) {
+      list[keyNode].classList.remove("hilight");
     }
 
     if (key === "Enter" && showLangList) {
-      list[currentNode].click();
+      list[keyNode].click();
     }
   };
 
@@ -146,10 +147,14 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
                     selectLang(lang);
                   }}
                   onMouseOver={(e) => {
+                    const node = Array.from(e.target.parentNode.children).indexOf(e.target);
+                    setMouseNode(node);
                     e.target.classList.add("hilight");
                   }}
                   onMouseLeave={(e) => {
-                    e.target.classList.remove("hilight");
+                    const node = Array.from(e.target.parentNode.children).indexOf(e.target);
+                    setMouseNode(null);
+                    node !== keyNode && e.target.classList.remove("hilight");
                   }}
                 >
                   {lang.name}

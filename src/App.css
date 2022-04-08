@@ -59,7 +59,7 @@ button.active {
   text-align: center;
   font-size: 20px;
   margin: 1% 0 1% 0%;
-  height: 26.5px;
+  height: 53px;
 }
 
 .new-quote-btn {
@@ -74,7 +74,7 @@ button.active {
 }
 
 .quotes-display {
-  margin: 1% 0 1% 2%;
+  margin: 1% 0 1% 4%;
   max-height: 39px;
   overflow: hidden;
   /* overflow: scroll; */

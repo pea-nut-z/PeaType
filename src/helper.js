@@ -26,8 +26,6 @@ export const fetchQuote = async () => {
 };
 
 export const translateQuote = async (toLang, quote) => {
-  console.log({ quote });
-
   let url = `https://translation.googleapis.com/language/translate/v2?key=${process.env.REACT_APP_API_KEY}`;
   url += "&q=" + encodeURI(quote.join(""));
   url += `&source=en`;

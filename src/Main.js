@@ -42,9 +42,9 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const testedLinesRef = useRef();
 
   const handleInput = (e) => {
-    // if (!startTimer) {
-    //   setStartTimer(true);
-    // }
+    if (!startTimer) {
+      setStartTimer(true);
+    }
 
     const input = e.currentTarget.textContent;
     const inputToCheck = isLastWord ? input : input.trim();
@@ -123,13 +123,17 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
     const eventNames = ["copy", "paste", "blur", "cut", "delete", "mouseup"];
 
+    const setScrollState = () => setScrolled(true);
+
     inputEle.addEventListener("keydown", disableKeys);
     eventNames.forEach((name) => inputEle.addEventListener(name, disableEvent));
-    quotesDisplay.addEventListener("scroll", () => setScrolled(true));
+    quotesDisplay.addEventListener("scroll", setScrollState);
+    window.addEventListener("resize", setScrollState);
     return () => {
       inputEle.removeEventListener("keydown", disableKeys);
       eventNames.forEach((name) => inputEle.removeEventListener(name, disableEvent));
-      quotesDisplay.addEventListener("scroll", () => setScrolled(true));
+      quotesDisplay.removeEventListener("scroll", setScrollState);
+      window.removeEventListener("resize", setScrollState);
     };
   }, []);
 
@@ -279,22 +283,15 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     }
   }, [curQuoteArr, wordIdx, reset]);
 
-  // REMOVE GRAYOUT FOR CURRENT LINE
+  // GRAYOUT NEXT LINE
   useEffect(() => {
-    // setCurTop(newTop);
     if (curQuoteArr) {
-      // console.log("Trig");
       let curLineEles = curQuoteRef.current.children;
-
       const curTop = curWordRef.current.getBoundingClientRect().top;
       Array.from(curLineEles).forEach((ele) => {
         ele.classList.remove("grayout");
-
         const wordTop = ele.getBoundingClientRect().top;
-        // console.log("Each Word top", wordTop);
         if (wordTop !== curTop) {
-          // console.log("same line", wordTop);
-          // console.log(ele);
           ele.classList.add("grayout");
         }
       });
@@ -347,7 +344,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         </section>
       )}
       <div className="test-container">
-        {/* {!showResult && ( */}
         <div ref={quotesDisplayRef} className="quotes-display">
           <div data-testid="curQuote" className="cur-quote" ref={curQuoteRef}>
             {curQuoteArr &&
@@ -373,9 +369,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
             {nxtQuoteArr && nxtQuoteArr.join("")}
           </div>
         </div>
-        {/* )} */}
 
-        <div className="input-container">
+        <div className="input-container" onClick={() => inputFieldRef.current.focus()}>
           <div ref={testedLinesRef} className="tested-lines"></div>
           <div
             ref={curInputContainerRef}
