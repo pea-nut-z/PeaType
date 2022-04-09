@@ -16,6 +16,7 @@ describe("Settings.js Unit Testing", () => {
 
   beforeEach(async () => {
     mockFuns.mockFetchLangData();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     await act(async () => {
       component = await render(<Settings {...props} />);
@@ -31,30 +32,60 @@ describe("Settings.js Unit Testing", () => {
     cleanup();
   });
 
-  it("displays a language dropdown on focus", () => {
+  it("displays dropdown when input is on focus", () => {
     userEvent.click(field);
     expect(getByText("Spanish")).toBeInTheDocument();
   });
 
-  it("hilights a language using keys", () => {
-    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+  it("hilights previous element using arrow up", () => {
+    userEvent.click(field);
+    userEvent.keyboard("{arrowdown}{arrowdown}{arrowup}");
+    expect(getByText("Spanish")).toHaveClass("hilight");
+  });
+
+  it("hilights the first element when arrow down reaches end of dropdown", () => {
     userEvent.click(field);
     userEvent.keyboard("{arrowdown}{arrowdown}{arrowdown}");
     expect(getByText("Dutch")).not.toHaveClass("hilight");
     expect(getByText("Spanish")).toHaveClass("hilight");
   });
 
-  it("selects a language using keys", () => {
-    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+  it("hilights the last element when arrow up reaches start of dropdown", () => {
+    userEvent.click(field);
+    userEvent.keyboard("{arrowdown}{arrowup}");
+    expect(getByText("Dutch")).toHaveClass("hilight");
+  });
+
+  it("keeps the only one element in dropdown selected regardless which arrow key is pressed", () => {
+    userEvent.click(field);
+    userEvent.keyboard("S");
+    userEvent.keyboard("{arrowdown}{arrowdown}");
+    expect(getByText("Spanish")).toHaveClass("hilight");
+  });
+
+  it("selects a language using arrows and enter", () => {
     userEvent.click(field);
     userEvent.keyboard("{arrowdown}{enter}");
     expect(field).toHaveValue("Spanish");
   });
 
-  it("displays languages that match input", async () => {
+  it("removes hilight on mouse leave", () => {
+    userEvent.click(field);
+    userEvent.hover(getByText("Spanish"));
+    userEvent.unhover(getByText("Spanish"));
+    expect(getByText("Spanish")).not.toHaveClass("hilight");
+  });
+
+  it("displays dropdown for matches", async () => {
     userEvent.click(field);
     userEvent.keyboard("S");
     expect(queryByText("Dutch")).not.toBeInTheDocument();
+  });
+
+  it("hides dropdown for no matches", async () => {
+    userEvent.click(field);
+    userEvent.keyboard("SSSS");
+    expect(queryByTestId("langList")).toBeNull();
   });
 
   it("resets dropdown when input is deleted", async () => {
@@ -78,11 +109,11 @@ describe("Settings.js Unit Testing", () => {
     expect(queryByText("Spanish")).not.toBeInTheDocument();
   });
 
-  it("shows current selected language in input placeholder", () => {
+  it("shows current selected language in placeholder", () => {
     expect(field.placeholder).toContain(props.selectedName);
   });
 
-  it("shows current selected time in the corresponding button", () => {
+  it("shows current selected time in corresponding button", () => {
     const selectedTime = props.selectedTime.toString();
     expect(getByText(selectedTime)).toHaveClass("time-button active");
   });
