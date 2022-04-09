@@ -14,6 +14,7 @@ describe("Main.js Unit Testing - Layout", () => {
 
   beforeEach(async () => {
     mockFuncs.mockFetchQuote();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     await act(async () => {
       component = await render(<Main {...props} />);
@@ -50,7 +51,16 @@ describe("Main.js Unit Testing - Style", () => {
   let component, getByTestId, getAllByTestId, quoteInputField;
 
   beforeEach(async () => {
-    mockFuncs.mockFetchQuote();
+    mockFuncs.mockFetchQuoteForStyleTest();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    window.HTMLElement.prototype.getBoundingClientRect = function () {
+      return {
+        width: parseFloat(this.style.width) || 0,
+        height: parseFloat(this.style.height) || 0,
+        top: parseFloat(this.style.marginTop) || 0,
+        left: parseFloat(this.style.marginLeft) || 0,
+      };
+    };
 
     await act(async () => {
       component = await render(<Main selectedLang="en" />);
@@ -66,34 +76,48 @@ describe("Main.js Unit Testing - Style", () => {
   });
 
   it("styles correct input in black", () => {
-    userEvent.keyboard("F");
+    userEvent.keyboard("O");
     const styles = window.getComputedStyle(quoteInputField);
     expect(styles.color).toBe("black");
   });
 
   it("styles incorrect input in red", () => {
-    userEvent.keyboard("Ff");
+    userEvent.keyboard("Oo");
     const styles = window.getComputedStyle(quoteInputField);
     expect(styles.color).toBe("red");
   });
 
-  it("pushes correct input to an element after pressing space, and styles it in black", () => {
-    userEvent.keyboard("First{space}");
+  it("pushes correct input to an element after pressing space, and styles it in black", async () => {
+    await act(async () => {
+      await userEvent.keyboard("One{space}");
+    });
     let testedInput = getAllByTestId("testedWord");
     const span = testedInput[0];
     const styles = window.getComputedStyle(span);
-    expect(span).toHaveTextContent("First");
+    expect(span).toHaveTextContent("One");
     expect(styles.color).toBe("black");
   });
 
-  it("pushes incorrect input to an element after pressing space, and styles it in red", () => {
-    userEvent.keyboard("F{space}");
+  it("pushes incorrect input to an element after pressing space, and styles it in red", async () => {
+    await act(async () => {
+      await userEvent.keyboard("O{space}");
+    });
     let testedInput = getAllByTestId("testedWord");
     const span = testedInput[0];
     const styles = window.getComputedStyle(span);
-    expect(span).toHaveTextContent("F");
+    expect(span).toHaveTextContent("O");
     expect(styles.color).toBe("red");
   });
+
+  // it.only("grays out second line of quote display", async () => {
+  //   const eles = getByTestId("curQuote").children;
+  //   await act(async () => {
+  //     await new Promise((r) => setTimeout(r, 4000));
+  //   });
+  //   for (let x = 16; x < eles.length; x += 2) {
+  //   console.log(component.debug());
+  //   }
+  // });
 });
 
 describe("Main.js Unit Testing - Translation", () => {
@@ -127,6 +151,7 @@ describe("Main.js Unit Testing - Fetch", () => {
   beforeEach(async () => {
     mockFuncs.mockFetchQuote();
     mockFuncs.mockTranslateQuote();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     await act(async () => {
       component = await render(<Main selectedLang="es" />);
@@ -150,7 +175,7 @@ describe("Main.js Unit Testing - Fetch", () => {
     expect(curQuote.firstChild).toHaveTextContent("Second");
   });
 
-  it("fetches a new quote when next quote is moved up", () => {
+  it("fetches a quote when next quote is moved up", () => {
     const nxtQuote = getByTestId("nxtQuote");
     expect(nxtQuote).toHaveTextContent("Third Spanish.");
   });
@@ -161,30 +186,75 @@ describe("Main.js Unit Testing - Fetch", () => {
     expect(testedInput.length).toEqual(1);
     expect(testedInput[0]).toHaveTextContent("Second");
   });
+
+  it("fetches a quote when all previous quotes have been redone after click of Redo", async () => {
+    await act(async () => {
+      await userEvent.keyboard("Second{space}");
+    });
+    await act(async () => {
+      await userEvent.keyboard("Spanish.");
+    });
+    await act(async () => {
+      await userEvent.keyboard("Third{space}");
+    });
+    await act(async () => {
+      await userEvent.keyboard("Spanish.");
+    });
+    await act(async () => {
+      const redo = getByTestId("redo");
+      await userEvent.click(redo);
+    });
+
+    //REDO
+    await act(async () => {
+      await userEvent.keyboard("First{space}");
+    });
+    await act(async () => {
+      await userEvent.keyboard("Spanish.");
+    });
+    await act(async () => {
+      await userEvent.keyboard("Second{space}");
+    });
+    await act(async () => {
+      await userEvent.keyboard("Spanish.");
+    });
+    const nxtQuote = getByTestId("nxtQuote");
+    expect(nxtQuote).toHaveTextContent("Fourth Spanish.");
+  });
 });
 
 describe("Main.js Unit Testing - Buttons", () => {
-  let component, getByTestId, curInputContainer, quoteInputField, curQuote, nxtQuote, timer, result;
+  let component,
+    getByTestId,
+    queryByTestId,
+    curInputContainer,
+    quoteInputField,
+    curQuote,
+    nxtQuote,
+    timer,
+    result;
 
   const props = {
     selectedLang: "en",
-    initialTime: 1,
+    initialTime: 2,
   };
 
   beforeEach(async () => {
     mockFuncs.mockFetchQuote();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     await act(async () => {
       component = await render(<Main {...props} />);
     });
 
     getByTestId = component.getByTestId;
+    queryByTestId = component.queryByTestId;
     curInputContainer = getByTestId("curInputContainer");
     quoteInputField = getByTestId("quoteInputField");
     curQuote = getByTestId("curQuote");
     nxtQuote = getByTestId("nxtQuote");
     timer = getByTestId("timer");
-    result = getByTestId("result");
+    result = queryByTestId("result");
 
     userEvent.keyboard("First ");
   });
@@ -195,29 +265,26 @@ describe("Main.js Unit Testing - Buttons", () => {
 
   it("resets on click of Redo", async () => {
     await act(async () => {
-      await new Promise((r) => setTimeout(r, 2000));
+      await userEvent.click(getByTestId("redo"));
     });
-    userEvent.click(getByTestId("redo"));
-    console.log(curInputContainer.children);
-
     expect(curInputContainer.children.length).toEqual(1);
     expect(curQuote.firstChild).toHaveTextContent("First");
     expect(nxtQuote).toHaveTextContent("Second English.");
+    expect(result).toBeNull();
     expect(timer).toHaveTextContent(props.initialTime);
-    expect(result).toHaveTextContent("");
   });
 
   it("resets and fetches new quotes on click of New Quote", async () => {
     await act(async () => {
-      await new Promise((r) => setTimeout(r, 2000));
       await userEvent.click(getByTestId("newQuote"));
     });
+
     expect(curInputContainer.children.length).toEqual(1);
     expect(quoteInputField).toHaveTextContent("");
     expect(curQuote.firstChild).toHaveTextContent("Third");
     expect(nxtQuote).toHaveTextContent("Fourth English.");
+    expect(result).toBeNull();
     expect(timer).toHaveTextContent(props.initialTime);
-    expect(result).toHaveTextContent("");
   });
 });
 
@@ -231,7 +298,6 @@ describe("Main.js Unit Testing - Result", () => {
 
   beforeEach(async () => {
     mockFuncs.mockFetchQuote();
-
     await act(async () => {
       component = await render(<Main {...props} />);
     });

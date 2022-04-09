@@ -11,6 +11,7 @@ describe("App.js Intergration Testing", () => {
     mockFuncs.mockFetchLangData();
     mockFuncs.mockFetchQuote();
     mockFuncs.mockTranslateQuote();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     await act(async () => {
       component = await render(<App />);

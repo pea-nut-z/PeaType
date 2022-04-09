@@ -15,11 +15,50 @@ export const mockFetchQuote = () => {
     .mockImplementationOnce(() => ["Third", " ", "English."])
     .mockImplementationOnce(() => ["Fourth", " ", "English."]);
 };
+export const mockFetchQuoteForStyleTest = () => {
+  jest
+    .spyOn(helper, "fetchQuote")
+    .mockImplementationOnce(() => [
+      "One",
+      " ",
+      "of",
+      " ",
+      "the",
+      " ",
+      "most",
+      " ",
+      "beautiful",
+      " ",
+      "qualities",
+      " ",
+      "of",
+      " ",
+      "true",
+      " ",
+      "friendship",
+      " ",
+      "is",
+      " ",
+      "to",
+      " ",
+      "understand",
+      " ",
+      "and",
+      " ",
+      "to",
+      " ",
+      "be",
+      " ",
+      "understood.",
+    ])
+    .mockImplementationOnce(() => ["Second", " ", "Quote."]);
+};
 
 export const mockTranslateQuote = () => {
   jest
     .spyOn(helper, "translateQuote")
     .mockImplementationOnce(() => ["First", " ", "Spanish."])
     .mockImplementationOnce(() => ["Second", " ", "Spanish."])
-    .mockImplementationOnce(() => ["Third", " ", "Spanish."]);
+    .mockImplementationOnce(() => ["Third", " ", "Spanish."])
+    .mockImplementationOnce(() => ["Fourth", " ", "Spanish."]);
 };

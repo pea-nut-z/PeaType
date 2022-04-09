@@ -176,20 +176,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         firstQuote = await helper.translateQuote(selectedLang, firstQuote);
         secondQuote = await helper.translateQuote(selectedLang, secondQuote);
       }
-      // let firstQuote = [
-      //   "First",
-      //   " ",
-      //   "English.",
-      //   " ",
-      //   "First",
-      //   " ",
-      //   "English.",
-      //   " ",
-      //   "First",
-      //   " ",
-      //   "English.",
-      // ];
-      // let secondQuote = ["Second."];
+      // let firstQuote = ["First", " ", "English."];
+      // let secondQuote = ["Second", " ", "English."];
       setCurQuoteArr(firstQuote);
       setNxtQuoteArr(secondQuote);
       setPreviousQuotes([firstQuote, secondQuote]);
@@ -205,15 +193,15 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           ? setUsePreQuotes(false)
           : setPreQuoteIdx(preQuoteIdx + 1);
       } else {
-        // (async () => {
-        //   let nxtQuote = await helper.fetchQuote();
-        //   if (selectedLang !== "en") {
-        //     nxtQuote = helper.translateQuote(selectedLang, nxtQuote);
-        //   }
-        let nxtQuote = ["Test", " ", "test", " ", "line3."];
-        setNxtQuoteArr(nxtQuote);
-        setPreviousQuotes([...previousQuotes, nxtQuote]);
-        // })();
+        (async () => {
+          let nxtQuote = await helper.fetchQuote();
+          if (selectedLang !== "en") {
+            nxtQuote = helper.translateQuote(selectedLang, nxtQuote);
+          }
+          // let nxtQuote = ["Test", " ", "test", " ", "line3."];
+          setNxtQuoteArr(nxtQuote);
+          setPreviousQuotes([...previousQuotes, nxtQuote]);
+        })();
       }
       setFetchNxtQuote(false);
     }

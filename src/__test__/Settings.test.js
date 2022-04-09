@@ -5,7 +5,7 @@ import Settings from "../Settings";
 import * as mockFuns from "./mockFuncs";
 
 describe("Settings.js Unit Testing", () => {
-  let component, getByTestId, queryByText, getByText, field;
+  let component, getByTestId, getByText, queryByText, queryByTestId, field;
 
   const props = {
     selectedName: "English",
@@ -23,6 +23,7 @@ describe("Settings.js Unit Testing", () => {
     getByTestId = component.getByTestId;
     getByText = component.getByText;
     queryByText = component.queryByText;
+    queryByTestId = component.queryByTestId;
     field = getByTestId("langInputField");
   });
 
@@ -36,6 +37,7 @@ describe("Settings.js Unit Testing", () => {
   });
 
   it("hilights a language using keys", () => {
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
     userEvent.click(field);
     userEvent.keyboard("{arrowdown}{arrowdown}{arrowdown}");
     expect(getByText("Dutch")).not.toHaveClass("hilight");
@@ -43,6 +45,7 @@ describe("Settings.js Unit Testing", () => {
   });
 
   it("selects a language using keys", () => {
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
     userEvent.click(field);
     userEvent.keyboard("{arrowdown}{enter}");
     expect(field).toHaveValue("Spanish");
@@ -66,7 +69,7 @@ describe("Settings.js Unit Testing", () => {
     userEvent.click(field);
     userEvent.click(getByText("Spanish"));
     expect(field).toHaveValue("Spanish");
-    expect(getByTestId("langList")).toHaveTextContent("");
+    expect(queryByTestId("langList")).toBeNull();
   });
 
   it("closes dropdown when there is a click elsewhere within Settings", () => {
@@ -81,6 +84,6 @@ describe("Settings.js Unit Testing", () => {
 
   it("shows current selected time in the corresponding button", () => {
     const selectedTime = props.selectedTime.toString();
-    expect(getByText(selectedTime)).toHaveClass("selected-time-btn");
+    expect(getByText(selectedTime)).toHaveClass("time-button active");
   });
 });

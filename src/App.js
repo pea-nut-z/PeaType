@@ -7,7 +7,7 @@ function App() {
   const [openSettings, setOpenSettings] = useState(false);
   const [selectedLang, setSelectedLang] = useState("en");
   const [selectedName, setSelectedName] = useState("English");
-  const [selectedTime, setSelectedTime] = useState(3);
+  const [selectedTime, setSelectedTime] = useState(15);
 
   const buttonRef = useRef();
 
