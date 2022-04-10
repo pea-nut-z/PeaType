@@ -251,10 +251,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   // OPENING SETTINGS DURING TEST DISABLES INPUT FIELD
   useEffect(() => {
     if (!showResult && !openSettings) {
-      // console.log("allow input");
       setAllowInput(true);
     } else {
-      // console.log("disable input");
       setAllowInput(false);
     }
   }, [showResult, openSettings]);
@@ -276,11 +274,13 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     if (curQuoteArr) {
       let curLineEles = curQuoteRef.current.children;
       const curTop = curWordRef.current.getBoundingClientRect().top;
+
       Array.from(curLineEles).forEach((ele) => {
         ele.classList.remove("grayout");
         const wordTop = ele.getBoundingClientRect().top;
+
         if (wordTop !== curTop) {
-          ele.classList.add("grayout");
+          ele.classList.add("greyout");
         }
       });
       setScrolled(false);
@@ -338,8 +338,9 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
               curQuoteArr.map((str, idx) => {
                 return (
                   <span
-                    ref={wordIdx === idx ? curWordRef : null}
-                    className={wordIdx === idx ? "curWord" : null}
+                    data-testid={wordIdx === idx ? "curWord" : undefined}
+                    ref={wordIdx === idx ? curWordRef : undefined}
+                    className={wordIdx === idx ? "cur-Word" : undefined}
                     key={idx}
                   >
                     {str}

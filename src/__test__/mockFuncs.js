@@ -13,7 +13,8 @@ export const mockFetchQuote = () => {
     .mockImplementationOnce(() => ["First", " ", "English."])
     .mockImplementationOnce(() => ["Second", " ", "English."])
     .mockImplementationOnce(() => ["Third", " ", "English."])
-    .mockImplementationOnce(() => ["Fourth", " ", "English."]);
+    .mockImplementationOnce(() => ["Fourth", " ", "English."])
+    .mockImplementationOnce(() => ["Fifth", " ", "English."]);
 };
 export const mockFetchQuoteForStyleTest = () => {
   jest
@@ -60,5 +61,6 @@ export const mockTranslateQuote = () => {
     .mockImplementationOnce(() => ["First", " ", "Spanish."])
     .mockImplementationOnce(() => ["Second", " ", "Spanish."])
     .mockImplementationOnce(() => ["Third", " ", "Spanish."])
-    .mockImplementationOnce(() => ["Fourth", " ", "Spanish."]);
+    .mockImplementationOnce(() => ["Fourth", " ", "Spanish."])
+    .mockImplementationOnce(() => ["Fifth", " ", "Spanish."]);
 };

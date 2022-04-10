@@ -59,7 +59,10 @@ describe("Settings.js Unit Testing", () => {
   it("keeps the only one element in dropdown selected regardless which arrow key is pressed", () => {
     userEvent.click(field);
     userEvent.keyboard("S");
-    userEvent.keyboard("{arrowdown}{arrowdown}");
+    userEvent.keyboard("{arrowdown}");
+    userEvent.keyboard("{arrowdown}");
+    expect(getByText("Spanish")).toHaveClass("hilight");
+    userEvent.keyboard("{arrowup}");
     expect(getByText("Spanish")).toHaveClass("hilight");
   });
 

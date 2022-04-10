@@ -80,13 +80,13 @@ button.active {
   /* overflow: scroll; */
 }
 
-.curWord {
+.cur-Word {
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: 2px;
 }
 
-.grayout {
+.greyout {
   opacity: 0.3;
 }
 

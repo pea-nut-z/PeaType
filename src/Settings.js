@@ -65,9 +65,8 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
 
     if (!showLangList || (key === "ArrowUp" && keyNode === null)) return;
 
-    if (list.length === 1 && keyNode === 0) {
-      if (key === "ArrowDown" || key === "ArrowUp") return;
-    }
+    if (list.length === 1 && keyNode === 0 && key === "ArrowDown") return;
+    if (list.length === 1 && keyNode === 0 && key === "ArrowUp") return;
 
     if (key === "ArrowDown") {
       const nxtNode = keyNode === null || keyNode === lastNode ? 0 : keyNode + 1;
