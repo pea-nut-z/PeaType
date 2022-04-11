@@ -21,10 +21,11 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [isLastWord, setIsLastWord] = useState(false);
   const [fetchQuotes, setFetchQuotes] = useState(true);
   const [previousQuotes, setPreviousQuotes] = useState([]);
-  const [usePreQuotes, setUsePreQuotes] = useState(false);
+  const [usePreQuote, setUsePreQuote] = useState(false);
   const [preQuoteIdx, setPreQuoteIdx] = useState(0);
   const [fetchNxtQuote, setFetchNxtQuote] = useState(false);
-  const [scrolled, setScrolled] = useState(true);
+  const [greyout, setGreyout] = useState(false);
+  const [wrapIdx, setWrapIdx] = useState(true);
 
   // INPUT FIELD
   const [allowInput, setAllowInput] = useState(false);
@@ -92,6 +93,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         setWordIdx(0);
         setIsLastWord(false);
         setCurQuoteArr(nxtQuoteArr);
+        setGreyout(true);
         setFetchNxtQuote(true);
       } else {
         setWordIdx(wordIdx + 2);
@@ -123,7 +125,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
     const eventNames = ["copy", "paste", "blur", "cut", "delete", "mouseup"];
 
-    const setScrollState = () => setScrolled(true);
+    const setScrollState = () => setGreyout(true);
 
     inputEle.addEventListener("keydown", disableKeys);
     eventNames.forEach((name) => inputEle.addEventListener(name, disableEvent));
@@ -179,6 +181,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       // let firstQuote = ["First", " ", "English."];
       // let secondQuote = ["Second", " ", "English."];
       setCurQuoteArr(firstQuote);
+      setGreyout(true);
       setNxtQuoteArr(secondQuote);
       setPreviousQuotes([firstQuote, secondQuote]);
     })();
@@ -187,34 +190,49 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   // FETCH NEXT QUOTE
   useEffect(() => {
     if (fetchNxtQuote) {
-      if (usePreQuotes) {
-        setNxtQuoteArr(previousQuotes[preQuoteIdx]);
-        preQuoteIdx === previousQuotes.length - 1
-          ? setUsePreQuotes(false)
-          : setPreQuoteIdx(preQuoteIdx + 1);
+      if (usePreQuote) {
+        let nxtQuote = previousQuotes[preQuoteIdx];
+        setNxtQuoteArr(nxtQuote);
+        if (preQuoteIdx === previousQuotes.length - 1) {
+          console.log("setting use pre to false");
+          setUsePreQuote(false);
+        } else {
+          console.log("setting use pre +1");
+          setPreQuoteIdx(preQuoteIdx + 1);
+        }
       } else {
-        (async () => {
-          let nxtQuote = await helper.fetchQuote();
+        const useNewQuote = async () => {
+          let quote = await helper.fetchQuote();
+          // console.log({ quote });
           if (selectedLang !== "en") {
-            nxtQuote = helper.translateQuote(selectedLang, nxtQuote);
+            console.log("fetching nxt quote in", selectedLang);
+            quote = await helper.translateQuote(selectedLang, quote);
           }
-          // let nxtQuote = ["Test", " ", "test", " ", "line3."];
-          setNxtQuoteArr(nxtQuote);
-          setPreviousQuotes([...previousQuotes, nxtQuote]);
-        })();
+          return quote;
+        };
+        const nxtQuote = useNewQuote();
+        setNxtQuoteArr(nxtQuote);
+        setPreviousQuotes([...previousQuotes, nxtQuote]);
       }
       setFetchNxtQuote(false);
     }
-  }, [fetchNxtQuote, preQuoteIdx, previousQuotes, selectedLang, usePreQuotes]);
+  }, [fetchNxtQuote, preQuoteIdx, previousQuotes, selectedLang, usePreQuote]);
+
+  // TRANSLATE QUOTE
+  useEffect(() => {}, []);
 
   // REDO
   useEffect(() => {
     if (redo) {
+      console.log("clicked REDO");
+
       setCurQuoteArr(previousQuotes[0]);
       setNxtQuoteArr(previousQuotes[1]);
+      setGreyout(true);
       if (previousQuotes.length > 2) {
         setPreQuoteIdx(2);
-        setUsePreQuotes(true);
+        console.log("pre is more than 2");
+        setUsePreQuote(true);
       }
       setRedo(false);
     }
@@ -271,21 +289,20 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
   // GRAYOUT NEXT LINE
   useEffect(() => {
-    if (curQuoteArr) {
-      let curLineEles = curQuoteRef.current.children;
+    if (greyout) {
       const curTop = curWordRef.current.getBoundingClientRect().top;
-
+      let curLineEles = curQuoteRef.current.children;
       Array.from(curLineEles).forEach((ele) => {
-        ele.classList.remove("grayout");
         const wordTop = ele.getBoundingClientRect().top;
-
         if (wordTop !== curTop) {
           ele.classList.add("greyout");
+        } else {
+          ele.classList.remove("greyout");
         }
+        setGreyout(false);
       });
-      setScrolled(false);
     }
-  }, [curQuoteArr, scrolled]);
+  }, [greyout]);
 
   return (
     <section className="main-container">
