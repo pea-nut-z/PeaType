@@ -124,7 +124,7 @@ describe("Main.js Unit Testing - Style", () => {
   });
 });
 
-describe("Main.js Unit Testing - Fetch", () => {
+describe("Main.js Unit Testing - Fetch in Spanish", () => {
   let component, getByTestId, getAllByTestId, curQuote, nxtQuote, redo;
 
   beforeEach(async () => {
@@ -164,7 +164,7 @@ describe("Main.js Unit Testing - Fetch", () => {
     expect(curQuote.firstChild).toHaveTextContent("Second");
   });
 
-  it("fetches a quote when next quote is moved up", () => {
+  it("fetches a quote in Spanish when next quote is moved up", () => {
     expect(nxtQuote).toHaveTextContent("Third Spanish.");
   });
 
@@ -206,6 +206,41 @@ describe("Main.js Unit Testing - Fetch", () => {
       await userEvent.keyboard("Spanish.");
     });
     expect(nxtQuote).toHaveTextContent("Fifth Spanish.");
+  });
+});
+
+describe("Main.js Unit Testing - Fetch in English", () => {
+  let component, getByTestId, getAllByTestId, curQuote, nxtQuote, redo;
+  beforeEach(async () => {
+    mockFuncs.mockFetchQuote();
+    mockFuncs.mockTranslateQuote();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
+
+    await act(async () => {
+      component = await render(<Main selectedLang="en" />);
+    });
+
+    getByTestId = component.getByTestId;
+    getAllByTestId = component.getAllByTestId;
+    curQuote = getByTestId("curQuote");
+    nxtQuote = getByTestId("nxtQuote");
+    redo = getByTestId("redo");
+
+    await act(async () => {
+      await userEvent.keyboard("First ");
+    });
+    await act(async () => {
+      await userEvent.keyboard("English.");
+    });
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("fetches next quote in English", () => {
+    expect(nxtQuote).toHaveTextContent("Third English.");
   });
 });
 

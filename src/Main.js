@@ -25,7 +25,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [preQuoteIdx, setPreQuoteIdx] = useState(0);
   const [fetchNxtQuote, setFetchNxtQuote] = useState(false);
   const [greyout, setGreyout] = useState(false);
-  const [wrapIdx, setWrapIdx] = useState(true);
 
   // INPUT FIELD
   const [allowInput, setAllowInput] = useState(false);
@@ -193,45 +192,31 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       if (usePreQuote) {
         let nxtQuote = previousQuotes[preQuoteIdx];
         setNxtQuoteArr(nxtQuote);
-        if (preQuoteIdx === previousQuotes.length - 1) {
-          console.log("setting use pre to false");
-          setUsePreQuote(false);
-        } else {
-          console.log("setting use pre +1");
-          setPreQuoteIdx(preQuoteIdx + 1);
-        }
+        preQuoteIdx === previousQuotes.length - 1
+          ? setUsePreQuote(false)
+          : setPreQuoteIdx(preQuoteIdx + 1);
       } else {
-        const useNewQuote = async () => {
-          let quote = await helper.fetchQuote();
-          // console.log({ quote });
+        (async () => {
+          let nxtQuote = await helper.fetchQuote();
           if (selectedLang !== "en") {
-            console.log("fetching nxt quote in", selectedLang);
-            quote = await helper.translateQuote(selectedLang, quote);
+            nxtQuote = await helper.translateQuote(selectedLang, nxtQuote);
           }
-          return quote;
-        };
-        const nxtQuote = useNewQuote();
-        setNxtQuoteArr(nxtQuote);
-        setPreviousQuotes([...previousQuotes, nxtQuote]);
+          setNxtQuoteArr(nxtQuote);
+          setPreviousQuotes([...previousQuotes, nxtQuote]);
+        })();
       }
       setFetchNxtQuote(false);
     }
   }, [fetchNxtQuote, preQuoteIdx, previousQuotes, selectedLang, usePreQuote]);
 
-  // TRANSLATE QUOTE
-  useEffect(() => {}, []);
-
   // REDO
   useEffect(() => {
     if (redo) {
-      console.log("clicked REDO");
-
       setCurQuoteArr(previousQuotes[0]);
       setNxtQuoteArr(previousQuotes[1]);
       setGreyout(true);
       if (previousQuotes.length > 2) {
         setPreQuoteIdx(2);
-        console.log("pre is more than 2");
         setUsePreQuote(true);
       }
       setRedo(false);
