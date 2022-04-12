@@ -41,18 +41,13 @@ describe("Main.js Unit Testing - Layout", () => {
     expect(timer).toHaveTextContent(props.initialTime);
   });
 
-  it("grays out next quote", () => {
-    const styles = window.getComputedStyle(nxtQuote);
-    expect(styles.opacity).toBe("0.3");
-  });
-
   it("focuses to input field", () => {
     expect(quoteInputField).toHaveFocus();
   });
 });
 
 describe("Main.js Unit Testing - Style", () => {
-  let component, getByTestId, getAllByTestId, curQuote, quoteInputField, testedInput;
+  let component, getByTestId, getAllByTestId, curQuote, nxtQuote, quoteInputField;
 
   beforeEach(async () => {
     mockFuncs.mockFetchQuoteForStyleTest();
@@ -75,6 +70,7 @@ describe("Main.js Unit Testing - Style", () => {
     getByTestId = component.getByTestId;
     getAllByTestId = component.getAllByTestId;
     curQuote = getByTestId("curQuote");
+    nxtQuote = getByTestId("nxtQuote");
     quoteInputField = getByTestId("quoteInputField");
   });
 
@@ -121,6 +117,10 @@ describe("Main.js Unit Testing - Style", () => {
     for (let x = 16; x < eles.length; x += 2) {
       expect(eles[x]).toHaveClass("greyout");
     }
+  });
+
+  it("greys out next quote", async () => {
+    expect(nxtQuote).toHaveClass("greyout");
   });
 });
 
