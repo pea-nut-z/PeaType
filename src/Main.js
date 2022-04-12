@@ -36,6 +36,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   //ELEMENTS
   const quotesDisplayRef = useRef();
   const curQuoteRef = useRef();
+  const timerRef = useRef();
   const curWordRef = useRef();
   const curInputContainerRef = useRef();
   const inputFieldRef = useRef();
@@ -116,7 +117,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     };
 
     const disableKeys = (e) => {
-      if (e.key === "Enter" || (e.key === " " && inputFieldRef.current.textContent === "")) {
+      const input = inputFieldRef.current.textContent;
+      if (e.key === "Enter" || (e.key === " " && input === "") || input.length > 19) {
         disableEvent(e);
       }
     };
@@ -231,6 +233,9 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         const currentTime = new Date();
         const timeLeft = timer - Math.floor((currentTime - startTime) / 1000);
         setTimer(timeLeft);
+        if (timeLeft < 6) {
+          timerRef.current.style.color = "red";
+        }
         if (timeLeft === 0) {
           clearInterval(interval);
           setStartTimer(false);
@@ -320,7 +325,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         </button>
       </div>
       {!showResult && (
-        <section className="timer" data-testid="timer">
+        <section ref={timerRef} className="timer" data-testid="timer">
           {timer}
         </section>
       )}

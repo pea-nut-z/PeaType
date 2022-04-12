@@ -32,6 +32,10 @@ describe("Main.js Unit Testing - Layout", () => {
     cleanup();
   });
 
+  it("greys out next quote", async () => {
+    expect(nxtQuote).toHaveClass("greyout");
+  });
+
   it("displays two quotes in English", () => {
     expect(curQuote.lastChild).toHaveTextContent("English.");
     expect(nxtQuote).toHaveTextContent("Second English.");
@@ -47,7 +51,7 @@ describe("Main.js Unit Testing - Layout", () => {
 });
 
 describe("Main.js Unit Testing - Style", () => {
-  let component, getByTestId, getAllByTestId, curQuote, nxtQuote, quoteInputField;
+  let component, getByTestId, getAllByTestId, timer, curQuote, nxtQuote, quoteInputField;
 
   beforeEach(async () => {
     mockFuncs.mockFetchQuoteForStyleTest();
@@ -63,12 +67,18 @@ describe("Main.js Unit Testing - Style", () => {
       }
     };
 
+    const props = {
+      selectedLang: "en",
+      initialTime: 6,
+    };
+
     await act(async () => {
-      component = await render(<Main selectedLang="en" />);
+      component = await render(<Main {...props} />);
     });
 
     getByTestId = component.getByTestId;
     getAllByTestId = component.getAllByTestId;
+    timer = getByTestId("timer");
     curQuote = getByTestId("curQuote");
     nxtQuote = getByTestId("nxtQuote");
     quoteInputField = getByTestId("quoteInputField");
@@ -119,8 +129,16 @@ describe("Main.js Unit Testing - Style", () => {
     }
   });
 
-  it("greys out next quote", async () => {
-    expect(nxtQuote).toHaveClass("greyout");
+  it("styles timer in red for the last 5 seconds left", async () => {
+    await act(async () => {
+      await userEvent.keyboard("O ");
+    });
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 1000));
+    });
+
+    const styles = window.getComputedStyle(timer);
+    expect(styles.color).toBe("red");
   });
 });
 
@@ -371,6 +389,7 @@ describe("Main.js Unit Testing - Others", () => {
   afterEach(() => {
     cleanup();
   });
+  ``;
 
   it("clears input field after pressing space", () => {
     userEvent.keyboard("Ff ");
@@ -385,6 +404,11 @@ describe("Main.js Unit Testing - Others", () => {
   it("disregards entry of space without input", () => {
     userEvent.keyboard(" ");
     expect(quoteInputField).toHaveTextContent("");
+  });
+
+  it("restricts maximum input to 20 characters", () => {
+    userEvent.keyboard("aaaaaaaaaaaaaaaaaaaaa");
+    expect(quoteInputField.textContent).toHaveLength(20);
   });
 
   it("starts timer at first input", async () => {
