@@ -210,10 +210,9 @@ describe("Main.js Unit Testing - Fetch in Spanish", () => {
 });
 
 describe("Main.js Unit Testing - Fetch in English", () => {
-  let component, getByTestId, getAllByTestId, curQuote, nxtQuote, redo;
+  let component, getByTestId, nxtQuote;
   beforeEach(async () => {
     mockFuncs.mockFetchQuote();
-    mockFuncs.mockTranslateQuote();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
 
@@ -222,10 +221,7 @@ describe("Main.js Unit Testing - Fetch in English", () => {
     });
 
     getByTestId = component.getByTestId;
-    getAllByTestId = component.getAllByTestId;
-    curQuote = getByTestId("curQuote");
     nxtQuote = getByTestId("nxtQuote");
-    redo = getByTestId("redo");
 
     await act(async () => {
       await userEvent.keyboard("First ");
@@ -322,6 +318,7 @@ describe("Main.js Unit Testing - Result", () => {
   beforeEach(async () => {
     mockFuncs.mockFetchQuote();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
 
     await act(async () => {
       component = await render(<Main {...props} />);
@@ -335,7 +332,7 @@ describe("Main.js Unit Testing - Result", () => {
 
   it("displays WPM when time is up ", async () => {
     await act(async () => {
-      userEvent.keyboard("First ");
+      await userEvent.keyboard("First ");
       await new Promise((r) => setTimeout(r, 1000));
     });
     expect(getByTestId("wpm")).toHaveTextContent("WPM: 72");
@@ -343,7 +340,7 @@ describe("Main.js Unit Testing - Result", () => {
 
   it("displays ACC when time is up", async () => {
     await act(async () => {
-      userEvent.keyboard("First ");
+      await userEvent.keyboard("First ");
       await new Promise((r) => setTimeout(r, 2000));
     });
     expect(getByTestId("acc")).toHaveTextContent("ACC: 100");

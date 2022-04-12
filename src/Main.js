@@ -48,23 +48,22 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
     const input = e.currentTarget.textContent;
     const inputToCheck = isLastWord ? input : input.trim();
-    const inputToPush = isLastWord ? input + " " : input;
     const lastChar = e.nativeEvent.data;
     const curWordSubStr = curWord.substring(0, input.length);
     let fontColor = inputToCheck === curWordSubStr ? "black" : "red";
 
     if ((!isLastWord && lastChar === " ") || (isLastWord && lastChar === ".")) {
       // CALCULATIONS
-      setTotalChars(totalChars + input.length);
+      const curWordLen = isLastWord ? curWord.length : curWord.length + 1;
+      setTotalChars(totalChars + curWordLen);
       setTotalCorrectChars(
         totalCorrectChars + helper.getNumOfCorrectChar(curWord, inputToCheck, isLastWord)
       );
-
       // PUSH TESTED WORD TO AN ELEMENT
       const span = document.createElement("span");
       span.setAttribute("class", "tested-word");
       span.setAttribute("data-testid", "testedWord");
-      span.textContent = inputToPush;
+      span.textContent = input;
       curInputContainerRef.current.insertBefore(span, curInputContainerRef.current.lastChild);
       inputFieldRef.current.textContent = null;
       curWordRef.current.style.color = fontColor;
@@ -177,12 +176,12 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         firstQuote = await helper.translateQuote(selectedLang, firstQuote);
         secondQuote = await helper.translateQuote(selectedLang, secondQuote);
       }
-      // let firstQuote = ["First", " ", "English."];
+      // let firstQuote =  ["First", " ", "English."];
       // let secondQuote = ["Second", " ", "English."];
       setCurQuoteArr(firstQuote);
-      setGreyout(true);
       setNxtQuoteArr(secondQuote);
       setPreviousQuotes([firstQuote, secondQuote]);
+      setGreyout(true);
     })();
   }, [selectedLang, fetchQuotes]);
 
