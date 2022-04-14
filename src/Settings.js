@@ -72,19 +72,17 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
       const nxtNode = keyNode === null || keyNode === lastNode ? 0 : keyNode + 1;
       list[nxtNode].classList.add("hilight");
       setKeyNode(nxtNode);
+      if (keyNode === null) return;
+      keyNode !== mouseNode && list[keyNode].classList.remove("hilight");
       langListRef.current.children[nxtNode].scrollIntoView();
     }
 
     if (key === "ArrowUp") {
       const preNode = keyNode === 0 ? lastNode : keyNode - 1;
       list[preNode].classList.add("hilight");
+      keyNode !== mouseNode && list[keyNode].classList.remove("hilight");
       setKeyNode(preNode);
       langListRef.current.children[preNode].scrollIntoView();
-    }
-
-    // KEY SELECTOR DOES NOT OVERWRITE MOUSE SELECTOR
-    if (keyNode !== mouseNode) {
-      list[keyNode].classList.remove("hilight");
     }
 
     if (key === "Enter" && showLangList) {
