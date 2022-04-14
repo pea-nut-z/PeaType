@@ -13,7 +13,7 @@ const secrets = {
 
 export const credentials = JSON.parse(JSON.stringify(secrets));
 const LANG_DATA_API_URL = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
-const RANDOM_QUOTE_API_URL = "http://api.quotable.io/random";
+const RANDOM_QUOTE_API_URL = "https://api.quotable.io/random";
 
 export const fetchQuote = async () => {
   try {
