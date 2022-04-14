@@ -1,6 +1,6 @@
 ## Typing Test Website
 
-[Link to site](https://pea-nut-z.github.io/PeaType/)
+[Link to site](https://peatype.herokuapp.com/)
 
 ### Context
 
