@@ -339,7 +339,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       )}
       <div className="test-container">
         <div ref={quotesDisplayRef} className="quotes-display">
-          <div data-testid="curQuote" ref={curQuoteRef}>
+          <div className="cur-quote" data-testid="curQuote" ref={curQuoteRef}>
             {curQuoteArr &&
               curQuoteArr.map((str, idx) => {
                 return (
@@ -354,7 +354,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
                 );
               })}
           </div>
-          <div data-testid="nxtQuote" className="greyout">
+          <div data-testid="nxtQuote" className="nxt-quote greyout">
             {nxtQuoteArr && nxtQuoteArr.join("")}
           </div>
         </div>

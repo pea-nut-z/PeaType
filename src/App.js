@@ -7,7 +7,7 @@ function App() {
   const [openSettings, setOpenSettings] = useState(false);
   const [selectedLang, setSelectedLang] = useState("en");
   const [selectedName, setSelectedName] = useState("English");
-  const [selectedTime, setSelectedTime] = useState(15);
+  const [selectedTime, setSelectedTime] = useState(1);
 
   const buttonRef = useRef();
 
@@ -29,6 +29,7 @@ function App() {
   return (
     <div
       data-testid="app"
+      className="app"
       onClick={() => {
         openSettings && toggleSettings();
       }}
@@ -47,7 +48,7 @@ function App() {
           changeSettings={changeSettings}
         />
       )}
-      <main style={{ height: "500px" }}>
+      <main>
         {<Main openSettings={openSettings} selectedLang={selectedLang} initialTime={selectedTime} />}
       </main>
     </div>
