@@ -32,6 +32,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   //CALCULATIONS
   const [totalChars, setTotalChars] = useState(0);
   const [totalCorrectChars, setTotalCorrectChars] = useState(0);
+  const periods = [".", "!", ":", "।", "።", "|", "။"];
 
   //ELEMENTS
   const quotesDisplayRef = useRef();
@@ -53,7 +54,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     const curWordSubStr = curWord.substring(0, input.length);
     let fontColor = inputToCheck === curWordSubStr ? "black" : "red";
 
-    if ((!isLastWord && lastChar === " ") || (isLastWord && lastChar === ".")) {
+    if ((!isLastWord && lastChar === " ") || (isLastWord && periods.includes(lastChar))) {
       // CALCULATIONS
       const curWordLen = isLastWord ? curWord.length : curWord.length + 1;
       setTotalChars(totalChars + curWordLen);
@@ -84,8 +85,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         testedLinesRef.current.appendChild(testedLine);
 
         // RESET CURRENT QUOTE STYLES
-        const curQuoteChildren = curQuoteRef.current.children;
-        Array.from(curQuoteChildren).forEach((child) => {
+        Array.from(curQuoteRef.current.children).forEach((child) => {
           child.style.color = "black";
         });
 
@@ -108,6 +108,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   };
 
   // EVENT LISTENERS
+
   useEffect(() => {
     const inputEle = inputFieldRef.current;
     const quotesDisplay = quotesDisplayRef.current;
@@ -147,12 +148,11 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   useEffect(() => {
     if (reset) {
       inputFieldRef.current.textContent = null;
+      testedLinesRef.current.textContent = null;
       while (curInputContainerRef.current.children.length > 1) {
         curInputContainerRef.current.removeChild(curInputContainerRef.current.firstChild);
       }
-      testedLinesRef.current.textContent = null;
-      const curQuoteChildren = curQuoteRef.current.children;
-      Array.from(curQuoteChildren).forEach((child) => {
+      Array.from(curQuoteRef.current.children).forEach((child) => {
         child.style.color = "black";
       });
       setWordIdx(0);
@@ -237,6 +237,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           timerRef.current.style.color = "red";
         }
         if (timeLeft === 0) {
+          timerRef.current.style.color = "black";
           clearInterval(interval);
           setStartTimer(false);
           setAllowInput(false);

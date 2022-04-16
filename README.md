@@ -8,4 +8,18 @@ Under settings you can choose your test time frame and language - by default it 
 
 ### Road blocks
 
-Due to grammar differences in languages, some languages do not have space between words. The spacing plays an important role in my current code, it is an indication to run a function which checks if the input for a word is correct. Therefore, certain selections of language will break the code. This issue will be resolved soon.
+Selecting the languages listed below will break my current code. The structure of these languages are different from others, and my code does not cover that at the moment. These issues will be resolved soon.
+
+The following languages are written from right to left:
+-Arabic
+-Urdu
+-Hebrew
+-Persian
+-Sindhi
+
+The following languages do not have space between words:
+-Chinese
+-Japanese
+-Lao
+-Khmer
+-Thai
