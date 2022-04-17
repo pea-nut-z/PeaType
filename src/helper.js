@@ -10,14 +10,16 @@ const secrets = {
   auth_provider_x509_cert_url: process.env.REACT_APP_auth_provider_x509_cert_url,
   client_x509_cert_url: process.env.REACT_APP_client_x509_cert_url,
 };
-const asianLangs = [
-  "zh-TW", //"Chinese (Traditional)",
-  "zh-CN", //"Chinese (Simplified)"
+const noSpaceLangs = [
+  "zh-TW", //"Chinese(Traditional)",
+  "zh-CN", //"Chinese(Simplified)"
   "ja", //"Japanese"
   "lo", //"Lao"
   "km", // "Khmer"
   "th", // "Thai"
 ];
+
+const rightToLeftLangs = [];
 
 export const fullstop = [".", "!", ":", "।", "።", "|", "။"];
 const addSpace = (quote) => {
@@ -57,7 +59,7 @@ export const translateQuote = async (toLang, quote) => {
       .then((res) => {
         const quote = res.data.translations[0].translatedText;
         let result;
-        if (asianLangs.includes(toLang)) {
+        if (noSpaceLangs.includes(toLang)) {
           result = addSpace(quote);
         } else {
           result = quote.split(/(\s+)/);

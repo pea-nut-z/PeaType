@@ -44,6 +44,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const testedLinesRef = useRef();
 
   const handleOtherInput = (e) => {
+    console.log({ curQuoteArr });
+
     if (!startTimer) {
       setStartTimer(true);
     }
@@ -148,6 +150,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     (async () => {
       let firstQuote = await helper.fetchQuote();
       let secondQuote = await helper.fetchQuote();
+      console.log({ firstQuote });
+
       if (selectedLang !== "en") {
         firstQuote = await helper.translateQuote(selectedLang, firstQuote);
         secondQuote = await helper.translateQuote(selectedLang, secondQuote);
