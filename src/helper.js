@@ -10,6 +10,27 @@ const secrets = {
   auth_provider_x509_cert_url: process.env.REACT_APP_auth_provider_x509_cert_url,
   client_x509_cert_url: process.env.REACT_APP_client_x509_cert_url,
 };
+const asianLangs = [
+  "zh-TW", //"Chinese (Traditional)",
+  "zh-CN", //"Chinese (Simplified)"
+  "ja", //"Japanese"
+  "lo", //"Lao"
+  "km", // "Khmer"
+  "th", // "Thai"
+];
+
+export const fullstop = [".", "!", ":", "।", "።", "|", "။"];
+const addSpace = (quote) => {
+  const arr = quote.split("");
+  let x = 0;
+  while (x < arr.length - 2) {
+    const ran = Math.floor(Math.random() * (3 - 1) + 1);
+    arr.splice(x + ran, 0, " ");
+    x = x + ran + 1;
+  }
+  const result = arr.join("").split(/(\s+)/);
+  return result;
+};
 
 export const credentials = JSON.parse(JSON.stringify(secrets));
 const LANG_DATA_API_URL = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
@@ -33,7 +54,16 @@ export const translateQuote = async (toLang, quote) => {
   try {
     return await fetch(url)
       .then((res) => res.json())
-      .then((result) => result.data.translations[0].translatedText.split(/(\s+)/));
+      .then((res) => {
+        const quote = res.data.translations[0].translatedText;
+        let result;
+        if (asianLangs.includes(toLang)) {
+          result = addSpace(quote);
+        } else {
+          result = quote.split(/(\s+)/);
+        }
+        return result;
+      });
   } catch (error) {
     console.log("Translate quote error", error);
   }

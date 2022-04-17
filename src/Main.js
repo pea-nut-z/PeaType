@@ -14,6 +14,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [timer, setTimer] = useState(initialTime);
 
   // QUOTE DISPLAY
+  // const [langType, setLangType] = useState(null);
   const [curQuoteArr, setCurQuoteArr] = useState(null);
   const [nxtQuoteArr, setNxtQuoteArr] = useState(null);
   const [wordIdx, setWordIdx] = useState(0);
@@ -23,7 +24,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [previousQuotes, setPreviousQuotes] = useState([]);
   const [usePreQuote, setUsePreQuote] = useState(false);
   const [preQuoteIdx, setPreQuoteIdx] = useState(0);
-  const [fetchNxtQuote, setFetchNxtQuote] = useState(false);
+  const [getNxtQuote, setGetNxtQuote] = useState(false);
   const [greyout, setGreyout] = useState(false);
 
   // INPUT FIELD
@@ -32,7 +33,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   //CALCULATIONS
   const [totalChars, setTotalChars] = useState(0);
   const [totalCorrectChars, setTotalCorrectChars] = useState(0);
-  const periods = [".", "!", ":", "।", "።", "|", "။"];
 
   //ELEMENTS
   const quotesDisplayRef = useRef();
@@ -43,7 +43,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const inputFieldRef = useRef();
   const testedLinesRef = useRef();
 
-  const handleInput = (e) => {
+  const handleOtherInput = (e) => {
     if (!startTimer) {
       setStartTimer(true);
     }
@@ -54,7 +54,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     const curWordSubStr = curWord.substring(0, input.length);
     let fontColor = inputToCheck === curWordSubStr ? "black" : "red";
 
-    if ((!isLastWord && lastChar === " ") || (isLastWord && periods.includes(lastChar))) {
+    if ((!isLastWord && lastChar === " ") || (isLastWord && helper.fullstop.includes(lastChar))) {
       // CALCULATIONS
       const curWordLen = isLastWord ? curWord.length : curWord.length + 1;
       setTotalChars(totalChars + curWordLen);
@@ -70,33 +70,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       inputFieldRef.current.textContent = null;
       curWordRef.current.style.color = fontColor;
       span.style.color = fontColor;
-
-      // SET UP FOR NEXT QUOTE
-      if (isLastWord) {
-        // Append words for current quote to one element
-        const testedLine = document.createElement("div");
-        testedLine.setAttribute("class", "tested-line");
-        const testedWords = document.getElementsByClassName("tested-word");
-        Array.from(testedWords).forEach((word) => {
-          word.removeAttribute("class");
-          word.removeAttribute("data-testid");
-          testedLine.appendChild(word);
-        });
-        testedLinesRef.current.appendChild(testedLine);
-
-        // RESET CURRENT QUOTE STYLES
-        Array.from(curQuoteRef.current.children).forEach((child) => {
-          child.style.color = "black";
-        });
-
-        setWordIdx(0);
-        setIsLastWord(false);
-        setCurQuoteArr(nxtQuoteArr);
-        setGreyout(true);
-        setFetchNxtQuote(true);
-      } else {
-        setWordIdx(wordIdx + 2);
-      }
+      // FETCH NEXT QUOTE OR MOVE ON TO NEXT WORD
+      isLastWord ? setGetNxtQuote(true) : setWordIdx(wordIdx + 2);
     } else {
       inputFieldRef.current.style.color = fontColor;
       curWordRef.current.style.color = fontColor;
@@ -108,7 +83,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   };
 
   // EVENT LISTENERS
-
   useEffect(() => {
     const inputEle = inputFieldRef.current;
     const quotesDisplay = quotesDisplayRef.current;
@@ -126,17 +100,17 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
     const eventNames = ["copy", "paste", "blur", "cut", "delete", "mouseup"];
 
-    const setScrollState = () => setGreyout(true);
+    const resetGreyout = () => setGreyout(true);
 
     inputEle.addEventListener("keydown", disableKeys);
     eventNames.forEach((name) => inputEle.addEventListener(name, disableEvent));
-    quotesDisplay.addEventListener("scroll", setScrollState);
-    window.addEventListener("resize", setScrollState);
+    quotesDisplay.addEventListener("scroll", resetGreyout);
+    window.addEventListener("resize", resetGreyout);
     return () => {
       inputEle.removeEventListener("keydown", disableKeys);
       eventNames.forEach((name) => inputEle.removeEventListener(name, disableEvent));
-      quotesDisplay.removeEventListener("scroll", setScrollState);
-      window.removeEventListener("resize", setScrollState);
+      quotesDisplay.removeEventListener("scroll", resetGreyout);
+      window.removeEventListener("resize", resetGreyout);
     };
   }, []);
 
@@ -187,9 +161,30 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     })();
   }, [selectedLang, fetchQuotes]);
 
-  // FETCH NEXT QUOTE
+  // GET NEXT QUOTE
   useEffect(() => {
-    if (fetchNxtQuote) {
+    if (getNxtQuote) {
+      // SET UP FOR NEXT QUOTE
+      // APPEND TESTED WORDS OF CURRENT QUOTE TO AN ELEMENT
+      const testedLine = document.createElement("div");
+      testedLine.setAttribute("class", "tested-line");
+      const testedWords = document.getElementsByClassName("tested-word");
+      Array.from(testedWords).forEach((word) => {
+        word.removeAttribute("class");
+        word.removeAttribute("data-testid");
+        testedLine.appendChild(word);
+      });
+      testedLinesRef.current.appendChild(testedLine);
+      // RESET CURRENT QUOTE STYLES
+      Array.from(curQuoteRef.current.children).forEach((child) => {
+        child.style.color = "black";
+      });
+      setWordIdx(0);
+      setIsLastWord(false);
+      setCurQuoteArr(nxtQuoteArr);
+      setGreyout(true);
+
+      // FETCH OR USE PREVIOUS QUOTES
       if (usePreQuote) {
         let nxtQuote = previousQuotes[preQuoteIdx];
         setNxtQuoteArr(nxtQuote);
@@ -206,9 +201,9 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           setPreviousQuotes([...previousQuotes, nxtQuote]);
         })();
       }
-      setFetchNxtQuote(false);
+      setGetNxtQuote(false);
     }
-  }, [fetchNxtQuote, preQuoteIdx, previousQuotes, selectedLang, usePreQuote]);
+  }, [getNxtQuote, preQuoteIdx, previousQuotes, selectedLang, usePreQuote]);
 
   // REDO
   useEffect(() => {
@@ -377,7 +372,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
-              onInput={handleInput}
+              onInput={handleOtherInput}
             ></div>
           </div>
         </div>
