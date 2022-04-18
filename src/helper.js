@@ -10,6 +10,8 @@ const secrets = {
   auth_provider_x509_cert_url: process.env.REACT_APP_auth_provider_x509_cert_url,
   client_x509_cert_url: process.env.REACT_APP_client_x509_cert_url,
 };
+export const credentials = JSON.parse(JSON.stringify(secrets));
+
 const noSpaceLangs = [
   "zh-TW", //"Chinese(Traditional)",
   "zh-CN", //"Chinese(Simplified)"
@@ -18,10 +20,15 @@ const noSpaceLangs = [
   "km", // "Khmer"
   "th", // "Thai"
 ];
-
-const rightToLeftLangs = [];
-
+export const rightToLeftLangs = [
+  "ar", // Arabic
+  "ur", // Urdu
+  "iw", // Hebrew
+  "fa", // Persian
+  "sd", // Sindhi
+];
 export const fullstop = [".", "!", ":", "।", "።", "|", "။"];
+
 const addSpace = (quote) => {
   const arr = quote.split("");
   let x = 0;
@@ -34,7 +41,6 @@ const addSpace = (quote) => {
   return result;
 };
 
-export const credentials = JSON.parse(JSON.stringify(secrets));
 const LANG_DATA_API_URL = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
 const RANDOM_QUOTE_API_URL = "https://api.quotable.io/random";
 

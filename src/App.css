@@ -150,6 +150,11 @@ button.active {
   opacity: 0.3;
 }
 
+.reverse {
+  unicode-bidi:bidi-override; 
+  direction: RTL; 
+}
+
 /* SCROLLBAR */
 ::-webkit-scrollbar {
   width: 20px;

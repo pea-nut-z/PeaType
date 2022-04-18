@@ -35,17 +35,16 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [totalCorrectChars, setTotalCorrectChars] = useState(0);
 
   //ELEMENTS
+  const testContainerRef = useRef();
   const quotesDisplayRef = useRef();
   const curQuoteRef = useRef();
   const timerRef = useRef();
-  const curWordRef = useRef();
   const curInputContainerRef = useRef();
-  const inputFieldRef = useRef();
   const testedLinesRef = useRef();
+  const curWordRef = useRef();
+  const inputFieldRef = useRef();
 
-  const handleOtherInput = (e) => {
-    console.log({ curQuoteArr });
-
+  const handleInput = (e) => {
     if (!startTimer) {
       setStartTimer(true);
     }
@@ -105,12 +104,12 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     const resetGreyout = () => setGreyout(true);
 
     inputEle.addEventListener("keydown", disableKeys);
-    eventNames.forEach((name) => inputEle.addEventListener(name, disableEvent));
+    // eventNames.forEach((name) => inputEle.addEventListener(name, disableEvent));
     quotesDisplay.addEventListener("scroll", resetGreyout);
     window.addEventListener("resize", resetGreyout);
     return () => {
       inputEle.removeEventListener("keydown", disableKeys);
-      eventNames.forEach((name) => inputEle.removeEventListener(name, disableEvent));
+      // eventNames.forEach((name) => inputEle.removeEventListener(name, disableEvent));
       quotesDisplay.removeEventListener("scroll", resetGreyout);
       window.removeEventListener("resize", resetGreyout);
     };
@@ -149,15 +148,23 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   useEffect(() => {
     (async () => {
       let firstQuote = await helper.fetchQuote();
-      let secondQuote = await helper.fetchQuote();
-      console.log({ firstQuote });
+      console.log("English", { firstQuote });
 
+      let secondQuote = await helper.fetchQuote();
       if (selectedLang !== "en") {
         firstQuote = await helper.translateQuote(selectedLang, firstQuote);
         secondQuote = await helper.translateQuote(selectedLang, secondQuote);
       }
+      console.log({ firstQuote });
+
+      if (helper.rightToLeftLangs.includes(selectedLang)) {
+        testContainerRef.current.classList.add("reverse");
+      } else {
+        testContainerRef.current.classList.remove("reverse");
+      }
       // let firstQuote =  ["First", " ", "English."];
       // let secondQuote = ["Second", " ", "English."];
+
       setCurQuoteArr(firstQuote);
       setNxtQuoteArr(secondQuote);
       setPreviousQuotes([firstQuote, secondQuote]);
@@ -337,7 +344,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           </div>
         </section>
       )}
-      <div className="test-container">
+      <div ref={testContainerRef} className="test-container">
         <div ref={quotesDisplayRef} className="quotes-display">
           <div data-testid="curQuote" ref={curQuoteRef}>
             {curQuoteArr &&
@@ -376,7 +383,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
               autoComplete="off"
               autoCorrect="off"
               autoCapitalize="off"
-              onInput={handleOtherInput}
+              onInput={handleInput}
             ></div>
           </div>
         </div>
