@@ -55,7 +55,11 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     const curWordSubStr = curWord.substring(0, input.length);
     let fontColor = inputToCheck === curWordSubStr ? "black" : "red";
 
-    if ((!isLastWord && lastChar === " ") || (isLastWord && helper.fullstop.includes(lastChar))) {
+    if (
+      (!isLastWord && lastChar === " ") ||
+      (isLastWord && helper.fullstop.includes(lastChar)) ||
+      (isLastWord && selectedLang === "th" && input.length === curWord.length) // THAI
+    ) {
       // CALCULATIONS
       const curWordLen = isLastWord ? curWord.length : curWord.length + 1;
       setTotalChars(totalChars + curWordLen);
@@ -71,7 +75,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       inputFieldRef.current.textContent = null;
       curWordRef.current.style.color = fontColor;
       span.style.color = fontColor;
-      // FETCH NEXT QUOTE OR MOVE ON TO NEXT WORD
+      // GET NEXT QUOTE OR MOVE ON TO NEXT WORD
       isLastWord ? setGetNxtQuote(true) : setWordIdx(wordIdx + 2);
     } else {
       inputFieldRef.current.style.color = fontColor;
@@ -148,15 +152,11 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   useEffect(() => {
     (async () => {
       let firstQuote = await helper.fetchQuote();
-      console.log("English", { firstQuote });
-
       let secondQuote = await helper.fetchQuote();
       if (selectedLang !== "en") {
         firstQuote = await helper.translateQuote(selectedLang, firstQuote);
         secondQuote = await helper.translateQuote(selectedLang, secondQuote);
       }
-      console.log({ firstQuote });
-
       if (helper.rightToLeftLangs.includes(selectedLang)) {
         testContainerRef.current.classList.add("reverse");
       } else {
@@ -164,7 +164,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       }
       // let firstQuote =  ["First", " ", "English."];
       // let secondQuote = ["Second", " ", "English."];
-
       setCurQuoteArr(firstQuote);
       setNxtQuoteArr(secondQuote);
       setPreviousQuotes([firstQuote, secondQuote]);

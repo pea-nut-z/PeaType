@@ -93,6 +93,7 @@ export const getNumOfCorrectChar = (word, input, isLastWord) => {
     });
   }
 
+  // ADD CORRECT SPACING
   if (!isLastWord && inputLen === wordLen) {
     count++;
   }
