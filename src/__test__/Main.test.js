@@ -142,7 +142,90 @@ describe("Main.js Unit Testing - Style", () => {
   });
 });
 
-describe("Main.js Unit Testing - Fetch in Spanish", () => {
+describe("Main.js Unit Testing - Test in English", () => {
+  let component, getByTestId, nxtQuote;
+  beforeEach(async () => {
+    mockFuncs.mockFetchQuote();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
+
+    await act(async () => {
+      component = await render(<Main selectedLang="en" />);
+    });
+
+    getByTestId = component.getByTestId;
+    nxtQuote = getByTestId("nxtQuote");
+
+    await act(async () => {
+      await userEvent.keyboard("First ");
+    });
+    await act(async () => {
+      await userEvent.keyboard("English.");
+    });
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("fetches next quote in English", () => {
+    expect(nxtQuote).toHaveTextContent("Third English.");
+  });
+});
+
+describe("Main.js Unit Testing - Test in Thai", () => {
+  let component, getByTestId, curQuote;
+  beforeEach(async () => {
+    mockFuncs.mockFetchQuote();
+    mockFuncs.mockTranslateQuoteInThai();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
+    await act(async () => {
+      component = await render(<Main selectedLang="th" />);
+    });
+    getByTestId = component.getByTestId;
+    curQuote = getByTestId("curQuote");
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("handles Thai input correctly without punctuation", async () => {
+    await act(async () => {
+      await userEvent.keyboard("First ");
+    });
+    await act(async () => {
+      await userEvent.keyboard("Thai");
+    });
+    expect(curQuote).toHaveTextContent("Second Thai");
+  });
+});
+
+describe("Main.js Unit Testing - Test in Arabic", () => {
+  let component, getByTestId, testContainer;
+  beforeEach(async () => {
+    mockFuncs.mockFetchQuote();
+    mockFuncs.mockTranslateQuoteInThai();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
+    await act(async () => {
+      component = await render(<Main selectedLang="ar" />);
+    });
+    getByTestId = component.getByTestId;
+    testContainer = getByTestId("testContainer");
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("aligns content in test container to the right", async () => {
+    expect(testContainer).toHaveClass("reverse");
+  });
+});
+
+describe("Main.js Unit Testing - Test in Spanish and Quote display", () => {
   let component, getByTestId, getAllByTestId, curQuote, nxtQuote, redo;
 
   beforeEach(async () => {
@@ -224,37 +307,6 @@ describe("Main.js Unit Testing - Fetch in Spanish", () => {
       await userEvent.keyboard("Spanish.");
     });
     expect(nxtQuote).toHaveTextContent("Fifth Spanish.");
-  });
-});
-
-describe("Main.js Unit Testing - Fetch in English", () => {
-  let component, getByTestId, nxtQuote;
-  beforeEach(async () => {
-    mockFuncs.mockFetchQuote();
-    window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
-
-    await act(async () => {
-      component = await render(<Main selectedLang="en" />);
-    });
-
-    getByTestId = component.getByTestId;
-    nxtQuote = getByTestId("nxtQuote");
-
-    await act(async () => {
-      await userEvent.keyboard("First ");
-    });
-    await act(async () => {
-      await userEvent.keyboard("English.");
-    });
-  });
-
-  afterEach(() => {
-    cleanup();
-  });
-
-  it("fetches next quote in English", () => {
-    expect(nxtQuote).toHaveTextContent("Third English.");
   });
 });
 

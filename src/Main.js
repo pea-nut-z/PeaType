@@ -343,7 +343,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           </div>
         </section>
       )}
-      <div ref={testContainerRef} className="test-container">
+      <div ref={testContainerRef} data-testid="testContainer" className="test-container">
         <div ref={quotesDisplayRef} className="quotes-display">
           <div data-testid="curQuote" ref={curQuoteRef}>
             {curQuoteArr &&

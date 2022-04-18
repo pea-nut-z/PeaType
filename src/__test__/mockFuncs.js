@@ -64,3 +64,11 @@ export const mockTranslateQuote = () => {
     .mockImplementationOnce(() => ["Fourth", " ", "Spanish."])
     .mockImplementationOnce(() => ["Fifth", " ", "Spanish."]);
 };
+
+export const mockTranslateQuoteInThai = () => {
+  jest
+    .spyOn(helper, "translateQuote")
+    .mockImplementationOnce(() => ["First", " ", "Thai"])
+    .mockImplementationOnce(() => ["Second", " ", "Thai"])
+    .mockImplementationOnce(() => ["Third", " ", "Thai"]);
+};
