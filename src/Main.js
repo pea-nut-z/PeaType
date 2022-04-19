@@ -43,6 +43,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const testedLinesRef = useRef();
   const curWordRef = useRef();
   const inputFieldRef = useRef();
+  const redoRef = useRef();
+  const newQuoteRef = useRef();
 
   const handleInput = (e) => {
     if (!startTimer) {
@@ -107,15 +109,28 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
     const resetGreyout = () => setGreyout(true);
 
+    const runShortcuts = (e) => {
+      if (e.ctrlKey && e.key === "n") {
+        newQuoteRef.current.click();
+        newQuoteRef.current.classList.toggle("active");
+      }
+      if (e.ctrlKey && e.key === "r") {
+        redoRef.current.click();
+        redoRef.current.classList.toggle("active");
+      }
+    };
+
     inputEle.addEventListener("keydown", disableKeys);
-    // eventNames.forEach((name) => inputEle.addEventListener(name, disableEvent));
+    eventNames.forEach((name) => inputEle.addEventListener(name, disableEvent));
     quotesDisplay.addEventListener("scroll", resetGreyout);
     window.addEventListener("resize", resetGreyout);
+    window.addEventListener("keydown", runShortcuts);
     return () => {
       inputEle.removeEventListener("keydown", disableKeys);
-      // eventNames.forEach((name) => inputEle.removeEventListener(name, disableEvent));
+      eventNames.forEach((name) => inputEle.removeEventListener(name, disableEvent));
       quotesDisplay.removeEventListener("scroll", resetGreyout);
       window.removeEventListener("resize", resetGreyout);
+      window.removeEventListener("keydown", runShortcuts);
     };
   }, []);
 
@@ -303,6 +318,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     <section className="main-container">
       <div className="button-container">
         <button
+          ref={redoRef}
           data-testid="redo"
           type="button"
           aria-label="Redo same quote"
@@ -317,6 +333,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         </button>
         <button
           data-testid="newQuote"
+          ref={newQuoteRef}
           className="new-quote-btn"
           type="button"
           aria-label="Get new quote"

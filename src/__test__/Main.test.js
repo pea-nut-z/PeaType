@@ -1,5 +1,4 @@
-import React, { useState, useRef } from "react";
-
+import React from "react";
 import { render, cleanup, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
@@ -225,7 +224,7 @@ describe("Main.js Unit Testing - Test in Arabic", () => {
   });
 });
 
-describe("Main.js Unit Testing - Test in Spanish and Quote display", () => {
+describe("Main.js Unit Testing - Quote display", () => {
   let component, getByTestId, getAllByTestId, curQuote, nxtQuote, redo;
 
   beforeEach(async () => {
@@ -256,24 +255,12 @@ describe("Main.js Unit Testing - Test in Spanish and Quote display", () => {
     cleanup();
   });
 
-  it("displays quotes in Spanish", () => {
-    expect(curQuote.lastChild).toHaveTextContent("Spanish.");
-    expect(nxtQuote).toHaveTextContent("Third Spanish.");
-  });
-
   it("moves next quote up when current quote is done", () => {
     expect(curQuote.firstChild).toHaveTextContent("Second");
   });
 
   it("fetches a quote in Spanish when next quote is moved up", () => {
     expect(nxtQuote).toHaveTextContent("Third Spanish.");
-  });
-
-  it("resets and works for input of next quote", async () => {
-    userEvent.keyboard("Second ");
-    let testedInput = getAllByTestId("testedWord");
-    expect(testedInput.length).toEqual(1);
-    expect(testedInput[0]).toHaveTextContent("Second");
   });
 
   it("fetches a quote when all previous quotes have been redone after click of Redo", async () => {
@@ -307,6 +294,79 @@ describe("Main.js Unit Testing - Test in Spanish and Quote display", () => {
       await userEvent.keyboard("Spanish.");
     });
     expect(nxtQuote).toHaveTextContent("Fifth Spanish.");
+  });
+});
+
+describe("Main.js Unit Testing - Timer and Input Field", () => {
+  let component, getByTestId, getAllByTestId, quoteInputField, timer;
+
+  const props = {
+    selectedLang: "en",
+    initialTime: 3,
+  };
+
+  beforeEach(async () => {
+    mockFuncs.mockFetchQuote();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
+    await act(async () => {
+      component = await render(<Main {...props} />);
+    });
+
+    getByTestId = component.getByTestId;
+    getAllByTestId = component.getAllByTestId;
+    quoteInputField = getByTestId("quoteInputField");
+    timer = getByTestId("timer");
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("clears input field after pressing space", () => {
+    userEvent.keyboard("Ff ");
+    expect(quoteInputField).toHaveTextContent("");
+  });
+
+  it("pushes entered input to an element", async () => {
+    userEvent.keyboard("First ");
+    let testedInput = getAllByTestId("testedWord");
+    expect(testedInput.length).toEqual(1);
+    expect(testedInput[0]).toHaveTextContent("First");
+  });
+
+  it("stays focussed to input field after entering input and space", () => {
+    userEvent.keyboard("F ");
+    expect(quoteInputField).toHaveFocus();
+  });
+
+  it("disregards entry of space without input", () => {
+    userEvent.keyboard(" ");
+    expect(quoteInputField).toHaveTextContent("");
+  });
+
+  it("restricts maximum input to 20 characters", () => {
+    userEvent.keyboard("aaaaaaaaaaaaaaaaaaaaa");
+    expect(quoteInputField.textContent).toHaveLength(20);
+  });
+
+  it("starts timer at first input", async () => {
+    await act(async () => {
+      userEvent.keyboard("F");
+      await new Promise((r) => setTimeout(r, 4000));
+    });
+    const time = parseInt(timer.textContent);
+    expect(time).toBeLessThan(props.initialTime);
+  });
+
+  it("disables input field when time is up", async () => {
+    await act(async () => {
+      userEvent.keyboard("F");
+      await new Promise((r) => setTimeout(r, 4000));
+    });
+    userEvent.keyboard("i");
+    expect(timer.textContent).toEqual("0");
+    expect(quoteInputField).toHaveTextContent("F");
   });
 });
 
@@ -417,12 +477,12 @@ describe("Main.js Unit Testing - Result", () => {
   });
 });
 
-describe("Main.js Unit Testing - Others", () => {
-  let component, getByTestId, quoteInputField, timer;
+describe("Main.js Unit Testing - Shortcuts", () => {
+  let component, getByTestId, queryAllByTestId, curQuote;
 
   const props = {
     selectedLang: "en",
-    initialTime: 3,
+    initialTime: 15,
   };
 
   beforeEach(async () => {
@@ -432,53 +492,31 @@ describe("Main.js Unit Testing - Others", () => {
     await act(async () => {
       component = await render(<Main {...props} />);
     });
-
     getByTestId = component.getByTestId;
-    quoteInputField = getByTestId("quoteInputField");
-    timer = getByTestId("timer");
+    queryAllByTestId = component.queryAllByTestId;
+    curQuote = getByTestId("curQuote");
   });
 
   afterEach(() => {
     cleanup();
   });
-  ``;
 
-  it("clears input field after pressing space", () => {
-    userEvent.keyboard("Ff ");
-    expect(quoteInputField).toHaveTextContent("");
-  });
-
-  it("stays focussed to input field after entering input and space", () => {
-    userEvent.keyboard("F ");
-    expect(quoteInputField).toHaveFocus();
-  });
-
-  it("disregards entry of space without input", () => {
-    userEvent.keyboard(" ");
-    expect(quoteInputField).toHaveTextContent("");
-  });
-
-  it("restricts maximum input to 20 characters", () => {
-    userEvent.keyboard("aaaaaaaaaaaaaaaaaaaaa");
-    expect(quoteInputField.textContent).toHaveLength(20);
-  });
-
-  it("starts timer at first input", async () => {
+  it("fetches new quotes by pressing control+n", async () => {
     await act(async () => {
-      userEvent.keyboard("F");
-      await new Promise((r) => setTimeout(r, 4000));
+      await userEvent.keyboard("{ctrl}{n}");
     });
-    const time = parseInt(timer.textContent);
-    expect(time).toBeLessThan(props.initialTime);
+    expect(curQuote.firstChild).toHaveTextContent("Third");
   });
 
-  it("disables input field when time is up", async () => {
+  it("redos previous quotes by pressing control+r", async () => {
     await act(async () => {
-      userEvent.keyboard("F");
-      await new Promise((r) => setTimeout(r, 4000));
+      await userEvent.keyboard("F ");
     });
-    userEvent.keyboard("i");
-    expect(timer.textContent).toEqual("0");
-    expect(quoteInputField).toHaveTextContent("F");
+    await act(async () => {
+      await userEvent.keyboard("{ctrl}{r}");
+    });
+    const testedInput = queryAllByTestId("testedWord");
+    expect(testedInput.length).toEqual(0);
+    expect(curQuote.firstChild).toHaveTextContent("First");
   });
 });
