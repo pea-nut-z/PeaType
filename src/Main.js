@@ -75,7 +75,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       span.textContent = input;
       curInputContainerRef.current.insertBefore(span, curInputContainerRef.current.lastChild);
       inputFieldRef.current.textContent = null;
-      curWordRef.current.style.color = fontColor;
+      curWordRef.current.color = fontColor;
       span.style.color = fontColor;
       // GET NEXT QUOTE OR MOVE ON TO NEXT WORD
       isLastWord ? setGetNxtQuote(true) : setWordIdx(wordIdx + 2);
