@@ -14,7 +14,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [timer, setTimer] = useState(initialTime);
 
   // QUOTE DISPLAY
-  // const [langType, setLangType] = useState(null);
   const [curQuoteArr, setCurQuoteArr] = useState(null);
   const [nxtQuoteArr, setNxtQuoteArr] = useState(null);
   const [wordIdx, setWordIdx] = useState(0);
@@ -26,6 +25,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [preQuoteIdx, setPreQuoteIdx] = useState(0);
   const [getNxtQuote, setGetNxtQuote] = useState(false);
   const [greyout, setGreyout] = useState(false);
+  const [error, setError] = useState(null);
 
   // INPUT FIELD
   const [allowInput, setAllowInput] = useState(false);
@@ -165,25 +165,24 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
   // FETCH QUOTES
   useEffect(() => {
-    (async () => {
-      let firstQuote = await helper.fetchQuote();
-      let secondQuote = await helper.fetchQuote();
-      if (selectedLang !== "en") {
-        firstQuote = await helper.translateQuote(selectedLang, firstQuote);
-        secondQuote = await helper.translateQuote(selectedLang, secondQuote);
-      }
-      if (helper.rightToLeftLangs.includes(selectedLang)) {
-        testContainerRef.current.classList.add("reverse");
-      } else {
-        testContainerRef.current.classList.remove("reverse");
-      }
-      // let firstQuote =  ["First", " ", "English."];
-      // let secondQuote = ["Second", " ", "English."];
-      setCurQuoteArr(firstQuote);
-      setNxtQuoteArr(secondQuote);
-      setPreviousQuotes([firstQuote, secondQuote]);
-      setGreyout(true);
-    })();
+    helper
+      .getQuotes(selectedLang)
+      .then((quotes) => {
+        setError(null);
+        setCurQuoteArr(quotes[0]);
+        setNxtQuoteArr(quotes[1]);
+        setPreviousQuotes([quotes[0], quotes[1]]);
+        setGreyout(true);
+
+        if (helper.rightToLeftLangs.includes(selectedLang)) {
+          testContainerRef.current.classList.add("reverse");
+        } else {
+          testContainerRef.current.classList.remove("reverse");
+        }
+      })
+      .catch(() => {
+        setError("Failed to fetch quotes");
+      });
   }, [selectedLang, fetchQuotes]);
 
   // GET NEXT QUOTE
@@ -200,6 +199,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         testedLine.appendChild(word);
       });
       testedLinesRef.current.appendChild(testedLine);
+
       // RESET CURRENT QUOTE STYLES
       Array.from(curQuoteRef.current.children).forEach((child) => {
         child.style.color = "black";
@@ -216,19 +216,22 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         preQuoteIdx === previousQuotes.length - 1
           ? setUsePreQuote(false)
           : setPreQuoteIdx(preQuoteIdx + 1);
+        setError(null);
       } else {
-        (async () => {
-          let nxtQuote = await helper.fetchQuote();
-          if (selectedLang !== "en") {
-            nxtQuote = await helper.translateQuote(selectedLang, nxtQuote);
-          }
-          setNxtQuoteArr(nxtQuote);
-          setPreviousQuotes([...previousQuotes, nxtQuote]);
-        })();
+        helper
+          .getNextQuote(selectedLang)
+          .then((quote) => {
+            setError(null);
+            setNxtQuoteArr(quote);
+            setPreviousQuotes([...previousQuotes, quote]);
+          })
+          .catch(() => {
+            setError("Failed to fetch next quote");
+          });
       }
       setGetNxtQuote(false);
     }
-  }, [getNxtQuote, preQuoteIdx, previousQuotes, selectedLang, usePreQuote]);
+  }, [nxtQuoteArr, getNxtQuote, preQuoteIdx, previousQuotes, selectedLang, usePreQuote]);
 
   // REDO
   useEffect(() => {
@@ -290,7 +293,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     if (curQuoteArr) {
       curWordRef.current.scrollIntoView();
       setCurWord(curQuoteArr[wordIdx]);
-      // at last word index
+      // AT LAST WORD INDEX
       if (wordIdx === curQuoteArr.length - 1) {
         setIsLastWord(true);
       }
@@ -352,6 +355,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           {timer}
         </section>
       )}
+      {error && <section>{error}</section>}
       {showResult && (
         <section data-testid="result" className="result">
           <div data-testid="wpm">WPM: {Math.floor(totalCorrectChars / 5 / (initialTime / 60))}</div>
