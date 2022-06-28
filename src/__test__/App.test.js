@@ -9,8 +9,7 @@ describe("App.js Intergration Testing", () => {
 
   beforeEach(async () => {
     mockFuncs.mockFetchLangData();
-    mockFuncs.mockFetchQuote();
-    mockFuncs.mockTranslateQuote();
+    mockFuncs.mockGetQuotes();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     await act(async () => {

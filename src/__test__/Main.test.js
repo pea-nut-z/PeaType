@@ -14,7 +14,7 @@ describe("Main.js Unit Testing - Layout", () => {
   };
 
   beforeEach(async () => {
-    mockFuncs.mockFetchQuote();
+    mockFuncs.mockGetQuotes();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     await act(async () => {
@@ -144,7 +144,8 @@ describe("Main.js Unit Testing - Style", () => {
 describe("Main.js Unit Testing - Test in English", () => {
   let component, getByTestId, nxtQuote;
   beforeEach(async () => {
-    mockFuncs.mockFetchQuote();
+    mockFuncs.mockGetQuotes();
+    mockFuncs.mockGetNextQuote();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
 
@@ -175,8 +176,8 @@ describe("Main.js Unit Testing - Test in English", () => {
 describe("Main.js Unit Testing - Test in Thai", () => {
   let component, getByTestId, curQuote;
   beforeEach(async () => {
-    mockFuncs.mockFetchQuote();
-    mockFuncs.mockTranslateQuoteInThai();
+    mockFuncs.mockGetQuotes();
+    mockFuncs.mockGetNextQuote();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
     await act(async () => {
@@ -204,8 +205,8 @@ describe("Main.js Unit Testing - Test in Thai", () => {
 describe("Main.js Unit Testing - Test in Arabic", () => {
   let component, getByTestId, testContainer;
   beforeEach(async () => {
-    mockFuncs.mockFetchQuote();
-    mockFuncs.mockTranslateQuoteInThai();
+    mockFuncs.mockGetQuotes();
+    // mockFuncs.mockTranslateQuoteInThai();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
     await act(async () => {
@@ -228,8 +229,8 @@ describe("Main.js Unit Testing - Quote display", () => {
   let component, getByTestId, getAllByTestId, curQuote, nxtQuote, redo;
 
   beforeEach(async () => {
-    mockFuncs.mockFetchQuote();
-    mockFuncs.mockTranslateQuote();
+    mockFuncs.mockGetQuotes();
+    mockFuncs.mockGetNextQuote();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
 
@@ -302,11 +303,11 @@ describe("Main.js Unit Testing - Timer and Input Field", () => {
 
   const props = {
     selectedLang: "en",
-    initialTime: 3,
+    initialTime: 1,
   };
 
   beforeEach(async () => {
-    mockFuncs.mockFetchQuote();
+    mockFuncs.mockGetQuotes();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     await act(async () => {
@@ -353,7 +354,7 @@ describe("Main.js Unit Testing - Timer and Input Field", () => {
   it("starts timer at first input", async () => {
     await act(async () => {
       userEvent.keyboard("F");
-      await new Promise((r) => setTimeout(r, 4000));
+      await new Promise((r) => setTimeout(r, 1500));
     });
     const time = parseInt(timer.textContent);
     expect(time).toBeLessThan(props.initialTime);
@@ -362,7 +363,7 @@ describe("Main.js Unit Testing - Timer and Input Field", () => {
   it("disables input field when time is up", async () => {
     await act(async () => {
       userEvent.keyboard("F");
-      await new Promise((r) => setTimeout(r, 4000));
+      await new Promise((r) => setTimeout(r, 1500));
     });
     userEvent.keyboard("i");
     expect(timer.textContent).toEqual("0");
@@ -384,11 +385,11 @@ describe("Main.js Unit Testing - Buttons", () => {
 
   const props = {
     selectedLang: "en",
-    initialTime: 2,
+    initialTime: 1,
   };
 
   beforeEach(async () => {
-    mockFuncs.mockFetchQuote();
+    mockFuncs.mockGetQuotes();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     await act(async () => {
@@ -446,7 +447,7 @@ describe("Main.js Unit Testing - Result", () => {
   };
 
   beforeEach(async () => {
-    mockFuncs.mockFetchQuote();
+    mockFuncs.mockGetQuotes();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
 
@@ -486,7 +487,7 @@ describe("Main.js Unit Testing - Shortcuts", () => {
   };
 
   beforeEach(async () => {
-    mockFuncs.mockFetchQuote();
+    mockFuncs.mockGetQuotes();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     await act(async () => {
