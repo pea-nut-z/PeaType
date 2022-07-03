@@ -5,7 +5,7 @@ import "@testing-library/jest-dom";
 import Main from "../Main";
 import * as mockFuncs from "./mockFuncs";
 
-describe("Main.js Unit Testing - Layout", () => {
+describe("Layout", () => {
   let component, getByTestId, quoteInputField, curQuote, nxtQuote, timer;
 
   const props = {
@@ -49,11 +49,11 @@ describe("Main.js Unit Testing - Layout", () => {
   });
 });
 
-describe("Main.js Unit Testing - Style", () => {
+describe("Style", () => {
   let component, getByTestId, getAllByTestId, timer, curQuote, nxtQuote, quoteInputField;
 
   beforeEach(async () => {
-    mockFuncs.mockFetchQuoteForStyleTest();
+    mockFuncs.mockGetQuotesForStyleTest();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     let numOfCalls = 0;
@@ -133,7 +133,7 @@ describe("Main.js Unit Testing - Style", () => {
       await userEvent.keyboard("O ");
     });
     await act(async () => {
-      await new Promise((r) => setTimeout(r, 1000));
+      await new Promise((r) => setTimeout(r, 1500));
     });
 
     const styles = window.getComputedStyle(timer);
@@ -141,11 +141,11 @@ describe("Main.js Unit Testing - Style", () => {
   });
 });
 
-describe("Main.js Unit Testing - Test in English", () => {
-  let component, getByTestId, nxtQuote;
+describe("Fetch Errors", () => {
+  let component, getByTestId, nxtQuote, error;
+
   beforeEach(async () => {
-    mockFuncs.mockGetQuotes();
-    mockFuncs.mockGetNextQuote();
+    mockFuncs.mockGetQuotesForErrorTest();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
 
@@ -155,25 +155,29 @@ describe("Main.js Unit Testing - Test in English", () => {
 
     getByTestId = component.getByTestId;
     nxtQuote = getByTestId("nxtQuote");
-
-    await act(async () => {
-      await userEvent.keyboard("First ");
-    });
-    await act(async () => {
-      await userEvent.keyboard("English.");
-    });
+    error = getByTestId("error");
   });
 
   afterEach(() => {
     cleanup();
   });
 
-  it("fetches next quote in English", () => {
-    expect(nxtQuote).toHaveTextContent("Third English.");
+  it("handles error in fetching quotes", () => {
+    expect(error.textContent).toBe("Failed to fetch quotes");
   });
+
+  // it.only("handles error in fetching next quote", async () => {
+  //   await act(async () => {
+  //     await userEvent.keyboard("First ");
+  //   });
+  //   await act(async () => {
+  //     await userEvent.keyboard("English");
+  //   });
+  //   expect(error.textContent).toBe("Failed to fetch next quote");
+  // });
 });
 
-describe("Main.js Unit Testing - Test in Thai", () => {
+describe("Language without punctuation", () => {
   let component, getByTestId, curQuote;
   beforeEach(async () => {
     mockFuncs.mockGetQuotes();
@@ -191,7 +195,7 @@ describe("Main.js Unit Testing - Test in Thai", () => {
     cleanup();
   });
 
-  it("handles Thai input correctly without punctuation", async () => {
+  it("handles the end of a sentence in Thai correctly without a period", async () => {
     await act(async () => {
       await userEvent.keyboard("First ");
     });
@@ -202,11 +206,10 @@ describe("Main.js Unit Testing - Test in Thai", () => {
   });
 });
 
-describe("Main.js Unit Testing - Test in Arabic", () => {
+describe("Language writes from left to right", () => {
   let component, getByTestId, testContainer;
   beforeEach(async () => {
     mockFuncs.mockGetQuotes();
-    // mockFuncs.mockTranslateQuoteInThai();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
     await act(async () => {
@@ -220,12 +223,12 @@ describe("Main.js Unit Testing - Test in Arabic", () => {
     cleanup();
   });
 
-  it("aligns content in test container to the right", async () => {
+  it("aligns content in Arabic to the right", async () => {
     expect(testContainer).toHaveClass("reverse");
   });
 });
 
-describe("Main.js Unit Testing - Quote display", () => {
+describe("Quote display", () => {
   let component, getByTestId, getAllByTestId, curQuote, nxtQuote, redo;
 
   beforeEach(async () => {
@@ -298,7 +301,7 @@ describe("Main.js Unit Testing - Quote display", () => {
   });
 });
 
-describe("Main.js Unit Testing - Timer and Input Field", () => {
+describe("Timer and Input Field", () => {
   let component, getByTestId, getAllByTestId, quoteInputField, timer;
 
   const props = {
@@ -371,7 +374,7 @@ describe("Main.js Unit Testing - Timer and Input Field", () => {
   });
 });
 
-describe("Main.js Unit Testing - Buttons", () => {
+describe("Buttons", () => {
   let component,
     getByTestId,
     queryByTestId,
@@ -438,7 +441,7 @@ describe("Main.js Unit Testing - Buttons", () => {
   });
 });
 
-describe("Main.js Unit Testing - Result", () => {
+describe("Result", () => {
   let component, getByTestId;
 
   const props = {
@@ -472,13 +475,13 @@ describe("Main.js Unit Testing - Result", () => {
   it("displays ACC when time is up", async () => {
     await act(async () => {
       await userEvent.keyboard("First ");
-      await new Promise((r) => setTimeout(r, 2000));
+      await new Promise((r) => setTimeout(r, 2500));
     });
     expect(getByTestId("acc")).toHaveTextContent("ACC: 100");
   });
 });
 
-describe("Main.js Unit Testing - Shortcuts", () => {
+describe("Shortcuts", () => {
   let component, getByTestId, queryAllByTestId, curQuote;
 
   const props = {

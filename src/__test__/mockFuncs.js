@@ -71,11 +71,6 @@ export const mockGetNextQuote = () => {
     })
     .mockImplementationOnce((lang) => {
       switch (lang) {
-        // case "en":
-        //   return Promise.resolve([
-        //     ["First", " ", "English."],
-        //     ["Second", " ", "English."],
-        //   ]);
         case "es":
           return Promise.resolve(["Fourth", " ", "Spanish."]);
         default:
@@ -84,11 +79,6 @@ export const mockGetNextQuote = () => {
     })
     .mockImplementationOnce((lang) => {
       switch (lang) {
-        // case "en":
-        //   return Promise.resolve([
-        //     ["First", " ", "English."],
-        //     ["Second", " ", "English."],
-        //   ]);
         case "es":
           return Promise.resolve(["Fifth", " ", "Spanish."]);
         default:
@@ -97,7 +87,21 @@ export const mockGetNextQuote = () => {
     });
 };
 
-export const mockFetchQuoteForStyleTest = () => {
+export const mockGetQuotesForErrorTest = () => {
+  jest
+    .spyOn(helper, "getQuotes")
+    // .mockImplementationOnce(() => Promise.reject())
+    .mockImplementationOnce(() =>
+      Promise.resolve([
+        ["First", " ", "English."],
+        ["Second", " ", "English."],
+      ])
+    );
+
+  jest.spyOn(helper, "getNextQuote").mockImplementation(() => Promise.reject());
+};
+
+export const mockGetQuotesForStyleTest = () => {
   jest.spyOn(helper, "getQuotes").mockImplementationOnce(() =>
     Promise.resolve([
       [

@@ -355,7 +355,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           {timer}
         </section>
       )}
-      {error && <section>{error}</section>}
+      {error && <section data-testid="error">{error}</section>}
       {showResult && (
         <section data-testid="result" className="result">
           <div data-testid="wpm">WPM: {Math.floor(totalCorrectChars / 5 / (initialTime / 60))}</div>
