@@ -12,6 +12,12 @@ const secrets = {
 };
 export const credentials = JSON.parse(JSON.stringify(secrets));
 
+const langApi = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
+const quoteApi = "https://api.quotable.io/random";
+const translateApi = `https://translation.googleapis.com/language/translate/v2?key=${process.env.REACT_APP_API_KEY}`;
+
+export const timeOptions = [15, 30, 60, 120, 240];
+
 export const noSpaceLangs = [
   "zh-TW", //"Chinese(Traditional)",
   "zh-CN", //"Chinese(Simplified)"
@@ -42,12 +48,8 @@ const addSpace = (quote) => {
   return result;
 };
 
-const LANG_DATA_API_URL = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
-const RANDOM_QUOTE_API_URL = "https://api.quotable.io/random";
-const TRANSLATE_BASE_URL = `https://translation.googleapis.com/language/translate/v2?key=${process.env.REACT_APP_API_KEY}`;
-
 const fetchQuote = async () => {
-  return await fetch(RANDOM_QUOTE_API_URL)
+  return await fetch(quoteApi)
     .then((res) => {
       if (!res.ok) {
         throw new Error(`API status ${res.status} - ${res.statusText}`);
@@ -58,12 +60,12 @@ const fetchQuote = async () => {
 };
 
 export const translateQuote = async (toLang, quote) => {
-  let url = TRANSLATE_BASE_URL;
+  let url = translateApi;
   url += "&q=" + encodeURI(quote.join(""));
   url += `&source=en`;
   url += `&target=${toLang}`;
 
-  return await fetch(url)
+  const result = await fetch(url)
     .then((res) => {
       if (!res.ok) {
         throw new Error(`API status ${res.status} - ${res.statusText}`);
@@ -71,32 +73,32 @@ export const translateQuote = async (toLang, quote) => {
       return res.json();
     })
     .then((data) => {
-      const quote = data.data.translations[0].translatedText;
-      let result;
+      let quote = data.data.translations[0].translatedText;
       if (noSpaceLangs.includes(toLang)) {
-        result = addSpace(quote);
+        quote = addSpace(quote);
       } else {
-        result = quote.split(/(\s+)/);
+        quote = quote.split(/(\s+)/);
       }
-      return result;
+      return quote;
     });
+  return result;
 };
 
 export const getQuotes = async (selectedLang) => {
   const quote1 = fetchQuote();
   const quote2 = fetchQuote();
   let quotes = await Promise.all([quote1, quote2]).catch((error) => {
+    console.log("error in en");
     throw error;
   });
-  // SHOULD MOVE BELOW?
   if (selectedLang !== "en") {
-    const translated1 = translateQuote(selectedLang, quote1);
-    const translated2 = translateQuote(selectedLang, quote2);
+    const translated1 = translateQuote(selectedLang, quotes[0]);
+    const translated2 = translateQuote(selectedLang, quotes[1]);
     quotes = await Promise.all([translated1, translated2]).catch((error) => {
+      console.log({ error });
       throw error;
     });
   }
-
   return quotes;
 };
 
@@ -137,11 +139,12 @@ export const getNumOfCorrectChar = (word, input, isLastWord) => {
 };
 
 export const fetchLangData = async () => {
-  try {
-    return await fetch(LANG_DATA_API_URL)
-      .then((res) => res.json())
-      .then((result) => result.data.languages);
-  } catch (error) {
-    console.log("Fetch language list data error", error);
-  }
+  return await fetch(langApi)
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(`API status ${res.status} - ${res.statusText}`);
+      }
+      return res.json();
+    })
+    .then((data) => data.data.languages);
 };
