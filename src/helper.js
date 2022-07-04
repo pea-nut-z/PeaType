@@ -12,7 +12,7 @@ const secrets = {
 };
 export const credentials = JSON.parse(JSON.stringify(secrets));
 
-const noSpaceLangs = [
+export const noSpaceLangs = [
   "zh-TW", //"Chinese(Traditional)",
   "zh-CN", //"Chinese(Simplified)"
   "ja", //"Japanese"
@@ -20,6 +20,7 @@ const noSpaceLangs = [
   "km", // "Khmer"
   "th", // "Thai"
 ];
+
 export const rightToLeftLangs = [
   "ar", // Arabic
   "ur", // Urdu
@@ -105,6 +106,7 @@ export const getNextQuote = async (selectedLang) => {
     if (selectedLang !== "en") {
       quote = await translateQuote(selectedLang, quote);
     }
+    // throw new Error();
     return quote;
   } catch (error) {
     throw error;

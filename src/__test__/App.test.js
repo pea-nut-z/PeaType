@@ -4,12 +4,55 @@ import "@testing-library/jest-dom";
 import App from "../App";
 import * as mockFuncs from "./mockFuncs";
 
+describe.only("Initial layout", () => {
+  let component, getByTestId, quoteInputField, curQuote, nxtQuote, timer;
+
+  beforeEach(async () => {
+    mockFuncs.initial();
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
+    await act(async () => {
+      component = await render(<App />);
+    });
+    getByTestId = component.getByTestId;
+    quoteInputField = getByTestId("quoteInputField");
+    curQuote = getByTestId("curQuote");
+    nxtQuote = getByTestId("nxtQuote");
+    timer = getByTestId("timer");
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("greys out next quote", async () => {
+    expect(nxtQuote).toHaveClass("greyout");
+  });
+
+  it("displays two quotes in English", () => {
+    expect(curQuote.lastChild).toHaveTextContent("English.");
+    expect(nxtQuote).toHaveTextContent("Second English.");
+  });
+
+  it("displays selected time", () => {
+    expect(timer).toHaveTextContent(15);
+  });
+
+  it("focuses to input field", () => {
+    expect(quoteInputField).toHaveFocus();
+  });
+
+  // it("moves next quote up when current quote is done", () => {
+  //   expect(curQuote.firstChild).toHaveTextContent("Second");
+  // });
+});
+
 describe("App.js Intergration Testing", () => {
   let component, getByTestId, queryByText, getByText, settings, quoteInputField;
 
   beforeEach(async () => {
     mockFuncs.mockFetchLangData();
-    mockFuncs.mockGetQuotes();
+    mockFuncs.getQuotes();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
     await act(async () => {

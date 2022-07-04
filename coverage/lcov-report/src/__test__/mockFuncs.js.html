@@ -362,7 +362,7 @@ export const mockFetchLangData = () =&gt; {
   ]);
 };
 &nbsp;
-export const mockGetQuotes = () =&gt; {
+export const getQuotes = () =&gt; {
   jest
     .spyOn(helper, "getQuotes")
     .mockImplementationOnce((lang) =&gt; {
@@ -452,7 +452,7 @@ export const mockGetNextQuote = () =&gt; {
     });
 };
 &nbsp;
-export const mockGetQuotesForStyleTest = () =&gt; {
+export const getQuotesStyle = () =&gt; {
   jest.spyOn(helper, "getQuotes").mockImplementationOnce(() =&gt;
     Promise.resolve([
       [
