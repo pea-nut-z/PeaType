@@ -35,7 +35,7 @@ function App() {
       }}
     >
       <section className="header-settings-container">
-        <header>PeaType</header>
+        <header>Typing Test</header>
         <button ref={buttonRef} data-testid="settings" onClick={toggleSettings}>
           Settings
         </button>

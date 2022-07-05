@@ -68,7 +68,8 @@ button.active {
 }
 
 .timer,
-.result {
+.result,
+.error {
   font-size: 20px;
   margin: 1% 0 1% 0%;
   width: 100%;

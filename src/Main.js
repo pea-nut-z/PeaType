@@ -185,7 +185,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         }
       })
       .catch(() => {
-        setError("Failed to fetch quotes");
+        setError("Error - failed to fetch quotes");
       });
   }, [selectedLang, fetchQuotes]);
 
@@ -232,7 +232,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
             setPreviousQuotes([...previousQuotes, quote]);
           })
           .catch(() => {
-            setError("Failed to fetch next quote");
+            setError("Error - failed to fetch next quote");
           });
       }
       setGetNxtQuote(false);
@@ -364,13 +364,17 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           {timer}
         </section>
       )}
-      {error && <section data-testid="error">{error}</section>}
       {showResult && (
         <section data-testid="result" className="result">
           <div data-testid="wpm">WPM: {Math.floor(totalCorrectChars / 5 / (initialTime / 60))}</div>
           <div data-testid="acc">
             ACC: {!totalChars ? 0 : Math.floor((totalCorrectChars / totalChars) * 100)}
           </div>
+        </section>
+      )}
+      {error && (
+        <section className="error" data-testid="error">
+          {error}
         </section>
       )}
       <div ref={testContainerRef} data-testid="testContainer" className="test-container">
