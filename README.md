@@ -10,13 +10,11 @@ _New Quote button_: fetches two random quotes and erases all previous ones you h
 
 _Redo button_: displays previous quotes you have done
 
-_Button shortcuts_:  
-New Quote - control + n  
-Redo - control + r
+_Button shortcuts_:  New Quote (control + n) and Redo (control + r)
 
 This site is responsive and tested in Jest with 100% coverage.
 
-<img src="public/test-coverage.jpg" width="500" height="500">
+<img src="public/test-coverage.jpg" width="50%" height="50%">
 
 ### Calculations
 
