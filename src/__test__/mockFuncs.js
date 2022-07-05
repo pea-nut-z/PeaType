@@ -1,21 +1,11 @@
 import * as helper from "../helper";
 
-export const mockFetchLangData = () => {
-  jest.spyOn(helper, "fetchLangData").mockImplementation(() => [
-    { language: "es", name: "Spanish" },
-    { language: "nl", name: "Dutch" },
-  ]);
-};
-
-export const initial = () => {
+export const defaultLayout = () => {
   jest.spyOn(helper, "getQuotes").mockImplementationOnce((lang) => {
-    if (lang === "en") {
-      return Promise.resolve([
-        ["First", " ", "English."],
-        ["Second", " ", "English."],
-      ]);
-    }
-    throw new Error();
+    return Promise.resolve([
+      ["First", " ", "English."],
+      ["Second", " ", "English."],
+    ]);
   });
 };
 
@@ -78,72 +68,10 @@ export const fetchSuccess = () => {
 
   jest
     .spyOn(helper, "getNextQuote")
-    .mockImplementation(() => Promise.resolve(["Third", " ", "English."]));
+    .mockImplementationOnce(() => Promise.resolve(["Third", " ", "English."]))
+    .mockImplementationOnce(() => Promise.resolve(["Fourth", " ", "English."]))
+    .mockImplementationOnce(() => Promise.resolve(["Fifth", " ", "English."]));
 };
-// export const forDefault = () => {
-//   jest
-//     .spyOn(helper, "getQuotes")
-//     .mockImplementationOnce((lang) => {
-//       switch (lang) {
-//         case "en":
-//           return Promise.resolve([
-//             ["First", " ", "English."],
-//             ["Second", " ", "English."],
-//           ]);
-//         case "es":
-//           return Promise.resolve([
-//             ["First", " ", "Spanish."],
-//             ["Second", " ", "Spanish."],
-//           ]);
-//         case "th":
-//           return Promise.resolve([
-//             ["First", " ", "Thai"],
-//             ["Second", " ", "Thai"],
-//           ]);
-//         case "ar":
-//           return Promise.resolve([
-//             ["First", " ", "Arabic."],
-//             ["Second", " ", "Arabic."],
-//           ]);
-//         default:
-//           return Promise.reject();
-//       }
-//     })
-//     .mockImplementationOnce((lang) => {
-//       switch (lang) {
-//         case "en":
-//           return Promise.resolve([
-//             ["Third", " ", "English."],
-//             ["Fourth", " ", "English."],
-//           ]);
-//         case "es":
-//           return Promise.resolve([
-//             ["First", " ", "Spanish."],
-//             ["Second", " ", "Spanish."],
-//           ]);
-//         default:
-//           return Promise.reject();
-//       }
-//     });
-// };
-
-// jest
-// .spyOn(helper, "getNextQuote")
-// .mockImplementationOnce((lang) => {
-// switch (lang) {
-//   case "en":
-//     return Promise.resolve(["Third", " ", "English."]);
-//   case "es":
-//     return Promise.resolve(["Third", " ", "Spanish."]);
-//   case "th":
-//     return Promise.resolve(["Third", " ", "Spanish."]);
-//   default:
-//     return Promise.reject();
-// }
-// Promise.resolve([
-//   ["First", " ", "Thai"],
-//   ["Second", " ", "Thai"],
-// ])
 
 export const quotesError = () => {
   jest.spyOn(helper, "getQuotes").mockImplementationOnce(() => Promise.reject());
@@ -161,13 +89,10 @@ export const nextQuoteError = () => {
 
 export const noPunctuation = () => {
   jest.spyOn(helper, "getQuotes").mockImplementationOnce((lang) => {
-    if (helper.noSpaceLangs.includes(lang)) {
-      return Promise.resolve([
-        ["First", " ", "line"],
-        ["Second", " ", "line"],
-      ]);
-    }
-    throw new Error();
+    return Promise.resolve([
+      ["First", " ", "line"],
+      ["Second", " ", "line"],
+    ]);
   });
 
   jest
@@ -175,43 +100,29 @@ export const noPunctuation = () => {
     .mockImplementation(() => Promise.resolve(["Third", " ", "line"]));
 };
 
-export const mockGetNextQuote = () => {
-  jest
-    .spyOn(helper, "getNextQuote")
-    .mockImplementationOnce((lang) => {
-      switch (lang) {
-        case "en":
-          return Promise.resolve(["Third", " ", "English."]);
-        case "es":
-          return Promise.resolve(["Third", " ", "Spanish."]);
-        case "th":
-          return Promise.resolve(["Third", " ", "Spanish."]);
-        default:
-          return Promise.reject();
-      }
-    })
-    .mockImplementationOnce((lang) => {
-      switch (lang) {
-        case "es":
-          return Promise.resolve(["Fourth", " ", "Spanish."]);
-        default:
-          return Promise.reject();
-      }
-    })
-    .mockImplementationOnce((lang) => {
-      switch (lang) {
-        case "es":
-          return Promise.resolve(["Fifth", " ", "Spanish."]);
-        default:
-          return Promise.reject();
-      }
-    });
+export const fetchLangs = () => {
+  jest.spyOn(helper, "fetchLangs").mockImplementation(() =>
+    Promise.resolve([
+      { language: "es", name: "Spanish" },
+      { language: "en", name: "English" },
+      { language: "nl", name: "Dutch" },
+    ])
+  );
 };
 
-export const mockTranslateQuoteInThai = () => {
+export const translate = () => {
   jest
-    .spyOn(helper, "translateQuote")
-    .mockImplementationOnce(() => ["First", " ", "Thai"])
-    .mockImplementationOnce(() => ["Second", " ", "Thai"])
-    .mockImplementationOnce(() => ["Third", " ", "Thai"]);
+    .spyOn(helper, "getQuotes")
+    .mockImplementationOnce((lang) => {
+      return Promise.resolve([
+        ["First", " ", "English."],
+        ["Second", " ", "English."],
+      ]);
+    })
+    .mockImplementationOnce((lang) => {
+      return Promise.resolve([
+        ["First", " ", "Spanish."],
+        ["Second", " ", "Spanish."],
+      ]);
+    });
 };

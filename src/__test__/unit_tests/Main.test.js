@@ -1,9 +1,12 @@
-import React from "react";
-import { render, cleanup, act, waitFor } from "@testing-library/react/pure";
+// import React from "react";
+// import React, { useEffect, useState, useRef } from "react";
+// import { useState } from 'react';
+import * as React from "react";
+import { render, cleanup, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-import Main from "../Main";
-import * as mockFuncs from "./mockFuncs";
+import Main from "../../Main";
+import * as mockFuncs from "../mockFuncs";
 import "@testing-library/jest-dom/extend-expect";
 
 describe("Style", () => {
@@ -17,15 +20,6 @@ describe("Style", () => {
   beforeEach(async () => {
     await act(async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
-      let numOfCalls = 0;
-      window.HTMLElement.prototype.getBoundingClientRect = () => {
-        if (numOfCalls < 17) {
-          ++numOfCalls;
-          return { top: 1 }; // curTop
-        } else {
-          return { top: 2 }; // others
-        }
-      };
       mockFuncs.style();
       component = await render(<Main {...props} />);
       getByTestId = component.getByTestId;
@@ -72,13 +66,6 @@ describe("Style", () => {
     expect(styles.color).toBe("red");
   });
 
-  it("greys out second line of quote display", async () => {
-    const eles = getByTestId("curQuote").children;
-    for (let x = 16; x < eles.length; x += 2) {
-      expect(eles[x]).toHaveClass("greyout");
-    }
-  });
-
   it("styles timer in red for the last 5 seconds left", async () => {
     await act(async () => {
       await userEvent.keyboard("O ");
@@ -90,6 +77,71 @@ describe("Style", () => {
 });
 
 describe("Style", () => {
+  let component, getByTestId;
+
+  const props = {
+    selectedLang: "en",
+    initialTime: 6,
+  };
+
+  beforeEach(async () => {
+    let numOfCalls = 0;
+    await act(async () => {
+      window.HTMLElement.prototype.getBoundingClientRect = () => {
+        if (numOfCalls < 17) {
+          ++numOfCalls;
+          return { top: 1 }; // current top
+        } else {
+          return { top: 2 }; // others
+        }
+      };
+      window.HTMLElement.prototype.scrollIntoView = jest.fn();
+      mockFuncs.style();
+      component = await render(<Main {...props} />);
+      getByTestId = component.getByTestId;
+    });
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("greys out second line of quote display", async () => {
+    const eles = getByTestId("curQuote").children;
+    expect(eles).toHaveLength(31);
+    for (let x = 16; x < eles.length; x += 2) {
+      expect(eles[x]).toHaveClass("greyout");
+    }
+  });
+});
+
+describe("Style", () => {
+  let component, mockGetTop;
+
+  beforeEach(async () => {
+    await act(async () => {
+      mockGetTop = jest.fn(() => ({ top: 0 }));
+      window.HTMLElement.prototype.getBoundingClientRect = mockGetTop;
+      window.HTMLElement.prototype.scrollIntoView = jest.fn();
+      mockFuncs.style();
+      component = await render(<Main />);
+    });
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("resets greyout for a window resize", async () => {
+    await act(async () => {
+      window.innerWidth = 100;
+      await window.dispatchEvent(new Event("resize"));
+    });
+    expect(mockGetTop).toBeCalled();
+  });
+});
+
+describe("Style", () => {
   let component, getByTestId, testContainer;
   beforeEach(async () => {
     mockFuncs.fetchSuccess();
@@ -97,9 +149,8 @@ describe("Style", () => {
     window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
     await act(async () => {
       component = await render(<Main selectedLang="ar" />);
+      getByTestId = component.getByTestId;
     });
-    getByTestId = component.getByTestId;
-    testContainer = getByTestId("testContainer");
   });
 
   afterEach(() => {
@@ -107,7 +158,7 @@ describe("Style", () => {
   });
 
   it("aligns content to the right if the language writes from left to right", async () => {
-    expect(testContainer).toHaveClass("reverse");
+    expect(getByTestId("testContainer")).toHaveClass("reverse");
   });
 });
 
@@ -139,13 +190,18 @@ describe("Fetch Success", () => {
     await act(async () => {
       await userEvent.keyboard("English.");
     });
-    const nxtQuote = getByTestId("nxtQuote");
-    expect(nxtQuote).toHaveTextContent("Third English.");
+    expect(getByTestId("nxtQuote")).toHaveTextContent("Third English.");
   });
 
   it("fetches a quote after all previous quotes have been redone on click of Redo", async () => {
     await act(async () => {
       await userEvent.keyboard("First ");
+    });
+    await act(async () => {
+      await userEvent.keyboard("English.");
+    });
+    await act(async () => {
+      await userEvent.keyboard("Second ");
     });
     await act(async () => {
       await userEvent.keyboard("English.");
@@ -161,7 +217,19 @@ describe("Fetch Success", () => {
     await act(async () => {
       await userEvent.keyboard("English.");
     });
-    expect(getByTestId("nxtQuote")).toHaveTextContent("Third English.");
+    await act(async () => {
+      await userEvent.keyboard("Second ");
+    });
+    await act(async () => {
+      await userEvent.keyboard("English.");
+    });
+    await act(async () => {
+      await userEvent.keyboard("Third ");
+    });
+    await act(async () => {
+      await userEvent.keyboard("English.");
+    });
+    expect(getByTestId("nxtQuote")).toHaveTextContent("Fifth English.");
   });
 
   it("fetches quotes on click of New Quote", async () => {
@@ -299,6 +367,12 @@ describe("Input Field", () => {
     expect(getByTestId("quoteInputField")).toHaveFocus();
   });
 
+  it("focusses to input field on click of input container", () => {
+    userEvent.click(getByTestId("testContainer"));
+    userEvent.click(getByTestId("inputContainer"));
+    expect(getByTestId("quoteInputField")).toHaveFocus();
+  });
+
   it("disregards entry of space without input", () => {
     userEvent.keyboard(" ");
     expect(getByTestId("quoteInputField")).toHaveTextContent("");
@@ -398,8 +472,8 @@ describe("Buttons", () => {
   });
 });
 
-describe("Result", () => {
-  let component, getByTestId;
+describe.only("Result", () => {
+  let component;
 
   const props = {
     selectedLang: "en",
@@ -412,7 +486,6 @@ describe("Result", () => {
       window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
       mockFuncs.fetchSuccess();
       component = await render(<Main {...props} />);
-      getByTestId = component.getByTestId;
     });
   });
 

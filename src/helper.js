@@ -138,7 +138,7 @@ export const getNumOfCorrectChar = (word, input, isLastWord) => {
   return count;
 };
 
-export const fetchLangData = async () => {
+export const fetchLangs = async () => {
   return await fetch(langApi)
     .then((res) => {
       if (!res.ok) {

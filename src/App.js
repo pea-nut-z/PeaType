@@ -7,7 +7,7 @@ function App() {
   const [openSettings, setOpenSettings] = useState(false);
   const [selectedLang, setSelectedLang] = useState("en");
   const [selectedName, setSelectedName] = useState("English");
-  const [selectedTime, setSelectedTime] = useState(15);
+  const [selectedTime, setSelectedTime] = useState(5);
 
   const buttonRef = useRef();
 
@@ -18,10 +18,10 @@ function App() {
       : buttonRef.current.classList.add("active");
   };
 
-  const changeSettings = (lang, name, time) => {
+  const changeSettings = (lang, time) => {
     if (lang) {
-      setSelectedLang(lang);
-      setSelectedName(name);
+      setSelectedLang(lang.language);
+      setSelectedName(lang.name);
     }
     time && setSelectedTime(time);
   };

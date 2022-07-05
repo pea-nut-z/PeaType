@@ -9,13 +9,12 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
   const [keyNode, setKeyNode] = useState(null);
   const [mouseNode, setMouseNode] = useState(null);
   const [time, setTime] = useState(selectedTime);
-  const timeOptions = [15, 30, 60, 120, 240];
 
   const langListRef = useRef();
 
   useEffect(() => {
     (async () => {
-      const data = await helper.fetchLangData();
+      const data = await helper.fetchLangs();
       setLangData(data);
       setfilteredLang(data);
     })();
@@ -92,19 +91,16 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
 
   const validateAndSave = () => {
     const newLang =
-      searchStr &&
-      langData.find((lang) => {
-        const str = searchStr.toLowerCase();
-        const name = lang.name.toLowerCase();
-        return str === name;
-      });
+      searchStr === selectedName
+        ? null
+        : langData.find((lang) => {
+            const str = searchStr.toLowerCase();
+            const name = lang.name.toLowerCase();
+            return str === name;
+          });
 
     const newTime = time === selectedTime ? null : time;
-    if (newLang) {
-      changeSettings(newLang.language, newLang.name, newTime);
-    } else if (newTime) {
-      changeSettings(null, null, newTime);
-    }
+    changeSettings(newLang, newTime);
     setfilteredLang(langData);
     setSearchStr("");
   };
@@ -164,10 +160,11 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
       <div>
         <h4>Time</h4>
         <div>
-          {timeOptions.map((option, idx) => {
+          {helper.timeOptions.map((option) => {
             return (
               <button
-                key={idx}
+                data-testid={option}
+                key={option}
                 type="button"
                 aria-label={`${option} seconds`}
                 className={`time-button ${time === option ? "active" : null}`}
@@ -183,11 +180,12 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         </div>
       </div>
       <button
+        data-testid="save"
         type="button"
         aria-label="Save"
-        onClick={(e) => {
+        onClick={() => {
           validateAndSave();
-          toggleSettings(e);
+          toggleSettings();
         }}
       >
         Save

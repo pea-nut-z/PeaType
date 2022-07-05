@@ -168,10 +168,14 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     helper
       .getQuotes(selectedLang)
       .then((quotes) => {
-        setError(null);
+        // const quotes = [
+        //   ["first", " ", "line."],
+        //   ["second", " ", "line."],
+        // ];
         setCurQuoteArr(quotes[0]);
         setNxtQuoteArr(quotes[1]);
         setPreviousQuotes([quotes[0], quotes[1]]);
+        setError(null);
         setGreyout(true);
 
         if (helper.rightToLeftLangs.includes(selectedLang)) {
@@ -213,9 +217,11 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       if (usePreQuote) {
         let nxtQuote = previousQuotes[preQuoteIdx];
         setNxtQuoteArr(nxtQuote);
-        preQuoteIdx === previousQuotes.length - 1
-          ? setUsePreQuote(false)
-          : setPreQuoteIdx(preQuoteIdx + 1);
+        if (preQuoteIdx === previousQuotes.length - 1) {
+          setUsePreQuote(false);
+        } else {
+          setPreQuoteIdx(preQuoteIdx + 1);
+        }
         setError(null);
       } else {
         helper
@@ -343,6 +349,9 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           onMouseDown={togglePressEffect}
           onClick={(e) => {
             togglePressEffect(e);
+            setPreviousQuotes([]);
+            setUsePreQuote(false);
+            setPreQuoteIdx(0);
             setReset(true);
             setFetchQuotes(!fetchQuotes);
           }}
@@ -355,12 +364,12 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           {timer}
         </section>
       )}
-      {error && <section>{error}</section>}
+      {error && <section data-testid="error">{error}</section>}
       {showResult && (
         <section data-testid="result" className="result">
           <div data-testid="wpm">WPM: {Math.floor(totalCorrectChars / 5 / (initialTime / 60))}</div>
           <div data-testid="acc">
-            ACC: {!totalCorrectChars ? 0 : Math.floor((totalCorrectChars / totalChars) * 100)}
+            ACC: {!totalChars ? 0 : Math.floor((totalCorrectChars / totalChars) * 100)}
           </div>
         </section>
       )}
@@ -386,7 +395,11 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           </div>
         </div>
 
-        <div className="input-container" onClick={() => inputFieldRef.current.focus()}>
+        <div
+          data-testid="inputContainer"
+          className="input-container"
+          onClick={() => inputFieldRef.current.focus()}
+        >
           <div ref={testedLinesRef} className="tested-lines"></div>
           <div
             ref={curInputContainerRef}
