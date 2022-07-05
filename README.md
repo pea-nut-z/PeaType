@@ -6,15 +6,17 @@
 
 Under settings you can choose your test time frame and language - by default it is 15 seconds and English.
 
-New Quote button: fetches two random quotes and erases all previous quotes you have done
+_New Quote button_: fetches two random quotes and erases all previous ones you have done
 
-Redo button: displays previous quotes you have done
+_Redo button_: displays previous quotes you have done
 
-Button shortcuts:  
+_Button shortcuts_:  
 New Quote - control + n  
 Redo - control + r
 
 This site is responsive and tested in Jest with 100% coverage.
+
+<img src="public/test-coverage.jpg" width="500" height="500">
 
 ### Calculations
 
