@@ -6,9 +6,9 @@
 
 Under settings you can choose your test time frame and language - by default it is 15 seconds and English.
 
-_New Quote button_: fetches two random quotes and erases all previous ones you have done
+_New Quote button_: fetches new quotes
 
-_Redo button_: displays previous quotes you have done
+_Redo button_: resets to previous quotes and fetches new ones once completed previous ones 
 
 _Button shortcuts_:  New Quote (control + n) and Redo (control + r)
 
