@@ -2,7 +2,7 @@ import { render, cleanup, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import Settings from "../../Settings";
-import * as mockFuncs from "../mockFuncs";
+import * as mocked from "../mocked-functions";
 
 describe("Settings", () => {
   let component, getByTestId, queryByText, queryByTestId, field;
@@ -16,7 +16,7 @@ describe("Settings", () => {
 
   beforeEach(async () => {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    mockFuncs.fetchLangs();
+    mocked.fetchLangs();
     await act(async () => {
       component = await render(<Settings {...props} />);
       getByTestId = component.getByTestId;

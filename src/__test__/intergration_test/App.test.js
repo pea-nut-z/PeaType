@@ -2,14 +2,14 @@ import { render, cleanup, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import App from "../../App";
-import * as mockFuncs from "../mockFuncs";
+import * as mocked from "../mocked-functions";
 
 describe("Initial layout", () => {
   let component, getByTestId;
 
   beforeEach(async () => {
     await act(async () => {
-      mockFuncs.defaultLayout();
+      mocked.defaultLayout();
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
       component = await render(<App />);
       getByTestId = component.getByTestId;
@@ -43,8 +43,8 @@ describe("Main and Settings", () => {
 
   beforeEach(async () => {
     await act(async () => {
-      mockFuncs.fetchLangs();
-      mockFuncs.translate();
+      mocked.fetchLangs();
+      mocked.translate();
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
       component = await render(<App />);
       getByTestId = component.getByTestId;

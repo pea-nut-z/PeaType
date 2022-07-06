@@ -6,7 +6,7 @@ import { render, cleanup, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import Main from "../../Main";
-import * as mockFuncs from "../mockFuncs";
+import * as mocked from "../mocked-functions";
 import "@testing-library/jest-dom/extend-expect";
 
 describe("Style", () => {
@@ -20,7 +20,7 @@ describe("Style", () => {
   beforeEach(async () => {
     await act(async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
-      mockFuncs.style();
+      mocked.style();
       component = await render(<Main {...props} />);
       getByTestId = component.getByTestId;
     });
@@ -96,7 +96,7 @@ describe("Style", () => {
         }
       };
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
-      mockFuncs.style();
+      mocked.style();
       component = await render(<Main {...props} />);
       getByTestId = component.getByTestId;
     });
@@ -123,7 +123,7 @@ describe("Style", () => {
       mockGetTop = jest.fn(() => ({ top: 0 }));
       window.HTMLElement.prototype.getBoundingClientRect = mockGetTop;
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
-      mockFuncs.style();
+      mocked.style();
       component = await render(<Main />);
     });
   });
@@ -144,7 +144,7 @@ describe("Style", () => {
 describe("Style", () => {
   let component, getByTestId, testContainer;
   beforeEach(async () => {
-    mockFuncs.fetchSuccess();
+    mocked.fetchSuccess();
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
     await act(async () => {
@@ -173,7 +173,7 @@ describe("Fetch Success", () => {
     await act(async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
       window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
-      mockFuncs.fetchSuccess();
+      mocked.fetchSuccess();
       component = await render(<Main {...props} />);
       getByTestId = component.getByTestId;
     });
@@ -254,7 +254,7 @@ describe("Fetch Error", () => {
     await act(async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
       window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
-      mockFuncs.quotesError();
+      mocked.quotesError();
       component = await render(<Main selectedLang="en" />);
       getByText = component.getByText;
     });
@@ -265,7 +265,7 @@ describe("Fetch Error", () => {
   });
 
   it("handles error in fetching quotes", async () => {
-    expect(getByText("Failed to fetch quotes")).toBeInTheDocument();
+    expect(getByText("Error - failed to fetch quotes")).toBeInTheDocument();
   });
 });
 
@@ -276,7 +276,7 @@ describe("Fetch Error", () => {
     await act(async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
       window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
-      mockFuncs.nextQuoteError();
+      mocked.nextQuoteError();
       component = await render(<Main selectedLang="en" />);
       getByText = component.getByText;
     });
@@ -293,7 +293,7 @@ describe("Fetch Error", () => {
     await act(async () => {
       await userEvent.keyboard("English.");
     });
-    expect(getByText("Failed to fetch next quote")).toBeInTheDocument();
+    expect(getByText("Error - failed to fetch next quote")).toBeInTheDocument();
   });
 });
 
@@ -307,7 +307,7 @@ describe("Timer", () => {
 
   beforeEach(async () => {
     await act(async () => {
-      mockFuncs.fetchSuccess();
+      mocked.fetchSuccess();
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
       component = await render(<Main {...props} />);
       getByTestId = component.getByTestId;
@@ -338,7 +338,7 @@ describe("Input Field", () => {
 
   beforeEach(async () => {
     await act(async () => {
-      mockFuncs.fetchSuccess();
+      mocked.fetchSuccess();
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
       component = await render(<Main {...props} />);
       getByTestId = component.getByTestId;
@@ -400,7 +400,7 @@ describe("Input Field", () => {
     await act(async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
       window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
-      mockFuncs.noPunctuation();
+      mocked.noPunctuation();
       component = await render(<Main selectedLang="th" />);
       getByTestId = component.getByTestId;
     });
@@ -432,7 +432,7 @@ describe("Buttons", () => {
   beforeEach(async () => {
     await act(async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
-      mockFuncs.fetchSuccess();
+      mocked.fetchSuccess();
       component = await render(<Main {...props} />);
       getByTestId = component.getByTestId;
     });
@@ -472,7 +472,7 @@ describe("Buttons", () => {
   });
 });
 
-describe.only("Result", () => {
+describe("Result", () => {
   let component;
 
   const props = {
@@ -484,7 +484,7 @@ describe.only("Result", () => {
     await act(async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
       window.HTMLElement.prototype.getBoundingClientRect = () => ({ top: 0 });
-      mockFuncs.fetchSuccess();
+      mocked.fetchSuccess();
       component = await render(<Main {...props} />);
     });
   });
@@ -510,6 +510,15 @@ describe.only("Result", () => {
     const queryByTestId = component.queryByTestId;
     expect(queryByTestId("acc")).toHaveTextContent("ACC: 100");
   });
+
+  it("displays ACC as zero for no inputs", async () => {
+    await act(async () => {
+      await userEvent.keyboard("F");
+      await new Promise((r) => setTimeout(r, 1000));
+    });
+    const queryByTestId = component.queryByTestId;
+    expect(queryByTestId("acc")).toHaveTextContent("ACC: 0");
+  });
 });
 
 describe("Shortcuts", () => {
@@ -523,7 +532,7 @@ describe("Shortcuts", () => {
   beforeEach(async () => {
     await act(async () => {
       window.HTMLElement.prototype.scrollIntoView = jest.fn();
-      mockFuncs.fetchSuccess();
+      mocked.fetchSuccess();
       component = await render(<Main {...props} />);
       getByTestId = component.getByTestId;
     });
