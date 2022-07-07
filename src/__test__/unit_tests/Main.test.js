@@ -1,13 +1,8 @@
-// import React from "react";
-// import React, { useEffect, useState, useRef } from "react";
-// import { useState } from 'react';
 import * as React from "react";
 import { render, cleanup, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
-import "@testing-library/jest-dom";
 import Main from "../../Main";
 import * as mocked from "../mocked-functions";
-import "@testing-library/jest-dom/extend-expect";
 
 describe("Style", () => {
   let component, getByTestId;
