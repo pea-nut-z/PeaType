@@ -1,4 +1,5 @@
 import * as React from "react";
+import "@testing-library/jest-dom";
 import { render, cleanup, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
 import Main from "../../Main";

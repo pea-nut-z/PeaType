@@ -1,6 +1,6 @@
+import "@testing-library/jest-dom";
 import { render, cleanup, act } from "@testing-library/react/pure";
 import userEvent from "@testing-library/user-event";
-import "@testing-library/jest-dom";
 import Settings from "../../Settings";
 import * as mocked from "../mocked-functions";
 
