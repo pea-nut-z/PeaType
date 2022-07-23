@@ -1,8 +1,10 @@
-## Typing Test Website
+## Web App - Typing Test
 
 [DEMO](https://drive.google.com/file/d/1PNma30nUL6MmBqpDdpx2gqUzDv-lTRJ0/view?usp=sharing) | [APP](https://pea-type.herokuapp.com/)
 
-### Context
+It is hosted on Heroku Free Dyno and may take up to 30 seconds to load. 😅
+
+### To get started
 
 Under settings you can choose your test time frame and language - by default it is 15 seconds and English.
 
@@ -12,12 +14,19 @@ _Redo button_: resets to previous quotes and fetches new ones once completed pre
 
 _Button shortcuts_: New Quote (control + n) and Redo (control + r)
 
-This site is responsive and tested in Jest with 100% coverage.
+### Technologies used
+
+- Javascript
+- React
+- Google API
+- Jest
+
+### Test
 
 <img src="public/test-coverage.jpg" width="50%" height="50%" alt="Test coverage table">
 
 ### Calculations
 
-wpm: total number of characters (including spaces) of words you got right divided by five then divided by the time starting from first character typed
+wpm (words per minute): total number of characters (including spaces) of words you got right divided by five then divided by the time starting from first character typed
 
-acc: total number of characters (including spaces) of words you got right divided by all character in the list of words
+acc (accuracy percentage): total number of characters (including spaces) of words you got right divided by all character in the list of words
