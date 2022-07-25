@@ -14,9 +14,9 @@ _Redo button_: resets to previous quotes and fetches new ones once completed pre
 
 _Button shortcuts_: New Quote (control + n) and Redo (control + r)
 
-### Technologies used
+### Tech-Stack
 
-- Javascript
+- JavaScript
 - React
 - Google API
 - Jest
