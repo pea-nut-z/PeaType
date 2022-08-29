@@ -1,8 +1,6 @@
 ## Web App - Typing Test
 
-[DEMO](https://drive.google.com/file/d/1PNma30nUL6MmBqpDdpx2gqUzDv-lTRJ0/view?usp=sharing) | [APP](https://typing-test-pz.netlify.app)
-
-It is hosted on Heroku Free Dyno and may take up to 30 seconds to load. 😅
+[DEMO](https://drive.google.com/file/d/1PNma30nUL6MmBqpDdpx2gqUzDv-lTRJ0/view?usp=sharing) | [APP](https://typing-test-pz.netlify.app){:target="\_blank"}
 
 ### To get started
 
