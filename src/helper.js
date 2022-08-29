@@ -36,6 +36,12 @@ export const rightToLeftLangs = [
 ];
 export const fullstop = [".", "!", ":", "।", "።", "|", "။"];
 
+const decodeHtmlEntity = (str) => {
+  return str.replace(/&#(\d+);/g, (match, dec) => {
+    return String.fromCharCode(dec);
+  });
+};
+
 const addSpace = (quote) => {
   const arr = quote.split("");
   let x = 0;
@@ -74,6 +80,11 @@ export const translateQuote = async (toLang, quote) => {
     })
     .then((data) => {
       let quote = data.data.translations[0].translatedText;
+
+      if (toLang === "fr") {
+        quote = decodeHtmlEntity(quote);
+      }
+
       if (noSpaceLangs.includes(toLang)) {
         quote = addSpace(quote);
       } else {
@@ -88,14 +99,75 @@ export const getQuotes = async (selectedLang) => {
   const quote1 = fetchQuote();
   const quote2 = fetchQuote();
   let quotes = await Promise.all([quote1, quote2]).catch((error) => {
-    console.log("error in en");
     throw error;
   });
+  quotes = [
+    [
+      "Tennis",
+      " ",
+      "is",
+      " ",
+      "a",
+      " ",
+      "perfect",
+      " ",
+      "combination",
+      " ",
+      "of",
+      " ",
+      "violent",
+      " ",
+      "action",
+      " ",
+      "taking",
+      " ",
+      "place",
+      " ",
+      "in",
+      " ",
+      "an",
+      " ",
+      "atmosphere",
+      " ",
+      "of",
+    ],
+    [
+      "The",
+      " ",
+      "important",
+      " ",
+      "thing",
+      " ",
+      "is",
+      " ",
+      "this:",
+      " ",
+      "to",
+      " ",
+      "be",
+      " ",
+      "able",
+      " ",
+      "at",
+      " ",
+      "any",
+      " ",
+      "moment",
+      " ",
+      "to",
+      " ",
+      "sacrifice",
+      " ",
+      "what",
+      " ",
+      "we",
+      " ",
+    ],
+  ];
   if (selectedLang !== "en") {
     const translated1 = translateQuote(selectedLang, quotes[0]);
     const translated2 = translateQuote(selectedLang, quotes[1]);
     quotes = await Promise.all([translated1, translated2]).catch((error) => {
-      console.log({ error });
       throw error;
     });
   }

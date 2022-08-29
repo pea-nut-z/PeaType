@@ -100,6 +100,10 @@ button.active {
   width: 60%;
 }
 
+/* .cur-quote-arr{
+display: flex;
+} */
+
 .input-container {
   height: 45vh;
   width: 60%;
