@@ -72,8 +72,9 @@ export const translateQuote = async (toLang, quote) => {
   url += `&target=${toLang}`;
 
   try {
-    const response = await fetch(url);
-    const json = await response.json();
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`API status ${res.status} - ${res.statusText}`);
+    const json = await res.json();
     const translation = json.data.translations[0].translatedText;
     let quote;
 
@@ -146,7 +147,7 @@ export const getNumOfCorrectChar = (word, input, isLastWord) => {
 };
 
 export const fetchLangs = async () => {
-  return await fetch(langApi)
+  return fetch(langApi)
     .then((res) => {
       if (!res.ok) {
         throw new Error(`API status ${res.status} - ${res.statusText}`);
