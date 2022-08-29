@@ -168,11 +168,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     helper
       .getQuotes(selectedLang)
       .then((quotes) => {
-        // const quotes = [
-        //   ["first", " ", "line."],
-        //   ["second", " ", "line."],
-        // ];
-
         setCurQuoteArr(quotes[0]);
         setNxtQuoteArr(quotes[1]);
         setPreviousQuotes([quotes[0], quotes[1]]);

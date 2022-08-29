@@ -73,22 +73,23 @@ export const translateQuote = async (toLang, quote) => {
 
   try {
     const res = await fetch(url);
+
     if (!res.ok) throw new Error(`API status ${res.status} - ${res.statusText}`);
     const json = await res.json();
-    const translation = json.data.translations[0].translatedText;
-    let quote;
+    let translation = json.data.translations[0].translatedText;
 
     if (toLang === "fr") {
-      quote = decodeHtmlEntity(translation);
+      translation = decodeHtmlEntity(translation);
     }
 
     // convert quote to array with spaces
     if (noSpaceLangs.includes(toLang)) {
-      quote = addSpace(quote);
+      translation = addSpace(translation);
     } else {
-      quote = quote.split(/(\s+)/);
+      translation = translation.split(/(\s+)/);
     }
-    return quote;
+
+    return translation;
   } catch (error) {
     throw error;
   }
