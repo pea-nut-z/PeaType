@@ -71,28 +71,26 @@ export const translateQuote = async (toLang, quote) => {
   url += `&source=en`;
   url += `&target=${toLang}`;
 
-  const result = await fetch(url)
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error(`API status ${res.status} - ${res.statusText}`);
-      }
-      return res.json();
-    })
-    .then((data) => {
-      let quote = data.data.translations[0].translatedText;
+  try {
+    const response = await fetch(url);
+    const json = await response.json();
+    const translation = json.data.translations[0].translatedText;
+    let quote;
 
-      if (toLang === "fr") {
-        quote = decodeHtmlEntity(quote);
-      }
+    if (toLang === "fr") {
+      quote = decodeHtmlEntity(translation);
+    }
 
-      if (noSpaceLangs.includes(toLang)) {
-        quote = addSpace(quote);
-      } else {
-        quote = quote.split(/(\s+)/);
-      }
-      return quote;
-    });
-  return result;
+    // convert quote to array with spaces
+    if (noSpaceLangs.includes(toLang)) {
+      quote = addSpace(quote);
+    } else {
+      quote = quote.split(/(\s+)/);
+    }
+    return quote;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getQuotes = async (selectedLang) => {
@@ -101,69 +99,7 @@ export const getQuotes = async (selectedLang) => {
   let quotes = await Promise.all([quote1, quote2]).catch((error) => {
     throw error;
   });
-  quotes = [
-    [
-      "Tennis",
-      " ",
-      "is",
-      " ",
-      "a",
-      " ",
-      "perfect",
-      " ",
-      "combination",
-      " ",
-      "of",
-      " ",
-      "violent",
-      " ",
-      "action",
-      " ",
-      "taking",
-      " ",
-      "place",
-      " ",
-      "in",
-      " ",
-      "an",
-      " ",
-      "atmosphere",
-      " ",
-      "of",
-    ],
-    [
-      "The",
-      " ",
-      "important",
-      " ",
-      "thing",
-      " ",
-      "is",
-      " ",
-      "this:",
-      " ",
-      "to",
-      " ",
-      "be",
-      " ",
-      "able",
-      " ",
-      "at",
-      " ",
-      "any",
-      " ",
-      "moment",
-      " ",
-      "to",
-      " ",
-      "sacrifice",
-      " ",
-      "what",
-      " ",
-      "we",
-      " ",
-    ],
-  ];
+
   if (selectedLang !== "en") {
     const translated1 = translateQuote(selectedLang, quotes[0]);
     const translated2 = translateQuote(selectedLang, quotes[1]);
@@ -180,7 +116,6 @@ export const getNextQuote = async (selectedLang) => {
     if (selectedLang !== "en") {
       quote = await translateQuote(selectedLang, quote);
     }
-    // throw new Error();
     return quote;
   } catch (error) {
     throw error;
