@@ -130,10 +130,10 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
           onKeyDown={handleLangKeyDown}
         />
         {showLangList && (
-          <div data-testid="langList" ref={langListRef} className="lang-list">
+          <ul data-testid="langList" ref={langListRef} className="lang-list">
             {filteredLang.map((lang, idx) => {
               return (
-                <div
+                <li
                   key={idx}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -151,33 +151,34 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
                   }}
                 >
                   {lang.name}
-                </div>
+                </li>
               );
             })}
-          </div>
+          </ul>
         )}
       </div>
       <div>
         <h4>Time</h4>
-        <div>
+        <ul className="all-time-button-wrapper">
           {helper.timeOptions.map((option) => {
             return (
-              <button
-                data-testid={option}
-                key={option}
-                type="button"
-                aria-label={`${option} seconds`}
-                className={`time-button ${time === option ? "active" : null}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setTime(option);
-                }}
-              >
-                {option}
-              </button>
+              <li key={option} className="time-button-wrapper">
+                <button
+                  data-testid={option}
+                  type="button"
+                  aria-label={`${option} seconds`}
+                  className={`time-button ${time === option ? "active" : null}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setTime(option);
+                  }}
+                >
+                  {option}
+                </button>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
       <button
         data-testid="save"

@@ -320,7 +320,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   }, [greyout]);
 
   return (
-    <section className="main-container">
+    <div className="main-container">
       <div className="button-container">
         <button
           ref={redoRef}
@@ -356,40 +356,40 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         </button>
       </div>
       {!showResult && (
-        <section ref={timerRef} className="timer" data-testid="timer">
+        <div ref={timerRef} className="timer" data-testid="timer">
           {timer}
-        </section>
+        </div>
       )}
       {showResult && (
-        <section data-testid="result" className="result">
+        <div data-testid="result" className="result">
           <div data-testid="wpm">WPM: {Math.floor(totalCorrectChars / 5 / (initialTime / 60))}</div>
           <div data-testid="acc">
             ACC: {!totalChars ? 0 : Math.floor((totalCorrectChars / totalChars) * 100)}
           </div>
-        </section>
+        </div>
       )}
       {error && (
-        <section className="error" data-testid="error">
+        <div className="error" data-testid="error">
           {error}
-        </section>
+        </div>
       )}
       <div ref={testContainerRef} data-testid="testContainer" className="test-container">
         <div ref={quotesDisplayRef} className="quotes-display">
-          <div data-testid="curQuote" ref={curQuoteRef}>
+          <ul className="cur-quote" data-testid="curQuote" ref={curQuoteRef}>
             {curQuoteArr &&
               curQuoteArr.map((str, idx) => {
                 return (
-                  <span
+                  <li
                     data-testid={wordIdx === idx ? "curWord" : undefined}
                     ref={wordIdx === idx ? curWordRef : undefined}
-                    className={wordIdx === idx ? "cur-Word" : undefined}
+                    className={`cur-quote-words ${wordIdx === idx ? "cur-Word" : undefined}`}
                     key={idx}
                   >
                     {str}
-                  </span>
+                  </li>
                 );
               })}
-          </div>
+          </ul>
           <div data-testid="nxtQuote" className="greyout">
             {nxtQuoteArr && nxtQuoteArr.join("")}
           </div>
@@ -421,6 +421,6 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

@@ -7,7 +7,7 @@ function App() {
   const [openSettings, setOpenSettings] = useState(false);
   const [selectedLang, setSelectedLang] = useState("en");
   const [selectedName, setSelectedName] = useState("English");
-  const [selectedTime, setSelectedTime] = useState(15);
+  const [selectedTime, setSelectedTime] = useState(3);
 
   const buttonRef = useRef();
 
@@ -27,30 +27,39 @@ function App() {
   };
 
   return (
-    <div
-      data-testid="app"
-      className="app"
-      onClick={() => {
-        openSettings && toggleSettings();
-      }}
-    >
-      <section className="header-settings-container">
-        <header>Typing Test</header>
-        <button ref={buttonRef} data-testid="settings" onClick={toggleSettings}>
-          Settings
-        </button>
-      </section>
-      {openSettings && (
-        <Settings
-          selectedName={selectedName}
-          selectedTime={selectedTime}
-          toggleSettings={toggleSettings}
-          changeSettings={changeSettings}
-        />
-      )}
-      <main>
-        {<Main openSettings={openSettings} selectedLang={selectedLang} initialTime={selectedTime} />}
-      </main>
+    <div>
+      <div className="background" />
+      <div
+        data-testid="app"
+        className="app"
+        onClick={() => {
+          openSettings && toggleSettings();
+        }}
+      >
+        <div className="header-settings-container">
+          <header>Typing Test</header>
+          <button type="button" ref={buttonRef} data-testid="settings" onClick={toggleSettings}>
+            Settings
+          </button>
+        </div>
+        {openSettings && (
+          <Settings
+            selectedName={selectedName}
+            selectedTime={selectedTime}
+            toggleSettings={toggleSettings}
+            changeSettings={changeSettings}
+          />
+        )}
+        <main>
+          {
+            <Main
+              openSettings={openSettings}
+              selectedLang={selectedLang}
+              initialTime={selectedTime}
+            />
+          }
+        </main>
+      </div>
     </div>
   );
 }

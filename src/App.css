@@ -1,9 +1,24 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@500&family=Rubik+Puddles&display=swap");
-/* header 30; btn 15; timer 20; body 15; */
+@import url("http://db.onlinewebfonts.com/c/640bccf731fd712f99b3b3ef2b89d628?family=Pixels");
+/* FONT SIZE - header 30; btn 15; timer 20; body 15; */
 
 :root {
+  --white:#FFFFFF;
   --green: #c5f7eb;
+  --gradient-green:linear-gradient(0deg, rgba(92,237,115,1) 0%, rgba(255,255,255,1) 97%);
+  --gradient-yellow: linear-gradient(0deg, rgba(229,237,92,1) 0%, rgba(255,255,255,1) 0%, rgba(251,252,229,1) 42%, rgba(232,239,113,1) 96%);
+  --yellow: #FFFFED;
+  --purple:#5C1AD9;
+  --pink:#FE347E;
+  --gray:lightslategray;
+  --lightgray:#ECECEC;
+
+  --large-font: 6rem;
+  --medium-font: 1.5rem;
+  --small-font: 1rem;
+
+  --pixel-font:"Pixels", sans-serif;
 }
 
 body {
@@ -15,6 +30,20 @@ body {
   font-family: Roboto Mono;
   font-size: 15px;
   overflow-x: hidden;
+}
+
+ul{
+  list-style: none;
+  margin:0;
+  padding: 0;
+}
+
+.background{
+background: linear-gradient(180deg, hsla(211, 93%, 48%, 1) 0%, hsla(0, 0%, 98%, 1) 26%, hsla(213, 35%, 94%, 1) 92%, hsla(211, 87%, 51%, 1) 100%);
+height: 100vh;
+ width: 100vw;
+ position: fixed;
+ z-index: -1;
 }
 
 .app{
@@ -34,10 +63,10 @@ body {
 }
 
 header {
-  font-family: "Quicksand", sans-serif;
-  font-size: 30px;
-  margin: 0% 0 1% 0;
-  padding: 0;
+  font-family: var(--pixel-font);
+  font-size: var(--large-font);
+  line-height:50%;
+  margin-bottom: 1rem;
 }
 
 .button-container {
@@ -51,33 +80,62 @@ header {
 button {
   font-size: 15px;
   font-family: Roboto Mono;
-  background-color: var(--green);
+  background: var(--gradient-green);
   border: 1px solid black;
   border-radius: 10px;
   height: 35px;
   width: 100px;
-  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.5);
   cursor: pointer;
 }
 
 button.active {
-  top: 3px;
-  left: 2px;
-  box-shadow: none;
-  background-color: white;
+  background: var(--lightgray);
 }
 
 .timer,
 .result,
 .error {
-  font-size: 20px;
-  margin: 1% 0 1% 0%;
+  margin: 1% 0;
   width: 100%;
   height: 53px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.result{
+  font-size: var(--medium-font);
+  font-weight: bolder;
+  -webkit-animation: test 4s;
+  animation: fly-in 0.5s;
+}
+
+@-webkit-keyframes fly-in {
+  from {
+    transform: translateX(-100%) 
+  }
+  to {
+    transform: translateX(auto)
+  } 
+}
+
+@keyframes fly-in {
+  from {
+    transform: translateX(-100%) 
+  }
+  to {
+    transform: translateX(auto)
+  } 
+}
+
+.timer{
+ font-family: var(--pixel-font);
+  font-size: var(--large-font)
+}
+
+.error{
+  font-size: 20px;
 }
 
 .new-quote-btn {
@@ -100,16 +158,23 @@ button.active {
   width: 60%;
 }
 
-/* .cur-quote-arr{
+.cur-quote{
 display: flex;
-} */
+flex-direction: row;
+flex-wrap: wrap;
+width: 100%;
+}
+
+.cur-quote-words{
+padding-right:5px ;
+}
 
 .input-container {
   height: 45vh;
   width: 60%;
   overflow-y: scroll;
   overflow-x: hidden;
-  border: 3px solid var(--green);
+  border: 3px solid var(--lightgray);
   outline: lightgray solid 1px;
   border-radius: 10px;
 }
@@ -184,7 +249,7 @@ display: flex;
   top:17%;
   right: 3%;
   padding: 2%;
-  background-color: #fdfd96;
+  background: var(--gradient-yellow);
   outline: black solid 1px;
   border-radius: 10px;
   z-index: 2;
@@ -226,13 +291,21 @@ h4 {
 }
 
 .hilight {
-  background-color: #fdfd96;
+  background-color: var(--lightgray);
   border-radius: 5px;
+}
+
+.all-time-button-wrapper{
+display: flex;
+flex-direction: row;
+}
+
+.time-button-wrapper{
+  margin:2% 2% 2% 0
 }
 
 .time-button {
   width: 50px;
-  margin: 2% 2% 2% 0%;
   cursor: pointer;
 }
 
@@ -242,6 +315,7 @@ h4 {
   width: 100%;
   margin-bottom:6%;
  }
+
  .timer,
 .result {
   margin: 6% 0 5% 0%;
