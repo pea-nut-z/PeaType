@@ -50,16 +50,11 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     !startTimer && setStartTimer(true);
     const lastChar = e.nativeEvent.data;
     const input = e.currentTarget.textContent;
-    // const inputToCheck = isLastWord ? input : input.trim();
     const inputToCheck = input.trim();
-    // console.log({ isLastWord });
-    // console.log({ lastChar });
-
     const curWordSubStr = curWord.substring(0, input.length);
     let fontColor = inputToCheck === curWordSubStr ? "black" : "red";
 
     if (
-      // (!isLastWord && lastChar === " ") ||
       lastChar === " " ||
       (isLastWord && helper.fullstop.includes(lastChar)) ||
       (isLastWord && selectedLang === "th" && input.length === curWord.length) // THAI
@@ -102,12 +97,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
     const disableKeys = (e) => {
       const input = inputFieldRef.current.textContent;
-      if (
-        e.key === "Enter" ||
-        (e.key === " " && input === "") ||
-        // input.substring(input.length - 2) === ". " ||
-        input.length > 19
-      ) {
+      if (e.key === "Enter" || (e.key === " " && input === "") || input.length > 19) {
         disableEvent(e);
       }
     };
