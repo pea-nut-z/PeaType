@@ -11,6 +11,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
   const [time, setTime] = useState(selectedTime);
 
   const langListRef = useRef();
+  const saveButtonRef = useRef();
 
   useEffect(() => {
     (async () => {
@@ -181,9 +182,11 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         </ul>
       </div>
       <button
+        ref={saveButtonRef}
         data-testid="save"
         type="button"
         aria-label="Save"
+        onMouseDown={() => saveButtonRef.current.classList.add("active")}
         onClick={() => {
           validateAndSave();
           toggleSettings();

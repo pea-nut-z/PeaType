@@ -7,12 +7,8 @@
 
 :root {
   --white:#FFFFFF;
-  --green: #c5f7eb;
   --gradient-green:linear-gradient(0deg, rgba(92,237,115,1) 0%, rgba(255,255,255,1) 97%);
   --gradient-yellow: linear-gradient(0deg, rgba(229,237,92,1) 0%, rgba(255,255,255,1) 0%, rgba(251,252,229,1) 42%, rgba(232,239,113,1) 96%);
-  --yellow: #FFFFED;
-  --purple:#5C1AD9;
-  --pink:#FE347E;
   --gray:lightslategray;
   --lightgray:#ECECEC;
 
@@ -48,6 +44,22 @@ height: 100vh;
  z-index: -1;
 }
 
+.corner-name{
+  position: fixed;
+  right: -8rem;
+  bottom:-9rem;
+  -webkit-transform:rotate(-45deg);
+  transform:rotate(-45deg);
+  background-color: var(--white);;
+  width: 15rem;
+  height: 15rem;
+  text-align: center;
+  z-index: 3;
+  font-size: var(--small-font);
+  border-top:var(--gray) solid 1px;
+  opacity:0.7
+}
+
 .app{
   height: 100vh;
   width: 100%;
@@ -66,6 +78,8 @@ height: 100vh;
 
 header {
   font-family: var(--pixel-font);
+  color: white;
+  -webkit-text-stroke: 2px black;
   font-size: var(--large-font);
   line-height:50%;
   margin-bottom: 1rem;
@@ -241,7 +255,7 @@ padding-right:5px ;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--green);
+  background-color: var(--lightgray);
   border: 1px solid darkgray;
   border-radius: 10px;
 }
@@ -314,7 +328,6 @@ flex-direction: row;
 }
 
 
-/* .snowContainer{width: 100%; height: 300px; background-color: black; overflow: hidden; position: relative;} */
 .peanut{position: absolute; top: -450px; text-align: center; 
 animation: peanut-rain ease-in infinite;
 -webkit-animation: peanut-rain ease-in infinite;

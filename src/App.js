@@ -7,7 +7,7 @@ function App() {
   const [openSettings, setOpenSettings] = useState(false);
   const [selectedLang, setSelectedLang] = useState("en");
   const [selectedName, setSelectedName] = useState("English");
-  const [selectedTime, setSelectedTime] = useState(15);
+  const [selectedTime, setSelectedTime] = useState(150000);
 
   const buttonRef = useRef();
 
@@ -29,6 +29,7 @@ function App() {
   return (
     <div>
       <div className="background" />
+      <p className="corner-name">PAULINE ZHANG</p>
       <div
         data-testid="app"
         className="app"

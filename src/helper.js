@@ -21,6 +21,7 @@ export const timeOptions = [15, 30, 60, 120, 240];
 export const noSpaceLangs = [
   "zh-TW", //"Chinese(Traditional)",
   "zh-CN", //"Chinese(Simplified)"
+  "zh", //"Chinese(Simplified)"
   "ja", //"Japanese"
   "lo", //"Lao"
   "km", // "Khmer"
@@ -55,14 +56,17 @@ const addSpace = (quote) => {
 };
 
 const fetchQuote = async () => {
-  return await fetch(quoteApi)
+  return fetch(quoteApi)
     .then((res) => {
       if (!res.ok) {
         throw new Error(`API status ${res.status} - ${res.statusText}`);
       }
       return res.json();
     })
-    .then((data) => data.content.split(/(\s+)/));
+    .then((data) => data.content.split(/(\s+)/))
+    .catch((err) => {
+      throw err;
+    });
 };
 
 export const translateQuote = async (toLang, quote) => {
@@ -73,7 +77,6 @@ export const translateQuote = async (toLang, quote) => {
 
   try {
     const res = await fetch(url);
-
     if (!res.ok) throw new Error(`API status ${res.status} - ${res.statusText}`);
     const json = await res.json();
     let translation = json.data.translations[0].translatedText;
@@ -99,6 +102,7 @@ export const getQuotes = async (selectedLang) => {
   const quote1 = fetchQuote();
   const quote2 = fetchQuote();
   let quotes = await Promise.all([quote1, quote2]).catch((error) => {
+    console.log(error);
     throw error;
   });
 
