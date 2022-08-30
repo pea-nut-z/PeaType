@@ -47,13 +47,11 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const newQuoteRef = useRef();
 
   const handleInput = (e) => {
-    if (!startTimer) {
-      setStartTimer(true);
-    }
-
+    !startTimer && setStartTimer(true);
     const input = e.currentTarget.textContent;
     const inputToCheck = isLastWord ? input : input.trim();
     const lastChar = e.nativeEvent.data;
+
     const curWordSubStr = curWord.substring(0, input.length);
     let fontColor = inputToCheck === curWordSubStr ? "black" : "red";
 
@@ -70,12 +68,12 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       );
       // PUSH TESTED WORD TO AN ELEMENT
       const span = document.createElement("span");
-      span.setAttribute("class", "tested-word");
+      span.setAttribute("className", "tested-word");
       span.setAttribute("data-testid", "testedWord");
       span.textContent = input;
       curInputContainerRef.current.insertBefore(span, curInputContainerRef.current.lastChild);
       inputFieldRef.current.textContent = null;
-      curWordRef.current.color = fontColor;
+      curWordRef.current.style.color = fontColor;
       span.style.color = fontColor;
       // GET NEXT QUOTE OR MOVE ON TO NEXT WORD
       isLastWord ? setGetNxtQuote(true) : setWordIdx(wordIdx + 2);
@@ -191,10 +189,10 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       // SET UP FOR NEXT QUOTE
       // APPEND TESTED WORDS OF CURRENT QUOTE TO AN ELEMENT
       const testedLine = document.createElement("div");
-      testedLine.setAttribute("class", "tested-line");
+      testedLine.setAttribute("className", "tested-line");
       const testedWords = document.getElementsByClassName("tested-word");
       Array.from(testedWords).forEach((word) => {
-        word.removeAttribute("class");
+        word.removeAttribute("className");
         word.removeAttribute("data-testid");
         testedLine.appendChild(word);
       });
@@ -304,7 +302,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
   // GRAYOUT NEXT LINE
   useEffect(() => {
-    if (greyout) {
+    if (greyout && !showResult) {
       const curTop = curWordRef.current.getBoundingClientRect().top;
       let curLineEles = curQuoteRef.current.children;
       Array.from(curLineEles).forEach((ele) => {
@@ -317,10 +315,21 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         setGreyout(false);
       });
     }
-  }, [greyout]);
+  }, [greyout, showResult]);
 
   return (
     <div className="main-container">
+      {showResult && (
+        <div>
+          <img alt="peanut" src="peanut.ico" className="peanut peanut1" />
+          <img alt="peanut" src="peanut.ico" className="peanut peanut2" />
+          <img alt="peanut" src="peanut.ico" className="peanut peanut3" />
+          <img alt="peanut" src="peanut.ico" className="peanut peanut4" />
+          <img alt="peanut" src="peanut.ico" className="peanut peanut5" />
+          <img alt="peanut" src="peanut.ico" className="peanut peanut6" />
+        </div>
+      )}
+
       <div className="button-container">
         <button
           ref={redoRef}
