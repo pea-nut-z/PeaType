@@ -13,7 +13,8 @@ const secrets = {
 export const credentials = JSON.parse(JSON.stringify(secrets));
 
 const langApi = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
-const quoteApi = "https://api.quotable.io/random";
+const quoteApi = "https://winterly-backend.herokuapp.com/quote";
+// const quoteApi = "https://api.quotable.io/random";
 const translateApi = `https://translation.googleapis.com/language/translate/v2?key=${process.env.REACT_APP_API_KEY}`;
 
 export const timeOptions = [15, 30, 60, 120, 240];
@@ -55,7 +56,7 @@ const addSpace = (quote) => {
   return result;
 };
 
-const fetchQuote = async () => {
+const fetchQuote = () => {
   return fetch(quoteApi)
     .then((res) => {
       if (!res.ok) {
@@ -63,7 +64,11 @@ const fetchQuote = async () => {
       }
       return res.json();
     })
-    .then((data) => data.content.split(/(\s+)/))
+    .then((data) => {
+      console.log("HERE", data.text);
+
+      return data.text.split(/(\s+)/);
+    })
     .catch((err) => {
       throw err;
     });

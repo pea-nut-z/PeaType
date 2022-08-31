@@ -177,7 +177,8 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           testContainerRef.current.classList.remove("reverse");
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error(error);
         setError("Error - failed to fetch quotes");
       });
   }, [selectedLang, fetchQuotes]);
@@ -225,6 +226,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
             setPreviousQuotes([...previousQuotes, quote]);
           })
           .catch(() => {
+            console.error(error);
             setError("Error - failed to fetch next quote");
           });
       }

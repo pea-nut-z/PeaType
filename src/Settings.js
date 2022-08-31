@@ -15,9 +15,13 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
 
   useEffect(() => {
     (async () => {
-      const data = await helper.fetchLangs();
-      setLangData(data);
-      setfilteredLang(data);
+      try {
+        const data = await helper.fetchLangs();
+        setLangData(data);
+        setfilteredLang(data);
+      } catch (error) {
+        console.error(error);
+      }
     })();
   }, []);
 
