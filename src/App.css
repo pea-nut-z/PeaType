@@ -121,7 +121,8 @@ button.active {
 }
 
 .timer,
-.result
+.result,
+.error
  {
   margin: 1% 0;
   width: 100%;
