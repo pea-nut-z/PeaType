@@ -13,7 +13,7 @@ const secrets = {
 export const credentials = JSON.parse(JSON.stringify(secrets));
 
 const langApi = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
-const quoteApi = "https://winterly-backend.herokuapp.com/quote";
+const quoteApi = "/api/";
 // const quoteApi = "https://api.quotable.io/random";
 const translateApi = `https://translation.googleapis.com/language/translate/v2?key=${process.env.REACT_APP_API_KEY}`;
 

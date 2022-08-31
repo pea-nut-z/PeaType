@@ -1,7 +1,7 @@
 # The following redirect is intended for use with most SPAs that handle
 # routing internally.
 [[redirects]]
-  from = "https://typing-test-pz.netlify.app"
+  from = "/api/*"
   to = "https://winterly-backend.herokuapp.com/quote"
   status = 200
 
