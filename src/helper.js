@@ -65,8 +65,6 @@ const fetchQuote = () => {
       return res.json();
     })
     .then((data) => {
-      console.log("HERE", data.text);
-
       return data.text.split(/(\s+)/);
     })
     .catch((err) => {
@@ -107,7 +105,6 @@ export const getQuotes = async (selectedLang) => {
   const quote1 = fetchQuote();
   const quote2 = fetchQuote();
   let quotes = await Promise.all([quote1, quote2]).catch((error) => {
-    console.log(error);
     throw error;
   });
 
