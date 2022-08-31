@@ -225,7 +225,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
             setNxtQuoteArr(quote);
             setPreviousQuotes([...previousQuotes, quote]);
           })
-          .catch(() => {
+          .catch((error) => {
             console.error(error);
             setError("Error - failed to fetch next quote");
           });
