@@ -44,10 +44,10 @@ height: 100vh;
  z-index: -1;
 }
 
-.corner-name{
+.corner-wrapper{
   position: fixed;
   right: -8rem;
-  bottom:-9rem;
+  bottom:-8rem;
   -webkit-transform:rotate(-45deg);
   transform:rotate(-45deg);
   background-color: var(--white);;
@@ -55,9 +55,15 @@ height: 100vh;
   height: 15rem;
   text-align: center;
   z-index: 3;
-  font-size: var(--small-font);
+  font-size: 1rem;
+  line-height: 8px;
   border-top:var(--gray) solid 1px;
   opacity:0.7
+}
+
+.portfolio-link:link,
+.portfolio-link:visited{
+  color:#5C1AD9
 }
 
 .app{

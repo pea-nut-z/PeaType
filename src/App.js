@@ -29,7 +29,19 @@ function App() {
   return (
     <div>
       <div className="background" />
-      <p className="corner-name">PAULINE ZHANG</p>
+      <div className="corner-wrapper">
+        <p>PAULINE ZHANG</p>
+        <a
+          href="https://pauline-zhang.netlify.app/"
+          className="portfolio-link"
+          aria-label="Porfolio Link"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <title>Portfolio Link</title>
+          <p>See more</p>
+        </a>
+      </div>
       <div
         data-testid="app"
         className="app"
