@@ -60,15 +60,16 @@ function App() {
           >
             Settings
           </button>
+          {openSettings && (
+            <Settings
+              selectedName={selectedName}
+              selectedTime={selectedTime}
+              toggleSettings={toggleSettings}
+              changeSettings={changeSettings}
+            />
+          )}
         </div>
-        {openSettings && (
-          <Settings
-            selectedName={selectedName}
-            selectedTime={selectedTime}
-            toggleSettings={toggleSettings}
-            changeSettings={changeSettings}
-          />
-        )}
+
         <main>
           {
             <Main

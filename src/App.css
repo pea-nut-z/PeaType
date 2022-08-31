@@ -15,7 +15,6 @@
   --large-font: 6rem;
   --medium-font: 2rem;
   --small-font: 1.2rem;
-
   --pixel-font:"Pixels";
 }
 
@@ -77,6 +76,7 @@ height: 100vh;
 }
 
 .header-settings-container {
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: space-between; 
@@ -274,9 +274,11 @@ padding-right:5px ;
 
 /* SETTINGS.JS */
 .settings-menu {
-  width: 50%;
   position: absolute;
-  top:17%;
+  width: 50%;
+  min-width: 200px;
+  max-width: 600px;
+  top:110%;
   right: 3%;
   padding: 2%;
   background: var(--gradient-yellow);
@@ -295,12 +297,13 @@ h4 {
 }
 
 .lang-input-field {
-  font-size: 15px;
-  margin: 2% 0% 2% 0%;
-  padding: 1%;
+  font-size: var(--small-font);
+  margin: 2% 0%;
+  box-sizing: border-box;
+  padding: 2%;
   border: 1px solid lightgray;
   border-radius: 5px;
-  width: 97%;
+  width: 100%;
 }
 
 .lang-input-field:focus {
@@ -328,6 +331,7 @@ h4 {
 .all-time-button-wrapper{
 display: flex;
 flex-direction: row;
+flex-wrap: wrap;
 }
 
 .time-button-wrapper{
@@ -420,11 +424,7 @@ animation-fill-mode: forwards;}
 }
 
 .settings-menu {
-  width: 80%;
-  right:3%;
-}
-
-.lang-input-field::placeholder{
- font-size: 12px;
+  top:50%;
+  width: 90%;
 }
 }
