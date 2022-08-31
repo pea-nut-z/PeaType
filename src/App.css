@@ -1,10 +1,10 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@500&family=Rubik+Puddles&display=swap");
-@import url("https://db.onlinewebfonts.com/c/640bccf731fd712f99b3b3ef2b89d628?family=Pixels");
-                
-                
-/* FONT SIZE - header 30; btn 15; timer 20; body 15; */
 
+@font-face{
+  src:url(../fonts/Pixels.ttf);
+  font-family:Pixels;
+}
+                
 :root {
   --white:#FFFFFF;
   --gradient-green:linear-gradient(0deg, rgba(92,237,115,1) 0%, rgba(255,255,255,1) 97%);
@@ -16,7 +16,7 @@
   --medium-font: 2rem;
   --small-font: 1.2rem;
 
-  --pixel-font:"Pixels", sans-serif;
+  --pixel-font:"Pixels";
 }
 
 body {
