@@ -51,7 +51,13 @@ function App() {
       >
         <div className="header-settings-container">
           <header>Typing Test</header>
-          <button type="button" ref={buttonRef} data-testid="settings" onClick={toggleSettings}>
+          <button
+            type="button"
+            ref={buttonRef}
+            className="settings-button"
+            data-testid="settings"
+            onClick={toggleSettings}
+          >
             Settings
           </button>
         </div>
