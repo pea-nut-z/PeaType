@@ -25,7 +25,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [preQuoteIdx, setPreQuoteIdx] = useState(0);
   const [getNxtQuote, setGetNxtQuote] = useState(false);
   const [greyout, setGreyout] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("loading...");
 
   // INPUT FIELD
   const [allowInput, setAllowInput] = useState(false);
@@ -365,17 +365,16 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           New Quote
         </button>
       </div>
-      {!showResult && (
-        <div ref={timerRef} className="timer" data-testid="timer">
-          {timer}
-        </div>
-      )}
-      {showResult && (
+      {showResult ? (
         <div data-testid="result" className="result">
           <div data-testid="wpm">WPM: {Math.floor(totalCorrectChars / 5 / (initialTime / 60))}</div>
           <div data-testid="acc">
             ACC: {!totalChars ? 0 : Math.floor((totalCorrectChars / totalChars) * 100)}
           </div>
+        </div>
+      ) : (
+        <div ref={timerRef} className="timer" data-testid="timer">
+          {timer}
         </div>
       )}
       {error && (
