@@ -25,7 +25,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [preQuoteIdx, setPreQuoteIdx] = useState(0);
   const [getNxtQuote, setGetNxtQuote] = useState(false);
   const [greyout, setGreyout] = useState(false);
-  const [error, setError] = useState("loading...");
+  const [loading, setLoading] = useState(true);
 
   // INPUT FIELD
   const [allowInput, setAllowInput] = useState(false);
@@ -83,7 +83,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   };
 
   const togglePressEffect = (e) => {
-    e.target.classList.toggle("active");
+    loading && e.target.classList.toggle("active");
   };
 
   // EVENT LISTENERS
@@ -162,25 +162,33 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
 
   // FETCH QUOTES
   useEffect(() => {
-    helper
-      .getQuotes(selectedLang)
-      .then((quotes) => {
-        setCurQuoteArr(quotes[0]);
-        setNxtQuoteArr(quotes[1]);
-        setPreviousQuotes([quotes[0], quotes[1]]);
-        setError(null);
-        setGreyout(true);
+    setFetchQuotes(true);
+  }, [selectedLang]);
 
-        if (helper.rightToLeftLangs.includes(selectedLang)) {
-          testContainerRef.current.classList.add("reverse");
-        } else {
-          testContainerRef.current.classList.remove("reverse");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        setError("Error - failed to fetch quotes");
-      });
+  useEffect(() => {
+    if (fetchQuotes) {
+      setLoading(true);
+      helper
+        .getQuotes(selectedLang)
+        .then((quotes) => {
+          setCurQuoteArr(quotes[0]);
+          setNxtQuoteArr(quotes[1]);
+          setPreviousQuotes([quotes[0], quotes[1]]);
+          setGreyout(true);
+          if (helper.rightToLeftLangs.includes(selectedLang)) {
+            testContainerRef.current.classList.add("reverse");
+          } else {
+            testContainerRef.current.classList.remove("reverse");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          setLoading(false);
+        })
+        .finally(() => {
+          setFetchQuotes(false);
+        });
+    }
   }, [selectedLang, fetchQuotes]);
 
   // GET NEXT QUOTE
@@ -216,18 +224,17 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         } else {
           setPreQuoteIdx(preQuoteIdx + 1);
         }
-        setError(null);
       } else {
         helper
           .getNextQuote(selectedLang)
           .then((quote) => {
-            setError(null);
+            setLoading(true);
             setNxtQuoteArr(quote);
             setPreviousQuotes([...previousQuotes, quote]);
           })
           .catch((error) => {
             console.error(error);
-            setError("Error - failed to fetch next quote");
+            setLoading(false);
           });
       }
       setGetNxtQuote(false);
@@ -338,6 +345,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           type="button"
           aria-label="Redo same quote"
           onClick={(e) => {
+            if (!loading) return;
             togglePressEffect(e);
             setRedo(true);
             setReset(true);
@@ -359,7 +367,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
             setUsePreQuote(false);
             setPreQuoteIdx(0);
             setReset(true);
-            setFetchQuotes(!fetchQuotes);
+            setFetchQuotes(true);
           }}
         >
           New Quote
@@ -377,11 +385,11 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           {timer}
         </div>
       )}
-      {error && (
-        <div className="error" data-testid="error">
-          {error}
-        </div>
-      )}
+      <div className="fetch-status-wrapper" data-testid="error">
+        {(fetchQuotes || !loading) && (
+          <p className="fetch-status">{loading ? "loading..." : "Error - failed to fetch quotes"}</p>
+        )}
+      </div>
       <div ref={testContainerRef} data-testid="testContainer" className="test-container">
         <div ref={quotesDisplayRef} className="quotes-display">
           <ul className="cur-quote" data-testid="curQuote" ref={curQuoteRef}>

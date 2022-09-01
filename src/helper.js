@@ -13,8 +13,8 @@ const secrets = {
 export const credentials = JSON.parse(JSON.stringify(secrets));
 
 const langApi = `https://www.googleapis.com/language/translate/v2/languages?key=${process.env.REACT_APP_API_KEY}&target=en`;
-const quoteApi = "/api/";
-// const quoteApi = "https://api.quotable.io/random";
+const quoteApi =
+  process.env.NODE_ENV === "development" ? "https://winterly-backend.herokuapp.com/quote" : "/api/";
 const translateApi = `https://translation.googleapis.com/language/translate/v2?key=${process.env.REACT_APP_API_KEY}`;
 
 export const timeOptions = [15, 30, 60, 120, 240];
