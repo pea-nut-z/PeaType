@@ -2,7 +2,7 @@
 # routing internally.
 [[redirects]]
   from = "/api/*"
-  to = "https://winterly-backend.herokuapp.com/quote"
+  to = "https://api.quotable.io/random"
   status = 200
 
 [[headers]]
