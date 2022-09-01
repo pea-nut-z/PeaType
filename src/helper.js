@@ -65,7 +65,7 @@ const fetchQuote = () => {
       return res.json();
     })
     .then((data) => {
-      return data.content.split(/(\s+)/);
+      return data.text.split(/(\s+)/);
     })
     .catch((err) => {
       throw err;
