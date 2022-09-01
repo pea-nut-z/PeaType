@@ -11,6 +11,7 @@
   --gradient-yellow: linear-gradient(0deg, rgba(229,237,92,1) 0%, rgba(255,255,255,1) 0%, rgba(251,252,229,1) 42%, rgba(232,239,113,1) 96%);
   --gray:lightslategray;
   --lightgray:#ECECEC;
+  --purple:#5C1AD9;
 
   --large-font: 6rem;
   --medium-font: 2rem;
@@ -62,7 +63,7 @@ height: 100vh;
 
 .portfolio-link:link,
 .portfolio-link:visited{
-  color:#5C1AD9
+  color:var(--purple)
 }
 
 .app{
@@ -137,6 +138,7 @@ height: 25px;
 .fetch-status{
   text-align: center;
   margin: 0;
+  color: var(--purple);
 }
 
 .result{
