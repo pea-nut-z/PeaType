@@ -1,6 +1,8 @@
 ## Web App - Typing Test
 
-[DEMO](https://drive.google.com/file/d/1PNma30nUL6MmBqpDdpx2gqUzDv-lTRJ0/view?usp=sharing) | [APP](https://typing-test-pz.netlify.app)
+[Typing Test.webm](https://user-images.githubusercontent.com/66141752/192047435-35980348-069e-48b7-b745-cbb7f16966d3.webm)
+
+### [DEMO](https://drive.google.com/file/d/1PNma30nUL6MmBqpDdpx2gqUzDv-lTRJ0/view?usp=sharing) | [APP](https://typing-test-pz.netlify.app)
 
 ### To get started
 
