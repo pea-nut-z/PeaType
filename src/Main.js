@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as helper from "./helper";
 
-export default function Main({ openSettings, selectedLang, initialTime }) {
+export default function Main({ openSettings, selectedLang, initialTime, settingError }) {
   // SETUP
   const [reset, setReset] = useState(true);
   const [showResult, setShowResult] = useState(false);
@@ -26,6 +26,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
   const [getNxtQuote, setGetNxtQuote] = useState(false);
   const [greyout, setGreyout] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [ setSettingErrorMsg] = useState(false);
 
   // INPUT FIELD
   const [allowInput, setAllowInput] = useState(false);
@@ -86,6 +87,11 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
     loading && e.target.classList.toggle("active");
   };
 
+  // SETTING ERROR
+  useEffect(() => {
+    settingError? setSettingErrorMsg(true) : setSettingErrorMsg(false)
+  }, [settingError])
+  
   // EVENT LISTENERS
   useEffect(() => {
     const inputEle = inputFieldRef.current;
@@ -385,10 +391,15 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           {timer}
         </div>
       )}
-      <div className="fetch-status-wrapper" data-testid="error">
+      <div className="error-msg-wrapper" data-testid="error">
         {(fetchQuotes || !loading) && (
-          <p className="fetch-status">{loading ? "loading..." : "Error - failed to fetch quotes"}</p>
+          <p className="error-msg">{loading ? "loading..." : "Failed to fetch quotes"}</p>
         )}
+        {
+          settingError && (
+            <p className="error-msg">Failed to display Settings</p>
+          )
+        }
       </div>
       <div ref={testContainerRef} data-testid="testContainer" className="test-container">
         <div ref={quotesDisplayRef} className="quotes-display">

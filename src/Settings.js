@@ -9,6 +9,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
   const [keyNode, setKeyNode] = useState(null);
   const [mouseNode, setMouseNode] = useState(null);
   const [time, setTime] = useState(selectedTime);
+  const [settingError, setSettingError] = useState(false);
 
   const langListRef = useRef();
   const saveButtonRef = useRef();
@@ -20,10 +21,15 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         setLangData(data);
         setfilteredLang(data);
       } catch (error) {
+        setSettingError(true)
         console.error(error);
       }
     })();
   }, []);
+
+  useEffect(() => {
+    settingError? toggleSettings(true): setSettingError(false)
+  },[settingError])
 
   const closeLangList = () => {
     setShowLangList(false);
@@ -193,7 +199,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         onMouseDown={() => saveButtonRef.current.classList.add("active")}
         onClick={() => {
           validateAndSave();
-          toggleSettings();
+          toggleSettings(false);
         }}
       >
         Save
