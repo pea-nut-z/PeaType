@@ -18,6 +18,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
     (async () => {
       try {
         const data = await helper.fetchLangs();
+        setSettingError(false)
         setLangData(data);
         setfilteredLang(data);
       } catch (error) {
@@ -27,9 +28,6 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
     })();
   }, []);
 
-  useEffect(() => {
-    settingError? toggleSettings(true): setSettingError(false)
-  },[settingError])
 
   const closeLangList = () => {
     setShowLangList(false);
@@ -102,7 +100,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
 
   const validateAndSave = () => {
     const newLang =
-      searchStr === selectedName
+      searchStr === selectedName || searchStr === ""
         ? null
         : langData.find((lang) => {
             const str = searchStr.toLowerCase();
@@ -132,13 +130,14 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
           className="lang-input-field"
           type="text"
           value={searchStr}
-          placeholder={`Enter or select a language to change from ${selectedName}.`}
+          placeholder={settingError ? "Failed to fetch list of language":`Enter or select a language to change from ${selectedName}.`}
           onFocus={filteredLang && openLangList}
           onClick={(e) => {
             e.stopPropagation();
           }}
           onChange={handleLangChange}
           onKeyDown={handleLangKeyDown}
+          disabled={settingError}
         />
         {showLangList && (
           <ul data-testid="langList" ref={langListRef} className="lang-list">
@@ -199,7 +198,7 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         onMouseDown={() => saveButtonRef.current.classList.add("active")}
         onClick={() => {
           validateAndSave();
-          toggleSettings(false);
+          toggleSettings(settingError);
         }}
       >
         Save

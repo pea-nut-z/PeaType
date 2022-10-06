@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as helper from "./helper";
 
-export default function Main({ openSettings, selectedLang, initialTime, settingError }) {
+export default function Main({ openSettings, selectedLang, initialTime, displaySettingError }) {
   // SETUP
   const [reset, setReset] = useState(true);
   const [showResult, setShowResult] = useState(false);
@@ -26,7 +26,6 @@ export default function Main({ openSettings, selectedLang, initialTime, settingE
   const [getNxtQuote, setGetNxtQuote] = useState(false);
   const [greyout, setGreyout] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [ setSettingErrorMsg] = useState(false);
 
   // INPUT FIELD
   const [allowInput, setAllowInput] = useState(false);
@@ -87,11 +86,6 @@ export default function Main({ openSettings, selectedLang, initialTime, settingE
     loading && e.target.classList.toggle("active");
   };
 
-  // SETTING ERROR
-  useEffect(() => {
-    settingError? setSettingErrorMsg(true) : setSettingErrorMsg(false)
-  }, [settingError])
-  
   // EVENT LISTENERS
   useEffect(() => {
     const inputEle = inputFieldRef.current;
@@ -396,8 +390,8 @@ export default function Main({ openSettings, selectedLang, initialTime, settingE
           <p className="error-msg">{loading ? "loading..." : "Failed to fetch quotes"}</p>
         )}
         {
-          settingError && (
-            <p className="error-msg">Failed to display Settings</p>
+          displaySettingError && (
+            <p className="error-msg">Failed to fetch list of language</p>
           )
         }
       </div>
