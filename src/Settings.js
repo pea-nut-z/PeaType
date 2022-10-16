@@ -18,16 +18,16 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
     (async () => {
       try {
         const data = await helper.fetchLangs();
-        setSettingError(false)
+        setSettingError(false);
         setLangData(data);
         setfilteredLang(data);
       } catch (error) {
-        setSettingError(true)
+        console.log("catch error");
+        setSettingError(true);
         console.error(error);
       }
     })();
   }, []);
-
 
   const closeLangList = () => {
     setShowLangList(false);
@@ -130,7 +130,11 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
           className="lang-input-field"
           type="text"
           value={searchStr}
-          placeholder={settingError ? "Failed to fetch list of language":`Enter or select a language to change from ${selectedName}.`}
+          placeholder={
+            settingError
+              ? "Failed to fetch list of language"
+              : `Enter or select a language to change from ${selectedName}.`
+          }
           onFocus={filteredLang && openLangList}
           onClick={(e) => {
             e.stopPropagation();
@@ -196,9 +200,9 @@ export default function Settings({ selectedName, selectedTime, toggleSettings, c
         type="button"
         aria-label="Save"
         onMouseDown={() => saveButtonRef.current.classList.add("active")}
-        onClick={() => {
+        onClick={(e) => {
           validateAndSave();
-          toggleSettings(settingError);
+          toggleSettings(e, settingError);
         }}
       >
         Save

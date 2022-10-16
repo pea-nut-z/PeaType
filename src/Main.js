@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import * as helper from "./helper";
 
-export default function Main({ openSettings, selectedLang, initialTime, displaySettingError }) {
+export default function Main({ openSettings, selectedLang, initialTime }) {
   // SETUP
   const [reset, setReset] = useState(true);
   const [showResult, setShowResult] = useState(false);
@@ -389,11 +389,6 @@ export default function Main({ openSettings, selectedLang, initialTime, displayS
         {(fetchQuotes || !loading) && (
           <p className="error-msg">{loading ? "loading..." : "Failed to fetch quotes"}</p>
         )}
-        {
-          displaySettingError && (
-            <p className="error-msg">Failed to fetch list of language</p>
-          )
-        }
       </div>
       <div ref={testContainerRef} data-testid="testContainer" className="test-container">
         <div ref={quotesDisplayRef} className="quotes-display">

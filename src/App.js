@@ -8,16 +8,14 @@ function App() {
   const [selectedLang, setSelectedLang] = useState("en");
   const [selectedName, setSelectedName] = useState("English");
   const [selectedTime, setSelectedTime] = useState(15);
-  const [displaySettingError, setDisplaySettingError] = useState(false);
 
   const buttonRef = useRef();
 
-  const toggleSettings = (settingError) => {
+  const toggleSettings = () => {
     setOpenSettings(!openSettings);
     openSettings
       ? buttonRef.current.classList.remove("active")
       : buttonRef.current.classList.add("active");
-    settingError ? setDisplaySettingError(true) : setDisplaySettingError(false);
   };
 
   const changeSettings = (lang, time) => {
@@ -78,7 +76,6 @@ function App() {
               openSettings={openSettings}
               selectedLang={selectedLang}
               initialTime={selectedTime}
-              displaySettingError={displaySettingError}
             />
           }
         </main>
