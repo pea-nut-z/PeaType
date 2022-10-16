@@ -3,6 +3,7 @@ import * as helper from "./helper";
 
 export default function Main({ openSettings, selectedLang, initialTime }) {
   // SETUP
+  const [firstFetch, setFirstFetch] = useState(true);
   const [reset, setReset] = useState(true);
   const [showResult, setShowResult] = useState(false);
 
@@ -187,6 +188,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
         })
         .finally(() => {
           setFetchQuotes(false);
+          firstFetch && setFirstFetch(false);
         });
     }
   }, [selectedLang, fetchQuotes]);
@@ -387,7 +389,13 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
       )}
       <div className="error-msg-wrapper" data-testid="error">
         {(fetchQuotes || !loading) && (
-          <p className="error-msg">{loading ? "loading..." : "Failed to fetch quotes"}</p>
+          <p className="error-msg">
+            {firstFetch
+              ? "Hang tight! The first load takes up to 30 seconds. I am loading..."
+              : loading
+              ? "loading..."
+              : "Failed to fetch quotes"}
+          </p>
         )}
       </div>
       <div ref={testContainerRef} data-testid="testContainer" className="test-container">
