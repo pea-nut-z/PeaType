@@ -17,6 +17,7 @@
   --large-font: 6rem;
   --medium-font: 2rem;
   --small-font: 1.2rem;
+  --xsmall-font: 0.8rem;
   --pixel-font: "Pixels";
 }
 
@@ -475,5 +476,9 @@ h4 {
   .settings-menu {
     top: 50%;
     width: 90%;
+  }
+
+  .lang-input-field {
+    font-size: var(--xsmall-font);
   }
 }
