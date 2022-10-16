@@ -17,7 +17,7 @@ function App() {
     openSettings
       ? buttonRef.current.classList.remove("active")
       : buttonRef.current.classList.add("active");
-    settingError? setDisplaySettingError(true) : setDisplaySettingError(false)
+    settingError ? setDisplaySettingError(true) : setDisplaySettingError(false);
   };
 
   const changeSettings = (lang, time) => {

@@ -12,6 +12,7 @@
   --gray: lightslategray;
   --lightgray: #ECECEC;
   --purple: #5C1AD9;
+  --blue: #0977EC;
 
   --large-font: 6rem;
   --medium-font: 2rem;
@@ -64,7 +65,8 @@ ul {
 
 .portfolio-link:link,
 .portfolio-link:visited {
-  color: var(--purple)
+  color: var(--blue);
+  text-decoration: none;
 }
 
 .app {
@@ -457,6 +459,12 @@ h4 {
 }
 
 @media (max-width: 540px) {
+
+  .corner-wrapper{
+    right: -9.5rem;
+    bottom: -9.5rem;
+    font-size: 0.7rem;
+  }
 
   .quotes-display,
   .input-container {
