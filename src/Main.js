@@ -191,7 +191,7 @@ export default function Main({ openSettings, selectedLang, initialTime }) {
           firstFetch && setFirstFetch(false);
         });
     }
-  }, [selectedLang, fetchQuotes]);
+  }, [selectedLang, fetchQuotes, firstFetch]);
 
   // GET NEXT QUOTE
   useEffect(() => {
